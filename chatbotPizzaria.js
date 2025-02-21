@@ -1,144 +1,83 @@
-const qrcode = require('qrcode-terminal');
+const express = require('express');
+const qrcode = require('qrcode');
 const { Client } = require('whatsapp-web.js');
+const app = express();
+const port = 3000;
 const client = new Client();
+let qrCodeUrl = '';
 
-client.on('qr', qr => {
-    qrcode.generate(qr, { small: true });
+client.on('qr', async qr => {
+    qrCodeUrl = await qrcode.toDataURL(qr);
 });
 
 client.on('ready', () => {
-    console.log('Chatbot da Pizzaria conectado!');
+    console.log('Atendente Virtual da Zailon está online!');
 });
 
 client.initialize();
 
-let pedidos = {};
-let enderecos = {};
-
-const cardapio = {
-    "1A": { nome: "Pizza Margherita M", preco: 35 },
-    "1B": { nome: "Pizza Margherita G", preco: 45 },
-    "1C": { nome: "Pizza Margherita GG", preco: 55 },
-    "2A": { nome: "Pizza Calabresa M", preco: 38 },
-    "2B": { nome: "Pizza Calabresa G", preco: 48 },
-    "2C": { nome: "Pizza Calabresa GG", preco: 58 },
-    "3A": { nome: "Pizza Portuguesa M", preco: 40 },
-    "3B": { nome: "Pizza Portuguesa G", preco: 50 },
-    "3C": { nome: "Pizza Portuguesa GG", preco: 60 },
-    "4A": { nome: "Pizza Quatro Queijos M", preco: 42 },
-    "4B": { nome: "Pizza Quatro Queijos G", preco: 52 },
-    "4C": { nome: "Pizza Quatro Queijos GG", preco: 62 }
-};
-
-const bebidas = {
-    "coca-cola": { nome: "Coca-Cola", preco: 8 },
-    "coca": { nome: "Coca-Cola", preco: 8 },
-    "cola": { nome: "Coca-Cola", preco: 8 },
-    "pepsi": { nome: "Pepsi", preco: 7 },
-    "guarana": { nome: "Guaraná", preco: 6 }
-};
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 client.on('message', async msg => {
     const chatId = msg.from;
-
-    if (msg.body.match(/(menu|cardápio|pedido|pizza|oi|olá|opa)/i) && chatId.endsWith('@c.us')) {
-        const chat = await msg.getChat();
-        const contact = await msg.getContact();
-        const name = contact.pushname;
-        pedidos[chatId] = [];
-
-        await client.sendMessage(chatId, `Olá, ${name.split(" ")[0]}! Escolha uma das opções abaixo:
-        
-1 - Ver o cardápio 🍕
-2 - Fazer um pedido 📦
-3 - Consultar tempo de entrega 🚀
-4 - Falar com um atendente 👨‍💼`);
-    }
-
-    if (msg.body === '1' && chatId.endsWith('@c.us')) {
-        await client.sendMessage(chatId, `Aqui está nosso cardápio 🍕:
-
-` +
-            `1 - Pizza Margherita - R$ 35,00\n` +
-            `2 - Pizza Calabresa - R$ 38,00\n` +
-            `3 - Pizza Portuguesa - R$ 40,00\n` +
-            `4 - Pizza Quatro Queijos - R$ 42,00\n\n` +
-            `Escolha o tamanho:\nA - M | B - G | C - GG\n\n` +
-            `Faça seu pedido no formato "1A, 2C"`);
-    }
-
-    if (msg.body.match(/^([1-4][A-C],?\s?)+$/i) && chatId.endsWith('@c.us')) {
-        const pedidosCliente = msg.body.toUpperCase().split(/,\s?/);
-        let total = 0;
-        pedidos[chatId] = pedidosCliente.map(pedido => {
-            if (cardapio[pedido]) {
-                total += cardapio[pedido].preco;
-                return cardapio[pedido].nome;
-            }
-        }).filter(Boolean);
-        
-        await client.sendMessage(chatId, `Você deseja adicionar alguma bebida? Temos:\n` +
-            `- Coca-Cola (R$ 8,00)\n` +
-            `- Pepsi (R$ 7,00)\n` +
-            `- Guaraná (R$ 6,00)\n\n` +
-            `Digite o nome da bebida ou "Não" para finalizar.`);
-        
-        pedidos[chatId].total = total; // Armazena o total até o momento
-    }
-
-    const bebidaPedido = msg.body.toLowerCase();
     
-    if (bebidaPedido in bebidas && chatId.endsWith('@c.us')) {
-        const bebida = bebidas[bebidaPedido];
-        await client.sendMessage(chatId, `Você escolheu ${bebida.nome}. Qual o tamanho da bebida?\n` +
-            `1 - Pequena\n` +
-            `2 - Média\n` +
-            `3 - Grande\n\n` +
-            `Digite o número do tamanho.`);
-        
-        pedidos[chatId].bebida = bebida; // Armazena a bebida escolhida
-    }
+    if (msg.body.match(/(oi|olá|bom dia|boa tarde|boa noite)/i) && chatId.endsWith('@c.us')) {
+        const chat = await msg.getChat();
+        await delay(1000);
+        await chat.sendStateTyping();
+        await delay(1000);
+        await client.sendMessage(chatId, `Olá! Eu sou a atendente virtual da Zailon. Nosso sistema de chatbot pode ajudar seu negócio a automatizar atendimentos e melhorar a experiência dos clientes. Como posso te ajudar hoje?
 
-    if (msg.body.match(/[1-3]/) && pedidos[chatId].bebida) {
-        const tamanho = msg.body;
-        const bebida = pedidos[chatId].bebida;
-        
-        pedidos[chatId].push(`${bebida.nome} (Tamanho ${tamanho})`);
-        pedidos[chatId].total += bebida.preco; // Adiciona o preço da bebida ao total
-        
-        await client.sendMessage(chatId, `Ótimo! Adicionamos ${bebida.nome} (Tamanho ${tamanho}) ao seu pedido. Deseja mais alguma coisa? (Sim/Não)`);
-        
-        delete pedidos[chatId].bebida; // Remove a bebida da escolha
+1 - Quais são os benefícios do chatbot?
+2 - Como funciona o chatbot da Zailon?
+3 - Quero contratar um chatbot para meu negócio!`);
     }
+    
+    if (msg.body === '1') {
+        await delay(1000);
+        await client.sendMessage(chatId, `Os principais benefícios do nosso chatbot são:
+✅ Atendimento automatizado 24h
+✅ Respostas rápidas e personalizadas
+✅ Redução de custos operacionais
+✅ Aumento da satisfação dos clientes
+✅ Facilidade de integração com WhatsApp e redes sociais
 
-    const respostaSimNao = msg.body.toLowerCase();
-
-    if ((respostaSimNao === 'não' || respostaSimNao === 'nao') && chatId.endsWith('@c.us')) {
-        const pedidoConfirmado = pedidos[chatId].join(', ');
-        const total = pedidos[chatId].total; // Obtem o total final
-        await client.sendMessage(chatId, `Confirmando seu pedido!\nVocê pediu: ${pedidoConfirmado}\nValor total: R$ ${total},00\nPor favor, digite "Entrega" ou "Retirada".`);
+Gostaria de saber mais? Escolha uma opção:
+2 - Como funciona o chatbot da Zailon?
+3 - Quero contratar um chatbot para meu negócio!`);
     }
+    
+    if (msg.body === '2') {
+        await delay(1000);
+        await client.sendMessage(chatId, `Nosso chatbot funciona de forma simples e eficiente:
+1️⃣ Coletamos as informações do seu negócio e personalizamos o chatbot
+2️⃣ Ele responde automaticamente perguntas frequentes dos clientes
+3️⃣ Encaminha atendimentos específicos para um atendente humano
+4️⃣ Você pode ativar ou desativar o chatbot conforme a necessidade
 
-    if ((respostaSimNao === 'sim') && chatId.endsWith('@c.us')) {
-        await client.sendMessage(chatId, `Ótimo! O que mais você gostaria de adicionar ao seu pedido?`);
+Quer experimentar? Digite "3" para contratar um chatbot!`);
     }
+    
+    if (msg.body === '3') {
+        await delay(1000);
+        await client.sendMessage(chatId, `Ótima escolha! 🎉
+Para contratar um chatbot, entre em contato conosco e um de nossos especialistas irá te atender.
 
-    if (respostaSimNao === 'retirada' && chatId.endsWith('@c.us')) {
-        await client.sendMessage(chatId, 'Seu pedido estará pronto para retirada em aproximadamente 40 minutos. Obrigado pela preferência! 🍕😊');
-        delete pedidos[chatId];
-    }
+📞 WhatsApp: +55 46 99137-0461
 
-    if (respostaSimNao === 'entrega' && chatId.endsWith('@c.us')) {
-        await client.sendMessage(chatId, 'Por favor, informe seu endereço com Rua, Bairro e Número.');
+Aguardamos seu contato! 🚀`);
     }
+});
 
-    if (msg.body.match(/(rua|bairro|número|numero)/i) && chatId.endsWith('@c.us')) {
-        enderecos[chatId] = msg.body;
-        const pedidoConfirmado = pedidos[chatId].join(', ');
-        const total = pedidos[chatId].total; // Obtem o total final
-        
-        await client.sendMessage(chatId, `Obrigado! Seu pedido: ${pedidoConfirmado} será entregue em aproximadamente 1 hora no endereço:\n${enderecos[chatId]}\nValor total: R$ ${total},00\n\nAgradecemos a preferência! 🍕😊`);
-        delete pedidos[chatId];
-        delete enderecos[chatId];
+// Servidor para exibir o QR Code
+tapp.get('/qrcode', (req, res) => {
+    if (qrCodeUrl) {
+        res.send(`<html><body><h1>Escaneie o QR Code para conectar</h1><img src="${qrCodeUrl}" /></body></html>`);
+    } else {
+        res.send('<html><body><h1>Aguardando QR Code...</h1></body></html>');
     }
+});
+
+app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}/qrcode`);
 });
