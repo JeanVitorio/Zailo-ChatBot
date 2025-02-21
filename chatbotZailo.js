@@ -2,12 +2,17 @@ const qrcode = require('qrcode-terminal');
 const { Client } = require('whatsapp-web.js');
 const client = new Client();
 
+// Função para garantir que a mensagem de log não tenha timestamp ou formatação extra
+function logWithoutTimestamp(message) {
+    console.log(message); // Apenas exibe a mensagem, sem timestamp
+}
+
 client.on('qr', qr => {
     qrcode.generate(qr, { small: true });
 });
 
 client.on('ready', () => {
-    console.log('Atendente Virtual da Zailon está online!');
+    logWithoutTimestamp('Atendente Virtual da Zailon está online!');
 });
 
 client.initialize();
