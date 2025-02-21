@@ -1,18 +1,21 @@
-const qrcode = require('qrcode-terminal');
+const qrcode = require('qrcode');  // Usando a versão completa da biblioteca qrcode
 const { Client } = require('whatsapp-web.js');
 const client = new Client();
 
-// Função para garantir que a mensagem de log não tenha timestamp ou formatação extra
-function logWithoutTimestamp(message) {
-    console.log(message); // Apenas exibe a mensagem, sem timestamp
+// Função para exibir o QR Code como uma única string no log
+function logQRCode(qrCodeString) {
+    console.log('QR Code gerado:');
+    console.log(qrCodeString);  // Exibe o QR Code gerado em formato de string
 }
 
-client.on('qr', qr => {
-    qrcode.generate(qr, { small: true });
+client.on('qr', async (qr) => {
+    // Gerando o QR Code como uma string base64
+    const qrCodeString = await qrcode.toString(qr, { type: 'terminal' });
+    logQRCode(qrCodeString);  // Chama a função para exibir o QR Code no log
 });
 
 client.on('ready', () => {
-    logWithoutTimestamp('Atendente Virtual da Zailon está online!');
+    console.log('Atendente Virtual da Zailon está online!');
 });
 
 client.initialize();
