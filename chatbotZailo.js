@@ -2,16 +2,30 @@ const qrcode = require('qrcode');  // Usando a versão completa da biblioteca qr
 const { Client } = require('whatsapp-web.js');
 const client = new Client();
 
+// Variável para armazenar o QR Code gerado
+let savedQRCode = null;
+
 // Função para exibir o QR Code como uma única string no log
 function logQRCode(qrCodeString) {
     console.log('QR Code gerado:');
     console.log(qrCodeString);  // Exibe o QR Code gerado em formato de string
 }
 
-client.on('qr', async (qr) => {
-    // Gerando o QR Code como uma string base64
-    const qrCodeString = await qrcode.toString(qr, { type: 'terminal' });
-    logQRCode(qrCodeString);  // Chama a função para exibir o QR Code no log
+// Gerar e armazenar um QR Code fixo
+async function generateAndStoreQRCode(qr) {
+    if (!savedQRCode) {
+        // Gerando o QR Code uma vez e armazenando-o
+        savedQRCode = await qrcode.toString(qr, { type: 'terminal' });
+        logQRCode(savedQRCode);  // Exibe o QR Code no log
+    } else {
+        // Caso já tenha um QR Code armazenado, só exibe o mesmo
+        console.log('QR Code reutilizado:');
+        console.log(savedQRCode);
+    }
+}
+
+client.on('qr', (qr) => {
+    generateAndStoreQRCode(qr);  // Chama a função para gerar e armazenar o QR Code
 });
 
 client.on('ready', () => {
