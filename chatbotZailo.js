@@ -32,9 +32,9 @@ client.on('message', async msg => {
 
     if (msg.body.match(/(oi|olá|bom dia|boa tarde|boa noite)/i) && chatId.endsWith('@c.us')) {
         const chat = await msg.getChat();
-        // await delay(1000);
+        await delay(1000);
         await chat.sendStateTyping();
-        // await delay(1000);
+        await delay(1000);
         await client.sendMessage(chatId, `Olá! Eu sou a atendente virtual da Zailon. Nosso sistema de chatbot pode ajudar seu negócio a automatizar atendimentos e melhorar a experiência dos clientes. Como posso te ajudar hoje?
 
 1 - Quais são os benefícios do chatbot?
@@ -43,7 +43,7 @@ client.on('message', async msg => {
     }
 
     if (msg.body === '1') {
-        // await delay(1000);
+        await delay(1000);
         await client.sendMessage(chatId, `Os principais benefícios do nosso chatbot são:
 ✅ Atendimento automatizado 24h
 ✅ Respostas rápidas e personalizadas
@@ -57,7 +57,7 @@ Gostaria de saber mais? Escolha uma opção:
     }
 
     if (msg.body === '2') {
-        // await delay(1000);
+        await delay(1000);
         await client.sendMessage(chatId, `Nosso chatbot funciona de forma simples e eficiente:
 1️⃣ Coletamos as informações do seu negócio e personalizamos o chatbot
 2️⃣ Ele responde automaticamente perguntas frequentes dos clientes
@@ -68,7 +68,7 @@ Quer experimentar? Digite "3" para contratar um chatbot!`);
     }
 
     if (msg.body === '3') {
-        // await delay(1000);
+        await delay(1000);
         await client.sendMessage(chatId, `Ótima escolha! 🎉
 Para contratar um chatbot, entre em contato conosco e um de nossos especialistas irá te atender.
 
