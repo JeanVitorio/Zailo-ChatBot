@@ -25,16 +25,13 @@ client.on('ready', () => {
 
 client.initialize();
 
-const delay = ms => new Promise(res => setTimeout(res, ms));
-
 client.on('message', async msg => {
     const chatId = msg.from;
 
+    // Resposta otimizada para a saudação inicial
     if (msg.body.match(/(oi|olá|bom dia|boa tarde|boa noite)/i) && chatId.endsWith('@c.us')) {
         const chat = await msg.getChat();
-        await delay(1000);
-        await chat.sendStateTyping();
-        await delay(1000);
+        await chat.sendStateTyping();  // Usado para mostrar que o bot está "digitando"
         await client.sendMessage(chatId, `Olá! Eu sou a atendente virtual da Zailon. Nosso sistema de chatbot pode ajudar seu negócio a automatizar atendimentos e melhorar a experiência dos clientes. Como posso te ajudar hoje?
 
 1 - Quais são os benefícios do chatbot?
@@ -42,8 +39,8 @@ client.on('message', async msg => {
 3 - Quero contratar um chatbot para meu negócio!`);
     }
 
+    // Resposta otimizada para "benefícios do chatbot"
     if (msg.body === '1') {
-        await delay(1000);
         await client.sendMessage(chatId, `Os principais benefícios do nosso chatbot são:
 ✅ Atendimento automatizado 24h
 ✅ Respostas rápidas e personalizadas
@@ -56,8 +53,8 @@ Gostaria de saber mais? Escolha uma opção:
 3 - Quero contratar um chatbot para meu negócio!`);
     }
 
+    // Resposta otimizada para "como funciona"
     if (msg.body === '2') {
-        await delay(1000);
         await client.sendMessage(chatId, `Nosso chatbot funciona de forma simples e eficiente:
 1️⃣ Coletamos as informações do seu negócio e personalizamos o chatbot
 2️⃣ Ele responde automaticamente perguntas frequentes dos clientes
@@ -67,8 +64,8 @@ Gostaria de saber mais? Escolha uma opção:
 Quer experimentar? Digite "3" para contratar um chatbot!`);
     }
 
+    // Resposta otimizada para "contratar chatbot"
     if (msg.body === '3') {
-        await delay(1000);
         await client.sendMessage(chatId, `Ótima escolha! 🎉
 Para contratar um chatbot, entre em contato conosco e um de nossos especialistas irá te atender.
 
@@ -81,11 +78,11 @@ Aguardamos seu contato! 🚀`);
 // Função para simular a atividade falsa
 async function simulateFakeActivity() {
     try {
-        // Pegue um chat qualquer, por exemplo, o chat de um número fictício
-        const fakeChatId = '5531999999999@c.us'; // Número fictício
+        // Use um chat válido para simulação de "digitando"
+        const fakeChatId = '5531999999999@c.us';  // Número fictício
         const chat = await client.getChatById(fakeChatId);
 
-        // Simula o ato de "digitando"
+        // Simula o ato de "digitando" no chat fictício
         await chat.sendStateTyping();
     } catch (error) {
         console.error("Erro ao tentar simular atividade:", error);
