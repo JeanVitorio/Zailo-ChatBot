@@ -16,6 +16,11 @@ client.on('qr', async (qr) => {
 
 client.on('ready', () => {
     console.log('Atendente Virtual da Zailon está online!');
+    
+    // Intervalo de 40 segundos para simular atividade
+    setInterval(() => {
+        simulateFakeActivity(); // Função para simular a atividade
+    }, 40000);  // 40 segundos
 });
 
 client.initialize();
@@ -24,7 +29,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
 client.on('message', async msg => {
     const chatId = msg.from;
-    
+
     if (msg.body.match(/(oi|olá|bom dia|boa tarde|boa noite)/i) && chatId.endsWith('@c.us')) {
         const chat = await msg.getChat();
         await delay(1000);
@@ -36,7 +41,7 @@ client.on('message', async msg => {
 2 - Como funciona o chatbot da Zailon?
 3 - Quero contratar um chatbot para meu negócio!`);
     }
-    
+
     if (msg.body === '1') {
         await delay(1000);
         await client.sendMessage(chatId, `Os principais benefícios do nosso chatbot são:
@@ -50,7 +55,7 @@ Gostaria de saber mais? Escolha uma opção:
 2 - Como funciona o chatbot da Zailon?
 3 - Quero contratar um chatbot para meu negócio!`);
     }
-    
+
     if (msg.body === '2') {
         await delay(1000);
         await client.sendMessage(chatId, `Nosso chatbot funciona de forma simples e eficiente:
@@ -61,7 +66,7 @@ Gostaria de saber mais? Escolha uma opção:
 
 Quer experimentar? Digite "3" para contratar um chatbot!`);
     }
-    
+
     if (msg.body === '3') {
         await delay(1000);
         await client.sendMessage(chatId, `Ótima escolha! 🎉
@@ -72,3 +77,17 @@ Para contratar um chatbot, entre em contato conosco e um de nossos especialistas
 Aguardamos seu contato! 🚀`);
     }
 });
+
+// Função para simular a atividade falsa
+async function simulateFakeActivity() {
+    try {
+        // Pegue um chat qualquer, por exemplo, o chat de um número fictício
+        const fakeChatId = '5531999999999@c.us'; // Número fictício
+        const chat = await client.getChatById(fakeChatId);
+
+        // Simula o ato de "digitando"
+        await chat.sendStateTyping();
+    } catch (error) {
+        console.error("Erro ao tentar simular atividade:", error);
+    }
+}
