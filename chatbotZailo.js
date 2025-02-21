@@ -1,9 +1,27 @@
-const qrcode = require('qrcode-terminal');
+const fs = require('fs');
+const path = require('path');  // Para trabalhar com caminhos de arquivos
+const qrcode = require('qrcode');
 const { Client } = require('whatsapp-web.js');
 const client = new Client();
+let qrCodeUrl = '';
 
-client.on('qr', qr => {
-    qrcode.generate(qr, { small: true });
+client.on('qr', async qr => {
+    qrCodeUrl = await qrcode.toDataURL(qr);
+    const htmlContent = `
+        <html>
+        <body>
+            <h1>Escaneie o QR Code para conectar</h1>
+            <img src="${qrCodeUrl}" />
+        </body>
+        </html>
+    `;
+
+    // Defina o caminho para o arquivo HTML
+    const filePath = path.join(__dirname, 'qrcode.html');  // Usa o __dirname para garantir o caminho absoluto
+
+    // Escreve o conteúdo HTML no arquivo
+    fs.writeFileSync(filePath, htmlContent);
+    console.log(`QR Code gerado! Abra o arquivo qrcode.html no navegador. O arquivo está localizado em: ${filePath}`);
 });
 
 client.on('ready', () => {
