@@ -1,0 +1,47 @@
+{
+  "modelos": [
+    {
+      "nome": "Volkswagen Gol 1.6",
+      "ano": "2020",
+      "preco": "R$ 45.900",
+      "descricao": "Volkswagen Gol 1.6 2020 com baixo consumo de combustível, ótimo para o dia a dia.",
+      "imagens": [
+        "imagens/Volkswagen_Gol_1.6_2020.jpg"
+      ]
+    },
+    {
+      "nome": "Chevrolet Onix LT",
+      "ano": "2021",
+      "preco": "R$ 58.700",
+      "descricao": "Onix LT 2021 com multimídia, câmbio manual, completo e confortável.",
+      "imagens": [
+        "imagens/Onix_LT_2021.jpg"
+      ]
+    },
+    {
+      "nome": "Jeep Renegade Sport",
+      "ano": "2022",
+      "preco": "R$ 89.900",
+      "descricao": "Jeep Renegade 2022, motor 1.8, excelente para aventuras e cidade.",
+      "imagens": [
+        "imagens/Jeep_Renegade_Sport.jpg"
+      ]
+    },
+    {
+      "nome": "Fiat Argo Drive 1.0",
+      "ano": "2021",
+      "preco": "R$ 52.000",
+      "descricao": "Fiat Argo Drive 1.0 2021, econômico, espaçoso e com design moderno.",
+      "imagens": [
+        "imagens/Fiat_Argo_Drive_1.0.jpg"
+      ]
+    }
+  ],
+  "numeros_para_contato": [
+    {
+      "nome": "Jean Vitorio",
+      "Email": "jeanvitoriosantosoliveira@gmail.com",
+      "numero": "46991370461"
+    }
+  ]
+}
