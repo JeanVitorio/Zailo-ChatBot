@@ -1,17 +1,16 @@
-const express = require('express');
-const qrcode = require('qrcode');
+const qrcode = require('qrcode-terminal');
 const { Client } = require('whatsapp-web.js');
-const app = express();
-const port = 3000;
-const client = new Client();
-let qrCodeUrl = '';
 
-client.on('qr', async qr => {
-    qrCodeUrl = await qrcode.toDataURL(qr);
+const client = new Client();
+
+client.on('qr', qr => {
+    console.clear();
+    console.log('Escaneie o QR Code abaixo para conectar:');
+    qrcode.generate(qr, { small: true });
 });
 
 client.on('ready', () => {
-    console.log('Vendedor Virtual da Zailon está online!');
+    console.log('✅ Vendedor Virtual da Zailon está online!');
 });
 
 client.initialize();
@@ -79,17 +78,4 @@ Vamos reservar um horário exclusivo para você conhecer os carros com tranquili
 Enquanto isso, se quiser agilizar, pode chamar direto:
 📞 WhatsApp: +55 46 99137-0461`);
     }
-});
-
-// Servidor para exibir o QR Code
-app.get('/qrcode', (req, res) => {
-    if (qrCodeUrl) {
-        res.send(`<html><body><h1>Escaneie o QR Code para conectar</h1><img src="${qrCodeUrl}" /></body></html>`);
-    } else {
-        res.send('<html><body><h1>Aguardando QR Code...</h1></body></html>');
-    }
-});
-
-app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}/qrcode`);
 });
