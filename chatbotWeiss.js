@@ -46,18 +46,44 @@ function isValidDate(date) {
 }
 
 function isValidVisitDate(date) {
-    // Aceita dd/mm/aaaa ou texto simples (ex.: "amanhã", "sexta")
     return /^\d{2}\/\d{2}\/\d{4}$/.test(date) || /^[a-zA-Z\s]+$/.test(date);
 }
 
 function isValidVisitTime(time) {
-    // Aceita HH:MM (ex.: 14:30)
     return /^\d{2}:\d{2}$/.test(time);
 }
 
 function isValidFullName(name) {
-    // Pelo menos dois palavras com letras
     return name.trim().split(/\s+/).length >= 2 && /^[a-zA-Z\s]+$/.test(name);
+}
+
+function isValidModel(model) {
+    return /^[a-zA-Z0-9\s]+$/.test(model) && model.trim().length > 0;
+}
+
+function isValidYear(year) {
+    return /^\d{4}$/.test(year) && parseInt(year) >= 1900 && parseInt(year) <= new Date().getFullYear() + 1;
+}
+
+function isValidCondition(condition) {
+    return condition.trim().length > 0;
+}
+
+async function salvarFoto(msg, chatId, tipo) {
+    if (msg.hasMedia) {
+        try {
+            const media = await msg.downloadMedia();
+            const fileName = `${chatId}_${tipo}_${Date.now()}.jpg`;
+            const filePath = path.join(__dirname, 'Uploads', fileName);
+            fs.mkdirSync(path.join(__dirname, 'Uploads'), { recursive: true });
+            fs.writeFileSync(filePath, Buffer.from(media.data, 'base64'));
+            return fileName;
+        } catch (err) {
+            console.error(`Erro ao salvar foto de ${tipo}:`, err);
+            return null;
+        }
+    }
+    return false;
 }
 
 async function enviarImagensDoCarro(chatId, carro) {
@@ -100,6 +126,23 @@ async function enviarRelatorioParaContatos(chatId) {
         mensagem += `Dia: ${dados.visita.dia || 'Não informado'}\n`;
         mensagem += `Horário: ${dados.visita.horario || 'Não informado'}\n`;
         mensagem += `Nome completo: ${dados.visita.nome || 'Não informado'}\n`;
+    }
+
+    if (dados.troca) {
+        mensagem += `\n🔄 *Solicitou troca de veículo:*\n`;
+        mensagem += `Modelo: ${dados.troca.modelo || 'Não informado'}\n`;
+        mensagem += `Ano: ${dados.troca.ano || 'Não informado'}\n`;
+        mensagem += `Estado: ${dados.troca.estado || 'Não informado'}\n`;
+        mensagem += `Foto: ${dados.troca.foto || 'Não enviada'}\n`;
+    }
+
+    if (dados.venda) {
+        mensagem += `\n📤 *Solicitou venda de veículo:*\n`;
+        mensagem += `Modelo: ${dados.venda.modelo || 'Não informado'}\n`;
+        mensagem += `Ano: ${dados.venda.ano || 'Não informado'}\n`;
+        mensagem += `Estado: ${dados.venda.estado || 'Não informado'}\n`;
+        mensagem += `Preço desejado: R$ ${dados.venda.preco || 'Não informado'}\n`;
+        mensagem += `Foto: ${dados.venda.foto || 'Não enviada'}\n`;
     }
 
     mensagem += `\n*⚠️ Atenção:* Este relatório contém informações sensíveis. Garanta conformidade com a LGPD e não compartilhe sem autorização.`;
@@ -167,7 +210,164 @@ client.on('message', async msg => {
         return;
     }
 
-    // Fluxo de agendamento de visita
+    // Fluxo de troca (opção 5)
+    if (estado?.etapa === 'aguardandoModeloTroca') {
+        if (isValidModel(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.troca) dados.troca = {};
+            dados.troca.modelo = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            estadoCliente.set(chatId, { etapa: 'aguardandoAnoTroca' });
+            await client.sendMessage(chatId, `Modelo registrado: ${textoOriginal}. Agora, informe o *ano* do veículo (ex.: 2018):`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe um modelo válido (ex.: Honda Civic).`);
+        }
+        return;
+    }
+
+    if (estado?.etapa === 'aguardandoAnoTroca') {
+        if (isValidYear(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.troca) dados.troca = {};
+            dados.troca.ano = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            estadoCliente.set(chatId, { etapa: 'aguardandoEstadoTroca' });
+            await client.sendMessage(chatId, `Ano registrado: ${textoOriginal}. Descreva o *estado de conservação* do veículo (ex.: Bom estado, revisado):`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe um ano válido (ex.: 2018).`);
+        }
+        return;
+    }
+
+    if (estado?.etapa === 'aguardandoEstadoTroca') {
+        if (isValidCondition(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.troca) dados.troca = {};
+            dados.troca.estado = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            estadoCliente.set(chatId, { etapa: 'aguardandoFotoTroca' });
+            await client.sendMessage(chatId, `Estado registrado: ${textoOriginal}. Envie uma *foto* do veículo ou digite "NÃO" para pular:`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe o estado de conservação (ex.: Bom estado, revisado).`);
+        }
+        return;
+    }
+
+    if (estado?.etapa === 'aguardandoFotoTroca') {
+        if (texto === 'NÃO' || msg.hasMedia) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.troca) dados.troca = {};
+            if (msg.hasMedia) {
+                const fotoPath = await salvarFoto(msg, chatId, 'troca');
+                if (fotoPath) dados.troca.foto = fotoPath;
+            }
+            interessesClientes.set(chatId, dados);
+
+            await client.sendMessage(chatId, `✅ Solicitação de troca enviada! Um consultor entrará em contato para avaliar seu veículo. 😊`);
+            await enviarRelatorioParaContatos(chatId);
+            await client.sendMessage(chatId, `📨 Relatório enviado! Obrigado pelo seu tempo. 👋 Se precisar de mais alguma coisa, é só chamar!`);
+
+            estadoCliente.delete(chatId);
+            interessesClientes.delete(chatId);
+            await wait(1000);
+            estadoCliente.set(chatId, { etapa: 'menuInicial' });
+            await enviarMenuInicial(chatId);
+        } else {
+            await client.sendMessage(chatId, `Por favor, envie uma foto do veículo ou digite "NÃO" para pular.`);
+        }
+        return;
+    }
+
+    // Fluxo de venda (opção 6)
+    if (estado?.etapa === 'aguardandoModeloVenda') {
+        if (isValidModel(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.venda) dados.venda = {};
+            dados.venda.modelo = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            estadoCliente.set(chatId, { etapa: 'aguardandoAnoVenda' });
+            await client.sendMessage(chatId, `Modelo registrado: ${textoOriginal}. Agora, informe o *ano* do veículo (ex.: 2020):`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe um modelo válido (ex.: Toyota Corolla).`);
+        }
+        return;
+    }
+
+    if (estado?.etapa === 'aguardandoAnoVenda') {
+        if (isValidYear(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.venda) dados.venda = {};
+            dados.venda.ano = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            estadoCliente.set(chatId, { etapa: 'aguardandoEstadoVenda' });
+            await client.sendMessage(chatId, `Ano registrado: ${textoOriginal}. Descreva o *estado de conservação* do veículo (ex.: Ótimo estado, único dono):`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe um ano válido (ex.: 2020).`);
+        }
+        return;
+    }
+
+    if (estado?.etapa === 'aguardandoEstadoVenda') {
+        if (isValidCondition(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.venda) dados.venda = {};
+            dados.venda.estado = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            estadoCliente.set(chatId, { etapa: 'aguardandoPrecoVenda' });
+            await client.sendMessage(chatId, `Estado registrado: ${textoOriginal}. Informe o *preço desejado* para a venda (ex.: 50000):`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe o estado de conservação (ex.: Ótimo estado, único dono).`);
+        }
+        return;
+    }
+
+    if (estado?.etapa === 'aguardandoPrecoVenda') {
+        if (isValidAmount(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.venda) dados.venda = {};
+            dados.venda.preco = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            estadoCliente.set(chatId, { etapa: 'aguardandoFotoVenda' });
+            await client.sendMessage(chatId, `Preço registrado: R$ ${textoOriginal}. Envie uma *foto* do veículo ou digite "NÃO" para pular:`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe um preço válido (ex.: 50000 ou 50000.00).`);
+        }
+        return;
+    }
+
+    if (estado?.etapa === 'aguardandoFotoVenda') {
+        if (texto === 'NÃO' || msg.hasMedia) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.venda) dados.venda = {};
+            if (msg.hasMedia) {
+                const fotoPath = await salvarFoto(msg, chatId, 'venda');
+                if (fotoPath) dados.venda.foto = fotoPath;
+            }
+            interessesClientes.set(chatId, dados);
+
+            await client.sendMessage(chatId, `✅ Solicitação de venda enviada! Um consultor entrará em contato para discutir a proposta. 😊`);
+            await enviarRelatorioParaContatos(chatId);
+            await client.sendMessage(chatId, `📨 Relatório enviado! Obrigado pelo seu tempo. 👋 Se precisar de mais alguma coisa, é só chamar!`);
+
+            estadoCliente.delete(chatId);
+            interessesClientes.delete(chatId);
+            await wait(1000);
+            estadoCliente.set(chatId, { etapa: 'menuInicial' });
+            await enviarMenuInicial(chatId);
+        } else {
+            await client.sendMessage(chatId, `Por favor, envie uma foto do veículo ou digite "NÃO" para pular.`);
+        }
+        return;
+    }
+
+    // Fluxo de agendamento de visita (opção 3)
     if (estado?.etapa === 'aguardandoDiaVisita') {
         if (isValidVisitDate(textoOriginal)) {
             let dados = interessesClientes.get(chatId) || { interesses: [] };
@@ -321,7 +521,12 @@ client.on('message', async msg => {
 
         } else if (texto === '2') {
             estadoCliente.set(chatId, { etapa: 'aguardandoNomeCarro' });
-            await client.sendMessage(chatId, `Ótimo! Para simular um financiamento, me diga o *nome do carro* desejado:`);
+            let lista = `Ótimo! Para simular um financiamento, me diga o *nome do carro* desejado.\n\nModelos disponíveis:\n`;
+            for (const carro of carros.modelos) {
+                lista += `🚘 *${carro.nome}* - ${carro.preco}\n`;
+            }
+            lista += `\nDigite o nome do carro ou envie "1" para ver mais detalhes dos modelos.`;
+            await client.sendMessage(chatId, lista);
 
         } else if (texto === '3') {
             estadoCliente.set(chatId, { etapa: 'aguardandoDiaVisita' });
@@ -334,20 +539,12 @@ client.on('message', async msg => {
             await enviarMenuInicial(chatId);
 
         } else if (texto === '5') {
-            await client.sendMessage(chatId, `🚗 Está pensando em trocar seu carro? Que legal! Podemos avaliar seu veículo na troca. Me envie as informações básicas dele (modelo, ano e estado de conservação) e uma foto se possível.`);
-            await wait(1000);
-            await client.sendMessage(chatId, `Em breve um de nossos consultores entrará em contato para fazer a avaliação completa.`);
-            await wait(1000);
-            estadoCliente.set(chatId, { etapa: 'menuInicial' });
-            await enviarMenuInicial(chatId);
+            estadoCliente.set(chatId, { etapa: 'aguardandoModeloTroca' });
+            await client.sendMessage(chatId, `Ótimo! Para avaliar seu carro na troca, me diga o *modelo* do veículo (ex.: Honda Civic):`);
 
         } else if (texto === '6') {
-            await client.sendMessage(chatId, `📤 Quer vender seu carro? Mande as informações principais (modelo, ano, estado geral e valor desejado). Fotos ajudam bastante!`);
-            await wait(1000);
-            await client.sendMessage(chatId, `Um consultor da Weiss Multimarcas entrará em contato com você em breve. 😊`);
-            await wait(1000);
-            estadoCliente.set(chatId, { etapa: 'menuInicial' });
-            await enviarMenuInicial(chatId);
+            estadoCliente.set(chatId, { etapa: 'aguardandoModeloVenda' });
+            await client.sendMessage(chatId, `Perfeito! Para vender seu carro, me diga o *modelo* do veículo (ex.: Toyota Corolla):`);
 
         } else {
             await client.sendMessage(chatId, `Desculpe, não entendi sua mensagem. Por favor, escolha uma das opções enviando o número correspondente (1-6).`);
