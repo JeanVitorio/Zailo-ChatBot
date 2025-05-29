@@ -14,20 +14,9 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const carros = JSON.parse(fs.readFileSync('carros.json', 'utf-8'));
 
-const bloquearChats = new Map();
 const estadoCliente = new Map();
 const interessesClientes = new Map();
 const ultimoBoasVindas = new Map();
-
-function estaBloqueado(chatId) {
-    const desbloqueio = bloquearChats.get(chatId);
-    return desbloqueio && Date.now() < desbloqueio;
-}
-
-function bloquearPor24h(chatId) {
-    const desbloqueio = Date.now() + 24 * 60 * 60 * 1000;
-    bloquearChats.set(chatId, desbloqueio);
-}
 
 function podeEnviarBoasVindas(chatId) {
     const ultimoEnvio = ultimoBoasVindas.get(chatId);
@@ -37,6 +26,23 @@ function podeEnviarBoasVindas(chatId) {
 
 function registrarBoasVindas(chatId) {
     ultimoBoasVindas.set(chatId, Date.now());
+}
+
+// Funções de validação
+function isValidAmount(amount) {
+    return /^\d+(\.\d{1,2})?$/.test(amount) || /^\d+$/.test(amount);
+}
+
+function isValidParcels(parcels) {
+    return /^\d+$/.test(parcels) && parseInt(parcels) > 0;
+}
+
+function isValidCPF(cpf) {
+    return /^\d{11}$/.test(cpf);
+}
+
+function isValidDate(date) {
+    return /^\d{2}\/\d{2}\/\d{4}$/.test(date);
 }
 
 async function enviarImagensDoCarro(chatId, carro) {
@@ -68,8 +74,11 @@ async function enviarRelatorioParaContatos(chatId) {
     if (dados.financiamento) {
         mensagem += `\n💰 *Solicitou simulação de financiamento:*\n`;
         mensagem += `Carro escolhido: ${dados.financiamento.carroEscolhido || 'Não informado'}\n`;
-        mensagem += `CPF: ${dados.financiamento.cpf}\n`;
-        mensagem += `Nascimento: ${dados.financiamento.nascimento}\n`;
+        mensagem += `Entrada: R$ ${dados.financiamento.entrada || 'Não informado'}\n`;
+        mensagem += `Parcelas: ${dados.financiamento.parcelas || 'Não informado'}\n`;
+        mensagem += `CPF: ${dados.financiamento.cpf || 'Não informado'}\n`;
+        mensagem += `Nascimento: ${dados.financiamento.nascimento || 'Não informado'}\n`;
+        mensagem += `\n*⚠️ Atenção:* Este relatório contém informações sensíveis. Garanta conformidade com a LGPD e não compartilhe sem autorização.`;
     }
 
     for (const contato of carros.numeros_para_contato) {
@@ -99,122 +108,228 @@ client.initialize();
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+async function enviarMenuInicial(chatId) {
+    const mensagem = `🤩 Weiss Multimarcas - Menu Principal\n\nEscolha uma opção digitando o número:\n1 - Ver modelos disponíveis\n2 - Quero um carro financiado\n3 - Quero agendar uma visita\n4 - Falar com um vendedor humano\n5 - Quero trocar meu carro\n6 - Quero vender meu carro`;
+    await client.sendMessage(chatId, mensagem);
+}
+
+async function enviarListaCarros(chatId) {
+    let lista = `Temos alguns modelos incríveis disponíveis no momento:\n\n`;
+    for (const carro of carros.modelos) {
+        lista += `🚘 *${carro.nome}* - ${carro.preco}\n`;
+    }
+    lista += `\nDigite o nome do carro que te interessou ou escolha outra opção do menu (1-6).`;
+    await client.sendMessage(chatId, lista);
+}
+
 client.on('message', async msg => {
     const chatId = msg.from;
     const textoOriginal = msg.body.trim();
     const texto = textoOriginal.toUpperCase();
 
-    if (estaBloqueado(chatId)) return;
-
     const estado = estadoCliente.get(chatId);
 
-    if (estado?.etapa === 'aguardandoFinanciamento' && texto === 'SIMULAR') {
-        estadoCliente.set(chatId, 'aguardandoCPF');
-
-        let dados = interessesClientes.get(chatId) || { interesses: [] };
-        if (!dados.financiamento) dados.financiamento = {};
-        dados.financiamento.carroEscolhido = estado.carroEscolhido;
-        interessesClientes.set(chatId, dados);
-
-        await client.sendMessage(chatId, '📝 Vamos simular! Primeiro, me informe seu *CPF* (apenas números):');
+    // Iniciar atendimento com qualquer mensagem
+    if (!estado && chatId.endsWith('@c.us')) {
+        await wait(1000);
+        if (podeEnviarBoasVindas(chatId)) {
+            await client.sendMessage(
+                chatId,
+                `Olá! 👋 Seja muito bem-vindo à 🤩Weiss Multimarcas 🤩!\nMe chamo Zailon, sou seu consultor virtual. 🚗✨`
+            );
+            registrarBoasVindas(chatId);
+        }
+        estadoCliente.set(chatId, { etapa: 'menuInicial' });
+        await enviarMenuInicial(chatId);
         return;
     }
 
-    if (estado === 'aguardandoCPF') {
-        estadoCliente.set(chatId, { etapa: 'aguardandoNascimento', cpf: textoOriginal });
+    // Fluxo de financiamento
+    if (estado?.etapa === 'aguardandoEntrada') {
+        if (isValidAmount(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.financiamento) dados.financiamento = {};
+            dados.financiamento.entrada = textoOriginal;
+            interessesClientes.set(chatId, dados);
 
-        let dados = interessesClientes.get(chatId) || { interesses: [] };
-        if (!dados.financiamento) dados.financiamento = {};
-        dados.financiamento.cpf = textoOriginal;
-        interessesClientes.set(chatId, dados);
+            estadoCliente.set(chatId, { etapa: 'aguardandoParcelas', carroEscolhido: estado.carroEscolhido });
+            await client.sendMessage(chatId, `Entrada de R$ ${textoOriginal} registrada. Quantas *parcelas* você pretende pagar?`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe um valor válido para a entrada (ex.: 10000 ou 10000.00).`);
+        }
+        return;
+    }
 
-        await client.sendMessage(chatId, '📅 Agora, por favor informe sua *data de nascimento* (dd/mm/aaaa):');
+    if (estado?.etapa === 'aguardandoParcelas') {
+        if (isValidParcels(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.financiamento) dados.financiamento = {};
+            dados.financiamento.parcelas = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            estadoCliente.set(chatId, { etapa: 'aguardandoCPF', carroEscolhido: estado.carroEscolhido });
+            await client.sendMessage(chatId, `Parcelas registradas: ${textoOriginal}. Agora, informe seu *CPF* (apenas números):`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe um número válido de parcelas (ex.: 36).`);
+        }
+        return;
+    }
+
+    if (estado?.etapa === 'aguardandoCPF') {
+        if (isValidCPF(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.financiamento) dados.financiamento = {};
+            dados.financiamento.cpf = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            estadoCliente.set(chatId, { etapa: 'aguardandoNascimento', carroEscolhido: estado.carroEscolhido });
+            await client.sendMessage(chatId, `📅 Agora, informe sua *data de nascimento* (dd/mm/aaaa):`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe um CPF válido com 11 dígitos (apenas números).`);
+        }
         return;
     }
 
     if (estado?.etapa === 'aguardandoNascimento') {
-        const dados = interessesClientes.get(chatId);
-        if (dados && dados.financiamento) {
-            dados.financiamento.nascimento = textoOriginal;
-            interessesClientes.set(chatId, dados);
-        }
-
-        await client.sendMessage(chatId, '✅ Obrigado! Encaminhando para um de nossos consultores para finalizar a simulação. 😊');
-
-        await wait(1000);
-        await client.sendMessage(chatId, `Deseja fazer outra simulação ou encerrar o atendimento?\nDigite:\nS - Para simular outro carro\nF - Para finalizar`);
-
-        estadoCliente.set(chatId, 'aguardandoFinalizacao');
-        return;
-    }
-
-    if (estado === 'aguardandoFinalizacao') {
-        if (texto === 'S') {
+        if (isValidDate(textoOriginal)) {
             let dados = interessesClientes.get(chatId);
-            if (dados?.financiamento) {
-                delete dados.financiamento;
+            if (dados && dados.financiamento) {
+                dados.financiamento.nascimento = textoOriginal;
                 interessesClientes.set(chatId, dados);
             }
-            estadoCliente.set(chatId, null);
-            await client.sendMessage(chatId, `Claro! Digite o nome de outro carro que deseja ver ou envie "1" para ver a lista novamente.`);
-        } else if (texto === 'F') {
+
+            await client.sendMessage(chatId, `✅ Obrigado! Encaminhando para um de nossos consultores para finalizar a simulação. 😊`);
             await enviarRelatorioParaContatos(chatId);
             await client.sendMessage(chatId, `📨 Relatório enviado! Obrigado pelo seu tempo. 👋 Se precisar de mais alguma coisa, é só chamar!`);
 
             estadoCliente.delete(chatId);
             interessesClientes.delete(chatId);
-            bloquearPor24h(chatId);
+            await wait(1000);
+            estadoCliente.set(chatId, { etapa: 'menuInicial' });
+            await enviarMenuInicial(chatId);
         } else {
-            await client.sendMessage(chatId, `Por favor, responda com:\nS - Para simular outro carro\nF - Para finalizar`);
+            await client.sendMessage(chatId, `Por favor, informe a data de nascimento no formato dd/mm/aaaa (ex.: 01/01/1990).`);
         }
         return;
     }
 
-    // ✅ CORRIGIDO: Enviar boas-vindas só uma vez a cada 24h com return
-    if (!estado && chatId.endsWith('@c.us') && podeEnviarBoasVindas(chatId)) {
-        await wait(1000);
-        await client.sendMessage(chatId,
-            `Olá! 👋 Seja muito bem-vindo à 🤩Weiss Multimarcas 🤩!\nMe chamo Zailon, sou seu consultor virtual. 🚗✨\n\nPosso te ajudar com:\n1 - Ver modelos disponíveis\n2 - Quero um carro financiado\n3 - Quero agendar uma visita\n4 - Falar com um vendedor humano\n5 - Quero trocar meu carro\n6 - Quero vender meu carro`
-        );
-        registrarBoasVindas(chatId);
-        return; // ✅ ESSENCIAL para evitar resposta duplicada
+    // Verificar se o usuário está na lista de carros
+    if (estado?.etapa === 'aguardandoSelecaoCarro') {
+        const carroEncontrado = carros.modelos.find(carro => texto.includes(carro.nome.toUpperCase()));
+        if (carroEncontrado) {
+            const dados = interessesClientes.get(chatId) || { interesses: [] };
+            dados.interesses.push(carroEncontrado.nome);
+            interessesClientes.set(chatId, dados);
+
+            await client.sendMessage(chatId, `🔍 Aqui estão os detalhes do carro *${carroEncontrado.nome}*:\n\n🗓 Ano: ${carroEncontrado.ano}\n💲 Preço: ${carroEncontrado.preco}\nDescrição: ${carroEncontrado.descricao}`);
+            await enviarImagensDoCarro(chatId, carroEncontrado);
+            await wait(500);
+            await client.sendMessage(chatId, `Deseja simular um financiamento deste carro?\nDigite "SIMULAR", ou envie outro nome de carro.`);
+            estadoCliente.set(chatId, { etapa: 'aguardandoFinanciamento', carroEscolhido: carroEncontrado.nome });
+        } else if (['1', '2', '3', '4', '5', '6'].includes(texto)) {
+            estadoCliente.set(chatId, { etapa: 'menuInicial' });
+            await processarOpcaoMenu(chatId, texto);
+        } else {
+            await client.sendMessage(chatId, `Carro não encontrado. Digite o nome de um carro válido ou escolha uma opção do menu (1-6).`);
+            await wait(1000);
+            await enviarListaCarros(chatId);
+        }
+        return;
     }
 
-    if (texto === '1') {
-        let lista = `Temos alguns modelos incríveis disponíveis no momento:\n\n`;
-        for (const carro of carros.modelos) {
-            lista += `🚘 *${carro.nome}* - ${carro.preco}\n`;
+    // Processar opções do menu
+    async function processarOpcaoMenu(chatId, texto) {
+        if (texto === '1') {
+            estadoCliente.set(chatId, { etapa: 'aguardandoSelecaoCarro' });
+            await enviarListaCarros(chatId);
+
+        } else if (texto === '2') {
+            estadoCliente.set(chatId, { etapa: 'aguardandoNomeCarro' });
+            await client.sendMessage(chatId, `Ótimo! Para simular um financiamento, me diga o *nome do carro* desejado:`);
+
+        } else if (texto === '3') {
+            await client.sendMessage(chatId, `Perfeito! Para agendar uma visita, me diga:\n📍 Dia e horário desejado\n👤 Seu nome completo`);
+            await wait(1000);
+            estadoCliente.set(chatId, { etapa: 'menuInicial' });
+            await enviarMenuInicial(chatId);
+
+        } else if (texto === '4') {
+            await client.sendMessage(chatId, `Claro! Um de nossos consultores humanos vai falar com você em instantes. 😊\n\nEnquanto isso, se quiser agilizar, pode chamar direto:\n📞 WhatsApp: +55 46 99137-0461`);
+            await wait(1000);
+            estadoCliente.set(chatId, { etapa: 'menuInicial' });
+            await enviarMenuInicial(chatId);
+
+        } else if (texto === '5') {
+            await client.sendMessage(chatId, `🚗 Está pensando em trocar seu carro? Que legal! Podemos avaliar seu veículo na troca. Me envie as informações básicas dele (modelo, ano e estado de conservação) e uma foto se possível.`);
+            await wait(1000);
+            await client.sendMessage(chatId, `Em breve um de nossos consultores entrará em contato para fazer a avaliação completa.`);
+            await wait(1000);
+            estadoCliente.set(chatId, { etapa: 'menuInicial' });
+            await enviarMenuInicial(chatId);
+
+        } else if (texto === '6') {
+            await client.sendMessage(chatId, `📤 Quer vender seu carro? Mande as informações principais (modelo, ano, estado geral e valor desejado). Fotos ajudam bastante!`);
+            await wait(1000);
+            await client.sendMessage(chatId, `Um consultor da Weiss Multimarcas entrará em contato com você em breve. 😊`);
+            await wait(1000);
+            estadoCliente.set(chatId, { etapa: 'menuInicial' });
+            await enviarMenuInicial(chatId);
+
+        } else {
+            await client.sendMessage(chatId, `Desculpe, não entendi sua mensagem. Por favor, escolha uma das opções enviando o número correspondente (1-6).`);
+            await wait(1000);
+            estadoCliente.set(chatId, { etapa: 'menuInicial' });
+            await enviarMenuInicial(chatId);
         }
-        lista += `\nDigite o nome do carro que te interessou ou:\n2 - Quero um carro financiado\n3 - Quero agendar uma visita`;
-        await wait(1000);
-        await client.sendMessage(chatId, lista);
+    }
 
-    } else if (texto === '2') {
-        await wait(1000);
-        await client.sendMessage(chatId, `Ótimo! Trabalhamos com várias financeiras e facilitamos tudo pra você.\n\n📋 Para simular um financiamento, me diga:\n- Nome do carro desejado\n- Entrada disponível (R$)\n- Parcelas que pretende pagar`);
+    // Tratar opções do menu ou mensagens inválidas
+    if (estado?.etapa === 'menuInicial' || estado?.etapa === 'aguardandoFinanciamento') {
+        if (estado?.etapa === 'aguardandoFinanciamento') {
+            if (texto === 'SIMULAR') {
+                let dados = interessesClientes.get(chatId) || { interesses: [] };
+                if (!dados.financiamento) dados.financiamento = {};
+                dados.financiamento.carroEscolhido = estado.carroEscolhido;
+                interessesClientes.set(chatId, dados);
 
-    } else if (texto === '3') {
-        await wait(1000);
-        await client.sendMessage(chatId, `Perfeito! Para agendar uma visita, me diga:\n📍 Dia e horário desejado  \n👤 Seu nome completo`);
+                estadoCliente.set(chatId, { etapa: 'aguardandoEntrada', carroEscolhido: estado.carroEscolhido });
+                await client.sendMessage(chatId, `Ótimo, vamos simular o financiamento para o *${estado.carroEscolhido}*. Informe o valor da *entrada* disponível (R$):`);
+                return;
+            } else {
+                const carroEncontrado = carros.modelos.find(carro => texto.includes(carro.nome.toUpperCase()));
+                if (carroEncontrado) {
+                    const dados = interessesClientes.get(chatId) || { interesses: [] };
+                    dados.interesses.push(carroEncontrado.nome);
+                    interessesClientes.set(chatId, dados);
 
-    } else if (texto === '4') {
-        await wait(1000);
-        await client.sendMessage(chatId, `Claro! Um de nossos consultores humanos vai falar com você em instantes. 😊\n\nEnquanto isso, se quiser agilizar, pode chamar direto:\n📞 WhatsApp: +55 46 99137-0461`);
-        bloquearPor24h(chatId);
+                    await client.sendMessage(chatId, `🔍 Aqui estão os detalhes do carro *${carroEncontrado.nome}*:\n\n🗓 Ano: ${carroEncontrado.ano}\n💲 Preço: ${carroEncontrado.preco}\nDescrição: ${carroEncontrado.descricao}`);
+                    await enviarImagensDoCarro(chatId, carroEncontrado);
+                    await wait(500);
+                    await client.sendMessage(chatId, `Deseja simular um financiamento deste carro?\nDigite "SIMULAR", ou envie outro nome de carro.`);
+                    estadoCliente.set(chatId, { etapa: 'aguardandoFinanciamento', carroEscolhido: carroEncontrado.nome });
+                    return;
+                } else {
+                    await client.sendMessage(chatId, `Carro não encontrado. Por favor, digite outro nome de carro válido ou envie "1" para ver a lista de modelos.`);
+                    return;
+                }
+            }
+        }
+        await processarOpcaoMenu(chatId, texto);
+    } else if (estado?.etapa === 'aguardandoNomeCarro') {
+        const carroEncontrado = carros.modelos.find(carro => texto.includes(carro.nome.toUpperCase()));
+        if (carroEncontrado) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.financiamento) dados.financiamento = {};
+            dados.financiamento.carroEscolhido = carroEncontrado.nome;
+            interessesClientes.set(chatId, dados);
 
-    } else if (texto === '5') {
-        await client.sendMessage(chatId, '🚗 Está pensando em trocar seu carro? Que legal! Podemos avaliar seu veículo na troca. Me envie as informações básicas dele (modelo, ano e estado de conservação) e uma foto se possível.');
-        await wait(1000);
-        await client.sendMessage(chatId, 'Em breve um de nossos consultores entrará em contato para fazer a avaliação completa.');
-
-    } else if (texto === '6') {
-        await client.sendMessage(chatId, '📤 Quer vender seu carro? Mande as informações principais (modelo, ano, estado geral e valor desejado). Fotos ajudam bastante!');
-        await wait(1000);
-        await client.sendMessage(chatId, 'Um consultor da Weiss Multimarcas entrará em contato com você em breve. 😊');
-
+            estadoCliente.set(chatId, { etapa: 'aguardandoEntrada', carroEscolhido: carroEncontrado.nome });
+            await client.sendMessage(chatId, `Ótimo, você escolheu o *${carroEncontrado.nome}*. Agora, informe o valor da *entrada* disponível (R$):`);
+        } else {
+            await client.sendMessage(chatId, `Carro não encontrado. Por favor, digite o nome de um carro válido ou envie "1" para ver a lista de modelos.`);
+        }
     } else {
         const carroEncontrado = carros.modelos.find(carro => texto.includes(carro.nome.toUpperCase()));
-
         if (carroEncontrado) {
             const dados = interessesClientes.get(chatId) || { interesses: [] };
             dados.interesses.push(carroEncontrado.nome);
@@ -226,7 +341,10 @@ client.on('message', async msg => {
             await client.sendMessage(chatId, `Deseja simular um financiamento deste carro?\nDigite "SIMULAR", ou envie outro nome de carro.`);
             estadoCliente.set(chatId, { etapa: 'aguardandoFinanciamento', carroEscolhido: carroEncontrado.nome });
         } else {
-            await client.sendMessage(chatId, `Desculpe, não entendi sua mensagem. Por favor, escolha uma das opções enviando o número correspondente.`);
+            await client.sendMessage(chatId, `Desculpe, não entendi sua mensagem. Por favor, escolha uma das opções enviando o número correspondente (1-6).`);
+            await wait(1000);
+            estadoCliente.set(chatId, { etapa: 'menuInicial' });
+            await enviarMenuInicial(chatId);
         }
     }
 });
