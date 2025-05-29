@@ -45,6 +45,21 @@ function isValidDate(date) {
     return /^\d{2}\/\d{2}\/\d{4}$/.test(date);
 }
 
+function isValidVisitDate(date) {
+    // Aceita dd/mm/aaaa ou texto simples (ex.: "amanhã", "sexta")
+    return /^\d{2}\/\d{2}\/\d{4}$/.test(date) || /^[a-zA-Z\s]+$/.test(date);
+}
+
+function isValidVisitTime(time) {
+    // Aceita HH:MM (ex.: 14:30)
+    return /^\d{2}:\d{2}$/.test(time);
+}
+
+function isValidFullName(name) {
+    // Pelo menos dois palavras com letras
+    return name.trim().split(/\s+/).length >= 2 && /^[a-zA-Z\s]+$/.test(name);
+}
+
 async function enviarImagensDoCarro(chatId, carro) {
     for (const imagemPath of carro.imagens) {
         try {
@@ -78,8 +93,16 @@ async function enviarRelatorioParaContatos(chatId) {
         mensagem += `Parcelas: ${dados.financiamento.parcelas || 'Não informado'}\n`;
         mensagem += `CPF: ${dados.financiamento.cpf || 'Não informado'}\n`;
         mensagem += `Nascimento: ${dados.financiamento.nascimento || 'Não informado'}\n`;
-        mensagem += `\n*⚠️ Atenção:* Este relatório contém informações sensíveis. Garanta conformidade com a LGPD e não compartilhe sem autorização.`;
     }
+
+    if (dados.visita) {
+        mensagem += `\n📅 *Solicitou agendamento de visita:*\n`;
+        mensagem += `Dia: ${dados.visita.dia || 'Não informado'}\n`;
+        mensagem += `Horário: ${dados.visita.horario || 'Não informado'}\n`;
+        mensagem += `Nome completo: ${dados.visita.nome || 'Não informado'}\n`;
+    }
+
+    mensagem += `\n*⚠️ Atenção:* Este relatório contém informações sensíveis. Garanta conformidade com a LGPD e não compartilhe sem autorização.`;
 
     for (const contato of carros.numeros_para_contato) {
         let numeroWhatsApp = contato.numero;
@@ -141,6 +164,59 @@ client.on('message', async msg => {
         }
         estadoCliente.set(chatId, { etapa: 'menuInicial' });
         await enviarMenuInicial(chatId);
+        return;
+    }
+
+    // Fluxo de agendamento de visita
+    if (estado?.etapa === 'aguardandoDiaVisita') {
+        if (isValidVisitDate(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.visita) dados.visita = {};
+            dados.visita.dia = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            estadoCliente.set(chatId, { etapa: 'aguardandoHorarioVisita' });
+            await client.sendMessage(chatId, `Dia registrado: ${textoOriginal}. Agora, informe o *horário* desejado (ex.: 14:30):`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe um dia válido (ex.: 30/05/2025 ou "amanhã").`);
+        }
+        return;
+    }
+
+    if (estado?.etapa === 'aguardandoHorarioVisita') {
+        if (isValidVisitTime(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.visita) dados.visita = {};
+            dados.visita.horario = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            estadoCliente.set(chatId, { etapa: 'aguardandoNomeVisita' });
+            await client.sendMessage(chatId, `Horário registrado: ${textoOriginal}. Agora, informe seu *nome completo*:`);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe um horário válido (ex.: 14:30).`);
+        }
+        return;
+    }
+
+    if (estado?.etapa === 'aguardandoNomeVisita') {
+        if (isValidFullName(textoOriginal)) {
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.visita) dados.visita = {};
+            dados.visita.nome = textoOriginal;
+            interessesClientes.set(chatId, dados);
+
+            await client.sendMessage(chatId, `✅ Agendamento solicitado! Um consultor entrará em contato para confirmar a disponibilidade. 😊`);
+            await enviarRelatorioParaContatos(chatId);
+            await client.sendMessage(chatId, `📨 Relatório enviado! Obrigado pelo seu tempo. 👋 Se precisar de mais alguma coisa, é só chamar!`);
+
+            estadoCliente.delete(chatId);
+            interessesClientes.delete(chatId);
+            await wait(1000);
+            estadoCliente.set(chatId, { etapa: 'menuInicial' });
+            await enviarMenuInicial(chatId);
+        } else {
+            await client.sendMessage(chatId, `Por favor, informe seu nome completo (ex.: João Silva).`);
+        }
         return;
     }
 
@@ -248,10 +324,8 @@ client.on('message', async msg => {
             await client.sendMessage(chatId, `Ótimo! Para simular um financiamento, me diga o *nome do carro* desejado:`);
 
         } else if (texto === '3') {
-            await client.sendMessage(chatId, `Perfeito! Para agendar uma visita, me diga:\n📍 Dia e horário desejado\n👤 Seu nome completo`);
-            await wait(1000);
-            estadoCliente.set(chatId, { etapa: 'menuInicial' });
-            await enviarMenuInicial(chatId);
+            estadoCliente.set(chatId, { etapa: 'aguardandoDiaVisita' });
+            await client.sendMessage(chatId, `Perfeito! Para agendar uma visita, me diga o *dia* desejado (ex.: 30/05/2025 ou "amanhã"):`);
 
         } else if (texto === '4') {
             await client.sendMessage(chatId, `Claro! Um de nossos consultores humanos vai falar com você em instantes. 😊\n\nEnquanto isso, se quiser agilizar, pode chamar direto:\n📞 WhatsApp: +55 46 99137-0461`);
