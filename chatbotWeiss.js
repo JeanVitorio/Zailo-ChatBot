@@ -153,7 +153,31 @@ async function enviarRelatorioParaContatos(chatId) {
             numeroWhatsApp = numeroWhatsApp.replace(/\D/g, '') + '@c.us';
         }
         try {
+            // Enviar o texto do relatório
             await client.sendMessage(numeroWhatsApp, mensagem);
+
+            // Enviar foto de troca, se existir
+            if (dados.troca?.foto) {
+                const fotoPath = path.join(__dirname, 'Uploads', dados.troca.foto);
+                if (fs.existsSync(fotoPath)) {
+                    const media = MessageMedia.fromFilePath(fotoPath);
+                    await client.sendMessage(numeroWhatsApp, media, { caption: 'Foto do veículo (Troca)' });
+                } else {
+                    console.error(`Foto de troca não encontrada: ${fotoPath}`);
+                }
+            }
+
+            // Enviar foto de venda, se existir
+            if (dados.venda?.foto) {
+                const fotoPath = path.join(__dirname, 'Uploads', dados.venda.foto);
+                if (fs.existsSync(fotoPath)) {
+                    const media = MessageMedia.fromFilePath(fotoPath);
+                    await client.sendMessage(numeroWhatsApp, media, { caption: 'Foto do veículo (Venda)' });
+                } else {
+                    console.error(`Foto de venda não encontrada: ${fotoPath}`);
+                }
+            }
+
             console.log(`✅ Relatório enviado para ${contato.nome}`);
         } catch (err) {
             console.error(`Erro ao enviar relatório para ${contato.nome}:`, err);
