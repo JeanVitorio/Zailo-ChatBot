@@ -35,7 +35,7 @@
         "imagens/L200 Triton_2018_Sport_GLS/WhatsApp Image 2025-05-15 at 19.34.33.jpeg"
       ]
     },
-       {
+    {
       "nome": "Fiat uno 2016",
       "ano": "2016",
       "preco": "R$ 0",
@@ -48,6 +48,52 @@
         "imagens/Fiat_uno_2016/WhatsApp Image 2025-05-15 at 19.34.46 (4).jpeg",
         "imagens/Fiat_uno_2016/WhatsApp Image 2025-05-15 at 19.34.46.jpeg",
         "imagens/Fiat_uno_2016/WhatsApp Image 2025-05-15 at 19.34.47.jpeg"
+      ]
+    },
+    {
+      "nome": "Kawasaki 600c",
+      "ano": "",
+      "preco": "R$ 0",
+      "descricao": "🤩Weiss Multimarcas🤩\n\n🏍️🏍️Ótima oportunidade para negociação moto esportiva em nosso estoque🏍️🏍️🏍️\n\n💚💚Kawasaki 600c\n💚Partida elétrica\n💚Freios a disco\n💚4c em linha\n💚Potência em cv 124\n💚Pneus michelin\n💚Revisões em dia\n💚Scapamento  sportivo acompanha original ",
+      "imagens": [
+        "imagens/Kawasaki_600c/Kawasaki_600c.jpg",
+        "imagens/Kawasaki_600c/Kawasaki_600c1.jpeg",
+        "imagens/Kawasaki_600c/Kawasaki_600c2.jpeg",
+        "imagens/Kawasaki_600c/Kawasaki_600c3.jpg",
+        "imagens/Kawasaki_600c/Kawasaki_600c4.jpg",
+        "imagens/Kawasaki_600c/Kawasaki_600c5.jpg",
+        "imagens/Kawasaki_600c/Kawasaki_600c6.jpg",
+        "imagens/Kawasaki_600c/Kawasaki_600c7.jpg" 
+      ]
+    },
+    {
+      "nome": "Gol GL 2.0",
+      "ano": "",
+      "preco": "R$ 19.990",
+      "descricao": "🤩Weiss Multimarcas 🤩\n\n🤩🤩Ótimas oportunidadeeee para negociação veículo em perfeito estado de conservação disponível no estoque 🤩🤩\n\n🚗Gol GL 2.0 pronto para montar turbo !\n🚗Direção hidráulica\n🚗Vidros elétricos\n🚗Alavanca engate rabido de 5 marchas\n🚗Rodas 🛞 Weld pró Star  aro 15 novas\n🚗Pneus novos\n🚗Placas Mercosul\n🚗Veículo bem estruturado\n🤩Valor 19.990 ",
+      "imagens": [
+        "imagens/Gol_GL_2.0/Gol_GL_2.0.jpg",
+        "imagens/Gol_GL_2.0/Gol_GL_2.01.jpg",
+        "imagens/Gol_GL_2.0/Gol_GL_2.02.jpg",
+        "imagens/Gol_GL_2.0/Gol_GL_2.04.jpg",
+        "imagens/Gol_GL_2.0/Gol_GL_2.05.jpg",
+        "imagens/Gol_GL_2.0/Gol_GL_2.06.jpg",
+        "imagens/Gol_GL_2.0/Gol_GL_2.07.jpg",
+        "imagens/Gol_GL_2.0/Gol_GL_2.08.jpg" 
+      ]
+    },
+    {
+      "nome": "Corsa 1.0",
+      "ano": "2007/2008",
+      "preco": "R$ 17.900",
+      "descricao": "🤩Weiss Multimarcas🤩\n\n🚗Ótima oportunidade para negociação veículo em ótimo estádio de conservação🚗\n\n🚗Corsa 2007/2008 1.0\n🚗Ar quente e desembaçador\n🚗Travas elétricas\n🚗Vidros elétricos\n🚗Pneus meia vida\n🚗Documentação em dia\n🚗Veículo ideal para dia a dia",
+      "imagens": [
+        "imagens/Corsa_2007_2008_1_0/Corsa_2007_2008_1_0.jpg",
+        "imagens/Corsa_2007_2008_1_0/Corsa_2007_2008_1_01.jpg",
+        "imagens/Corsa_2007_2008_1_0/Corsa_2007_2008_1_02.jpg",
+        "imagens/Corsa_2007_2008_1_0/Corsa_2007_2008_1_03.jpg",
+        "imagens/Corsa_2007_2008_1_0/Corsa_2007_2008_1_04.jpg",
+        "imagens/Corsa_2007_2008_1_0/Corsa_2007_2008_1_05.jpg"
       ]
     }
   ],
