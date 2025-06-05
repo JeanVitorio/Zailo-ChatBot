@@ -4,7 +4,15 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 
-const client = new Client();
+const app = express();
+const port = process.env.PORT || 3000; // Usa a porta do Render ou 3000 localmente
+let qrCodeDataUrl = null;
+
+// Configuração do cliente WhatsApp com persistência de sessão
+const client = new Client({
+    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }, // Necessário para Render
+    session: fs.existsSync('session.json') ? JSON.parse(fs.readFileSync('session.json', 'utf-8')) : null // Carrega sessão existente
+});
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 const carros = JSON.parse(fs.readFileSync('carros.json', 'utf-8'));
@@ -12,11 +20,6 @@ const carros = JSON.parse(fs.readFileSync('carros.json', 'utf-8'));
 const estadoCliente = new Map();
 const interessesClientes = new Map();
 const ultimoBoasVindas = new Map();
-
-// Configuração do servidor Express
-const app = express();
-const port = 3000;
-let qrCodeDataUrl = null; // Variável para armazenar a data URL do QR code
 
 // Rota para exibir o QR code em uma página web
 app.get('/', (req, res) => {
@@ -50,6 +53,11 @@ app.get('/', (req, res) => {
                         background-color: #fff;
                     }
                 </style>
+                <script>
+                    setInterval(() => {
+                        location.reload();
+                    }, 5000); // Recarrega a página a cada 5 segundos para atualizar o QR code
+                </script>
             </head>
             <body>
                 <h1>Escaneie o QR Code com o WhatsApp</h1>
@@ -92,7 +100,7 @@ app.get('/', (req, res) => {
 
 // Iniciar o servidor Express
 app.listen(port, () => {
-    console.log(`✅ Servidor web iniciado. Acesse http://localhost:${port} para ver o QR code.`);
+    console.log(`✅ Servidor web iniciado. Acesse o QR code na URL pública do Render ou localmente em http://localhost:${port}`);
 });
 
 function podeEnviarBoasVindas(chatId) {
@@ -264,10 +272,16 @@ client.on('qr', async qr => {
     console.log('Escaneie o QR code com o WhatsApp:');
     try {
         qrCodeDataUrl = await qrcode.toDataURL(qr);
-        console.log(`✅ QR code gerado! Acesse http://localhost:${port} para visualizá-lo.`);
+        console.log(`✅ QR code gerado! Acesse a URL pública do Render ou localmente em http://localhost:${port} para visualizá-lo.`);
     } catch (err) {
         console.error('Erro ao gerar QR code:', err);
     }
+});
+
+// Salvar sessão quando autenticada
+client.on('authenticated', (session) => {
+    console.log('✅ Sessão do WhatsApp autenticada!');
+    fs.writeFileSync('session.json', JSON.stringify(session));
 });
 
 client.on('ready', () => {
