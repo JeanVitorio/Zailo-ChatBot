@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: zailo-chatbot
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    build:
+      env:
+        NODE_VERSION: 20
