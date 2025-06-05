@@ -1,10 +1,18 @@
 {
+  "name": "zailo-chatbot",
+  "version": "1.0.0",
+  "main": "chatbotWeiss.js",
+  "scripts": {
+    "start": "node chatbotWeiss.js"
+  },
   "dependencies": {
     "@whiskeysockets/baileys": "^6.7.17",
-    "express": "^5.1.0",
     "moment-timezone": "^0.5.45",
-    "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0",
-    "whatsapp-web.js": "^1.28.0"
+    "whatsapp-web.js": "^1.28.0",
+    "@puppeteer/browsers": "^2.4.0"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
