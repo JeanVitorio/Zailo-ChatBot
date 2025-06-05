@@ -1,7 +1,8 @@
-const qrcode = require('qrcode-terminal'); // Substituído qrcode por qrcode-terminal
+const qrcode = require('qrcode');
 const { Client, MessageMedia } = require('whatsapp-web.js');
 const fs = require('fs');
 const path = require('path');
+const express = require('express');
 
 const client = new Client();
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -11,6 +12,88 @@ const carros = JSON.parse(fs.readFileSync('carros.json', 'utf-8'));
 const estadoCliente = new Map();
 const interessesClientes = new Map();
 const ultimoBoasVindas = new Map();
+
+// Configuração do servidor Express
+const app = express();
+const port = 3000;
+let qrCodeDataUrl = null; // Variável para armazenar a data URL do QR code
+
+// Rota para exibir o QR code em uma página web
+app.get('/', (req, res) => {
+    if (qrCodeDataUrl) {
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>QR Code - Weiss Multimarcas</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100vh;
+                        margin: 0;
+                        background-color: #f0f0f0;
+                    }
+                    h1 {
+                        color: #333;
+                    }
+                    img {
+                        max-width: 300px;
+                        border: 2px solid #333;
+                        border-radius: 10px;
+                        padding: 10px;
+                        background-color: #fff;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>Escaneie o QR Code com o WhatsApp</h1>
+                <img src="${qrCodeDataUrl}" alt="QR Code para autenticação do WhatsApp">
+            </body>
+            </html>
+        `);
+    } else {
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>QR Code - Weiss Multimarcas</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100vh;
+                        margin: 0;
+                        background-color: #f0f0f0;
+                    }
+                    h1 {
+                        color: #333;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>Aguardando QR Code...</h1>
+                <p>Por favor, aguarde enquanto o QR code é gerado.</p>
+            </body>
+            </html>
+        `);
+    }
+});
+
+// Iniciar o servidor Express
+app.listen(port, () => {
+    console.log(`✅ Servidor web iniciado. Acesse http://localhost:${port} para ver o QR code.`);
+});
 
 function podeEnviarBoasVindas(chatId) {
     const ultimoEnvio = ultimoBoasVindas.get(chatId);
@@ -147,10 +230,8 @@ async function enviarRelatorioParaContatos(chatId) {
             numeroWhatsApp = numeroWhatsApp.replace(/\D/g, '') + '@c.us';
         }
         try {
-            // Enviar o texto do relatório
             await client.sendMessage(numeroWhatsApp, mensagem);
 
-            // Enviar foto de troca, se existir
             if (dados.troca?.foto) {
                 const fotoPath = path.join(__dirname, 'Uploads', dados.troca.foto);
                 if (fs.existsSync(fotoPath)) {
@@ -161,7 +242,6 @@ async function enviarRelatorioParaContatos(chatId) {
                 }
             }
 
-            // Enviar foto de venda, se existir
             if (dados.venda?.foto) {
                 const fotoPath = path.join(__dirname, 'Uploads', dados.venda.foto);
                 if (fs.existsSync(fotoPath)) {
@@ -179,13 +259,20 @@ async function enviarRelatorioParaContatos(chatId) {
     }
 }
 
-client.on('qr', qr => {
-    console.log('Escaneie o QR code abaixo com o WhatsApp:');
-    qrcode.generate(qr, { small: true }); // Gera o QR code em formato ASCII no console
+// Evento de QR code
+client.on('qr', async qr => {
+    console.log('Escaneie o QR code com o WhatsApp:');
+    try {
+        qrCodeDataUrl = await qrcode.toDataURL(qr);
+        console.log(`✅ QR code gerado! Acesse http://localhost:${port} para visualizá-lo.`);
+    } catch (err) {
+        console.error('Erro ao gerar QR code:', err);
+    }
 });
 
 client.on('ready', () => {
     console.log('✅ Bot da Weiss Multimarcas está online!');
+    qrCodeDataUrl = null;
 });
 
 client.initialize();
@@ -213,7 +300,6 @@ client.on('message', async msg => {
 
     const estado = estadoCliente.get(chatId);
 
-    // Iniciar atendimento com qualquer mensagem
     if (!estado && chatId.endsWith('@c.us')) {
         await wait(1000);
         if (podeEnviarBoasVindas(chatId)) {
@@ -228,7 +314,6 @@ client.on('message', async msg => {
         return;
     }
 
-    // Fluxo de troca (opção 5)
     if (estado?.etapa === 'aguardandoModeloTroca') {
         if (isValidModel(textoOriginal)) {
             let dados = interessesClientes.get(chatId) || { interesses: [] };
@@ -299,7 +384,6 @@ client.on('message', async msg => {
         return;
     }
 
-    // Fluxo de venda (opção 6)
     if (estado?.etapa === 'aguardandoModeloVenda') {
         if (isValidModel(textoOriginal)) {
             let dados = interessesClientes.get(chatId) || { interesses: [] };
@@ -385,7 +469,6 @@ client.on('message', async msg => {
         return;
     }
 
-    // Fluxo de agendamento de visita (opção 3)
     if (estado?.etapa === 'aguardandoDiaVisita') {
         if (isValidVisitDate(textoOriginal)) {
             let dados = interessesClientes.get(chatId) || { interesses: [] };
@@ -438,7 +521,6 @@ client.on('message', async msg => {
         return;
     }
 
-    // Fluxo de financiamento
     if (estado?.etapa === 'aguardandoEntrada') {
         if (isValidAmount(textoOriginal)) {
             let dados = interessesClientes.get(chatId) || { interesses: [] };
@@ -507,7 +589,6 @@ client.on('message', async msg => {
         return;
     }
 
-    // Verificar se o usuário está na lista de carros
     if (estado?.etapa === 'aguardandoSelecaoCarro') {
         const carroEncontrado = carros.modelos.find(carro => texto.includes(carro.nome.toUpperCase()));
         if (carroEncontrado) {
@@ -531,12 +612,10 @@ client.on('message', async msg => {
         return;
     }
 
-    // Processar opções do menu
     async function processarOpcaoMenu(chatId, texto) {
         if (texto === '1') {
             estadoCliente.set(chatId, { etapa: 'aguardandoSelecaoCarro' });
             await enviarListaCarros(chatId);
-
         } else if (texto === '2') {
             estadoCliente.set(chatId, { etapa: 'aguardandoNomeCarro' });
             let lista = `Ótimo! Para simular um financiamento, me diga o *nome do carro* desejado.\n\nModelos disponíveis:\n`;
@@ -545,25 +624,20 @@ client.on('message', async msg => {
             }
             lista += `\nDigite o nome do carro ou envie "1" para ver mais detalhes dos modelos.`;
             await client.sendMessage(chatId, lista);
-
         } else if (texto === '3') {
             estadoCliente.set(chatId, { etapa: 'aguardandoDiaVisita' });
             await client.sendMessage(chatId, `Perfeito! Para agendar uma visita, me diga o *dia* desejado (ex.: 30/05/2025 ou "amanhã"):`);
-
         } else if (texto === '4') {
             await client.sendMessage(chatId, `Claro! Um de nossos consultores humanos vai falar com você em instantes. 😊\n\nEnquanto isso, se quiser agilizar, pode chamar direto:\n📞 WhatsApp: +55 46 99137-0461`);
             await wait(1000);
             estadoCliente.set(chatId, { etapa: 'menuInicial' });
             await enviarMenuInicial(chatId);
-
         } else if (texto === '5') {
             estadoCliente.set(chatId, { etapa: 'aguardandoModeloTroca' });
             await client.sendMessage(chatId, `Ótimo! Para avaliar seu carro na troca, me diga o *modelo* do veículo (ex.: Honda Civic):`);
-
         } else if (texto === '6') {
             estadoCliente.set(chatId, { etapa: 'aguardandoModeloVenda' });
             await client.sendMessage(chatId, `Perfeito! Para vender seu carro, me diga o *modelo* do veículo (ex.: Toyota Corolla):`);
-
         } else {
             await client.sendMessage(chatId, `Desculpe, não entendi sua mensagem. Por favor, escolha uma das opções enviando o número correspondente (1-6).`);
             await wait(1000);
@@ -572,7 +646,6 @@ client.on('message', async msg => {
         }
     }
 
-    // Tratar opções do menu ou mensagens inválidas
     if (estado?.etapa === 'menuInicial' || estado?.etapa === 'aguardandoFinanciamento') {
         if (estado?.etapa === 'aguardandoFinanciamento') {
             if (texto === 'SIMULAR') {
