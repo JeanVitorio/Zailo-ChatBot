@@ -1,14 +1,14 @@
-const express = require('express');
 const qrcode = require('qrcode');
 const { Client, MessageMedia } = require('whatsapp-web.js');
 const fs = require('fs');
 const path = require('path');
 
-const app = express();
-const port = 3000;
-
-const client = new Client();
-let qrCodeUrl = '';
+const client = new Client({
+    puppeteer: {
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+        headless: true
+    }
+});
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -186,8 +186,13 @@ async function enviarRelatorioParaContatos(chatId) {
 }
 
 client.on('qr', async qr => {
-    qrCodeUrl = await qrcode.toDataURL(qr);
-    console.log('QRCode gerado! Acesse no navegador para escanear.');
+    try {
+        const qrAscii = await qrcode.toString(qr, { type: 'terminal', small: true });
+        console.log('QR Code gerado! Escaneie com o WhatsApp:\n');
+        console.log(qrAscii);
+    } catch (err) {
+        console.error('Erro ao gerar QR Code:', err);
+    }
 });
 
 client.on('ready', () => {
@@ -642,13 +647,4 @@ client.on('message', async msg => {
             await enviarMenuInicial(chatId);
         }
     }
-});
-
-app.get('/qrcode', (req, res) => {
-    if (!qrCodeUrl) return res.status(404).send('QR Code ainda não gerado');
-    res.send(`<img src="${qrCodeUrl}" alt="QR Code para login WhatsApp" />`);
-});
-
-app.listen(port, () => {
-    console.log(`Servidor rodando em http://localhost:${port}/qrcode`);
 });
