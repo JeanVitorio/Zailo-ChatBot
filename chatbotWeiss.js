@@ -5,23 +5,29 @@ const path = require('path');
 const express = require('express');
 
 const app = express();
-const port = process.env.PORT || 3000; // Usa a porta do Render ou 3000 localmente
+const port = process.env.PORT || 3000; // Porta dinâmica para Render
 let qrCodeDataUrl = null;
 
-// Configuração do cliente WhatsApp com persistência de sessão
+// Configuração do cliente WhatsApp
 const client = new Client({
-    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }, // Necessário para Render
-    session: fs.existsSync('session.json') ? JSON.parse(fs.readFileSync('session.json', 'utf-8')) : null // Carrega sessão existente
+    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }, // Compatível com Render
+    session: fs.existsSync('session.json') ? JSON.parse(fs.readFileSync('session.json', 'utf-8')) : null // Carrega sessão
 });
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-const carros = JSON.parse(fs.readFileSync('carros.json', 'utf-8'));
+let carros;
+try {
+    carros = JSON.parse(fs.readFileSync('carros.json', 'utf-8'));
+} catch (err) {
+    console.error('Erro ao carregar carros.json:', err);
+    process.exit(1); // Sai se o arquivo essencial falhar
+}
 
 const estadoCliente = new Map();
 const interessesClientes = new Map();
 const ultimoBoasVindas = new Map();
 
-// Rota para exibir o QR code em uma página web
+// Rota para exibir o QR code
 app.get('/', (req, res) => {
     if (qrCodeDataUrl) {
         res.send(`
@@ -42,9 +48,7 @@ app.get('/', (req, res) => {
                         margin: 0;
                         background-color: #f0f0f0;
                     }
-                    h1 {
-                        color: #333;
-                    }
+                    h1 { color: #333; }
                     img {
                         max-width: 300px;
                         border: 2px solid #333;
@@ -54,9 +58,7 @@ app.get('/', (req, res) => {
                     }
                 </style>
                 <script>
-                    setInterval(() => {
-                        location.reload();
-                    }, 5000); // Recarrega a página a cada 5 segundos para atualizar o QR code
+                    setInterval(() => location.reload(), 5000); // Atualiza QR code
                 </script>
             </head>
             <body>
@@ -84,9 +86,7 @@ app.get('/', (req, res) => {
                         margin: 0;
                         background-color: #f0f0f0;
                     }
-                    h1 {
-                        color: #333;
-                    }
+                    h1 { color: #333; }
                 </style>
             </head>
             <body>
@@ -98,11 +98,12 @@ app.get('/', (req, res) => {
     }
 });
 
-// Iniciar o servidor Express
+// Iniciar o servidor
 app.listen(port, () => {
-    console.log(`✅ Servidor web iniciado. Acesse o QR code na URL pública do Render ou localmente em http://localhost:${port}`);
+    console.log(`✅ Servidor iniciado na porta ${port}. Acesse a URL pública do Render.`);
 });
 
+// Funções de validação
 function podeEnviarBoasVindas(chatId) {
     const ultimoEnvio = ultimoBoasVindas.get(chatId);
     if (!ultimoEnvio) return true;
@@ -113,7 +114,6 @@ function registrarBoasVindas(chatId) {
     ultimoBoasVindas.set(chatId, Date.now());
 }
 
-// Funções de validação
 function isValidAmount(amount) {
     return /^\d+(\.\d{1,2})?$/.test(amount) || /^\d+$/.test(amount);
 }
@@ -230,7 +230,7 @@ async function enviarRelatorioParaContatos(chatId) {
         mensagem += `Foto: ${dados.venda.foto || 'Não enviada'}\n`;
     }
 
-    mensagem += `\n*⚠️ Atenção:* Este relatório contém informações sensíveis. Garanta conformidade com a LGPD e não compartilhe sem autorização.`;
+    mensagem += `\n*⚠️ Atenção:* Este relatório contém informações sensíveis. Garanta conformidade com a LGPD.`;
 
     for (const contato of carros.numeros_para_contato) {
         let numeroWhatsApp = contato.numero;
@@ -267,29 +267,36 @@ async function enviarRelatorioParaContatos(chatId) {
     }
 }
 
-// Evento de QR code
+// Eventos do WhatsApp
 client.on('qr', async qr => {
-    console.log('Escaneie o QR code com o WhatsApp:');
+    console.log('📱 Novo QR code gerado');
     try {
         qrCodeDataUrl = await qrcode.toDataURL(qr);
-        console.log(`✅ QR code gerado! Acesse a URL pública do Render ou localmente em http://localhost:${port} para visualizá-lo.`);
+        console.log(`✅ QR code disponível na URL pública do Render (porta ${port})`);
     } catch (err) {
         console.error('Erro ao gerar QR code:', err);
     }
 });
 
-// Salvar sessão quando autenticada
 client.on('authenticated', (session) => {
-    console.log('✅ Sessão do WhatsApp autenticada!');
+    console.log('✅ Sessão autenticada!');
     fs.writeFileSync('session.json', JSON.stringify(session));
 });
 
 client.on('ready', () => {
-    console.log('✅ Bot da Weiss Multimarcas está online!');
+    console.log('✅ Bot da Weiss Multimarcas online!');
     qrCodeDataUrl = null;
 });
 
-client.initialize();
+client.on('disconnected', (reason) => {
+    console.log('❌ Bot desconectado:', reason);
+    // Tenta reiniciar o cliente
+    client.initialize();
+});
+
+client.initialize().catch(err => {
+    console.error('Erro ao inicializar o cliente WhatsApp:', err);
+});
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -308,6 +315,7 @@ async function enviarListaCarros(chatId) {
 }
 
 client.on('message', async msg => {
+    console.log(`📩 Mensagem recebida de ${msg.from}: ${msg.body}`); // Log para depuração
     const chatId = msg.from;
     const textoOriginal = msg.body.trim();
     const texto = textoOriginal.toUpperCase();
@@ -315,6 +323,7 @@ client.on('message', async msg => {
     const estado = estadoCliente.get(chatId);
 
     if (!estado && chatId.endsWith('@c.us')) {
+        console.log(`ℹ️ Novo usuário detectado: ${chatId}`);
         await wait(1000);
         if (podeEnviarBoasVindas(chatId)) {
             await client.sendMessage(
@@ -627,6 +636,7 @@ client.on('message', async msg => {
     }
 
     async function processarOpcaoMenu(chatId, texto) {
+        console.log(`🔄 Processando opção do menu para ${chatId}: ${texto}`);
         if (texto === '1') {
             estadoCliente.set(chatId, { etapa: 'aguardandoSelecaoCarro' });
             await enviarListaCarros(chatId);
