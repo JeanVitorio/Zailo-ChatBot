@@ -5,6 +5,9 @@
     "moment-timezone": "^0.5.45",
     "qrcode": "^1.5.4",
     "qrcode-terminal": "^0.12.0",
-    "whatsapp-web.js": "^1.28.0"
+    "whatsapp-web.js": "^1.28.0",
+    "engines": {
+      "node": "^12.0.0 || ^14.0.0 || >=16.0.0"
+    }
   }
 }
