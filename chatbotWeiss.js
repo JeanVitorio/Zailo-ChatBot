@@ -7,9 +7,10 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
 let qrCodeDataUrl = null;
+let isBotReady = false;
 
 const client = new Client({
-    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] },
+    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] },
     session: fs.existsSync('session.json') ? JSON.parse(fs.readFileSync('session.json', 'utf-8')) : null
 });
 const delay = ms => new Promise(res => setTimeout(res, ms));
@@ -28,8 +29,8 @@ const interessesClientes = new Map();
 const ultimoBoasVindas = new Map();
 
 app.get('/', (req, res) => {
-    console.log(`📄 Página acessada. qrCodeDataUrl: ${qrCodeDataUrl ? 'Presente' : 'Ausente'}`);
-    if (qrCodeDataUrl) {
+    if (qrCodeDataUrl && !isBotReady) {
+        console.log('📄 Página acessada: Exibindo QR code.');
         res.send(`
             <!DOCTYPE html>
             <html lang="pt-BR">
@@ -56,18 +57,65 @@ app.get('/', (req, res) => {
                         padding: 10px;
                         background-color: #fff;
                     }
+                    p { color: #555; }
                 </style>
                 <script>
-                    setTimeout(() => location.reload(), 5000);
+                    async function checkStatus() {
+                        try {
+                            const response = await fetch('/status');
+                            const data = await response.json();
+                            if (data.isReady) {
+                                document.body.innerHTML = '<h1>Bot Online!</h1><p>O bot está autenticado e funcionando.</p>';
+                            } else {
+                                setTimeout(checkStatus, 5000);
+                            }
+                        } catch (err) {
+                            console.error('Erro ao verificar status:', err);
+                            setTimeout(checkStatus, 5000);
+                        }
+                    }
+                    checkStatus();
                 </script>
             </head>
             <body>
                 <h1>Escaneie o QR Code com o WhatsApp</h1>
                 <img src="${qrCodeDataUrl}" alt="QR Code para autenticação do WhatsApp">
+                <p>Aguarde a autenticação...</p>
+            </body>
+            </html>
+        `);
+    } else if (isBotReady) {
+        console.log('📄 Página acessada: Bot já autenticado.');
+        res.send(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>QR Code - Weiss Multimarcas</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100vh;
+                        margin: 0;
+                        background-color: #f0f0f0;
+                    }
+                    h1 { color: #333; }
+                    p { color: #555; }
+                </style>
+            </head>
+            <body>
+                <h1>Bot Online!</h1>
+                <p>O bot está autenticado e funcionando.</p>
             </body>
             </html>
         `);
     } else {
+        console.log('📄 Página acessada: Aguardando QR code.');
         res.send(`
             <!DOCTYPE html>
             <html lang="pt-BR">
@@ -90,16 +138,34 @@ app.get('/', (req, res) => {
                     p { color: #555; }
                 </style>
                 <script>
-                    setTimeout(() => location.reload(), 5000);
+                    async function checkStatus() {
+                        try {
+                            const response = await fetch('/status');
+                            const data = await response.json();
+                            if (data.isReady) {
+                                document.body.innerHTML = '<h1>Bot Online!</h1><p>O bot está autenticado e funcionando.</p>';
+                            } else {
+                                setTimeout(checkStatus, 5000);
+                            }
+                        } catch (err) {
+                            console.error('Erro ao verificar status:', err);
+                            setTimeout(checkStatus, 5000);
+                        }
+                    }
+                    checkStatus();
                 </script>
             </head>
             <body>
                 <h1>Aguardando QR Code...</h1>
-                <p>Por favor, aguarde enquanto o QR code é gerado. Se demorar muito, verifique os logs do servidor.</p>
+                <p>Por favor, aguarde enquanto o QR code é gerado.</p>
             </body>
             </html>
         `);
     }
+});
+
+app.get('/status', (req, res) => {
+    res.json({ isReady: isBotReady });
 });
 
 app.get('/ping', (req, res) => {
@@ -184,14 +250,16 @@ async function enviarImagensDoCarro(chatId, carro) {
         console.log(`ℹ️ Nenhuma imagem disponível para o carro ${carro.nome}`);
         return;
     }
-    for (const imagemPath of carro.imagens) {
+    const maxImages = 3; // Limitar a 3 imagens para evitar sobrecarga
+    for (let i = 0; i < Math.min(carro.imagens.length, maxImages); i++) {
+        const imagemPath = carro.imagens[i];
         try {
             const fullPath = path.join(__dirname, imagemPath);
             if (fs.existsSync(fullPath)) {
                 const media = MessageMedia.fromFilePath(fullPath);
                 await client.sendMessage(chatId, media);
                 console.log(`✅ Imagem enviada: ${fullPath}`);
-                await delay(500);
+                await delay(200); // Reduzir delay para 200ms
             } else {
                 console.error(`❌ Imagem não encontrada: ${fullPath}`);
             }
@@ -252,7 +320,7 @@ async function enviarRelatorioParaContatos(chatId) {
 
     mensagem += `\n*⚠️ Atenção:* Este relatório contém informações sensíveis. Garanta conformidade com a LGPD.`;
 
-    for (const contato of carros.numeros_para_contato) {
+    const sendPromises = carros.numeros_para_contato.map(async (contato) => {
         let numeroWhatsApp = contato.numero;
         if (!numeroWhatsApp.includes('@c.us')) {
             numeroWhatsApp = numeroWhatsApp.replace(/\D/g, '') + '@c.us';
@@ -286,7 +354,9 @@ async function enviarRelatorioParaContatos(chatId) {
         } catch (err) {
             console.error(`❌ Erro ao enviar relatório para ${contato.nome}:`, err);
         }
-    }
+    });
+
+    await Promise.all(sendPromises);
 }
 
 client.on('qr', async qr => {
@@ -312,12 +382,14 @@ client.on('authenticated', (session) => {
 
 client.on('ready', () => {
     console.log('✅ Bot da Weiss Multimarcas online! Conexão WebSocket ativa.');
+    isBotReady = true;
     qrCodeDataUrl = null;
 });
 
 client.on('disconnected', (reason) => {
     console.log('❌ Bot desconectado:', reason);
     console.log('Tentando reiniciar o cliente...');
+    isBotReady = false;
     qrCodeDataUrl = null;
     client.initialize();
 });
