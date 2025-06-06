@@ -249,7 +249,7 @@ async function enviarImagensDoCarro(chatId, carro) {
         console.log(`ℹ️ Nenhuma imagem disponível para o carro ${carro.nome}`);
         return;
     }
-    const maxImages = 1; // Reduced to 1 to minimize resource usage
+    const maxImages = 100; // Reduced to 1 to minimize resource usage
     for (let i = 0; i < Math.min(carro.imagens.length, maxImages); i++) {
         const imagemPath = carro.imagens[i];
         try {
