@@ -28,9 +28,17 @@ const estadoCliente = new Map();
 const interessesClientes = new Map();
 const ultimoBoasVindas = new Map();
 
+// Global error handling to prevent crashes
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+});
+process.on('uncaughtException', (err) => {
+    console.error('❌ Uncaught Exception:', err);
+});
+
 app.get('/', (req, res) => {
+    console.log(`📄 Página acessada: isBotReady=${isBotReady}, qrCodeDataUrl=${!!qrCodeDataUrl}`);
     if (qrCodeDataUrl && !isBotReady) {
-        console.log('📄 Página acessada: Exibindo QR code.');
         res.send(`
             <!DOCTYPE html>
             <html lang="pt-BR">
@@ -39,24 +47,9 @@ app.get('/', (req, res) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>QR Code - Weiss Multimarcas</title>
                 <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
-                        height: 100vh;
-                        margin: 0;
-                        background-color: #f0f0f0;
-                    }
+                    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f0f0; }
                     h1 { color: #333; }
-                    img {
-                        max-width: 300px;
-                        border: 2px solid #333;
-                        border-radius: 10px;
-                        padding: 10px;
-                        background-color: #fff;
-                    }
+                    img { max-width: 300px; border: 2px solid #333; border-radius: 10px; padding: 10px; background-color: #fff; }
                     p { color: #555; }
                 </style>
                 <script>
@@ -85,7 +78,6 @@ app.get('/', (req, res) => {
             </html>
         `);
     } else if (isBotReady) {
-        console.log('📄 Página acessada: Bot já autenticado.');
         res.send(`
             <!DOCTYPE html>
             <html lang="pt-BR">
@@ -94,16 +86,7 @@ app.get('/', (req, res) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>QR Code - Weiss Multimarcas</title>
                 <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
-                        height: 100vh;
-                        margin: 0;
-                        background-color: #f0f0f0;
-                    }
+                    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f0f0; }
                     h1 { color: #333; }
                     p { color: #555; }
                 </style>
@@ -115,7 +98,6 @@ app.get('/', (req, res) => {
             </html>
         `);
     } else {
-        console.log('📄 Página acessada: Aguardando QR code.');
         res.send(`
             <!DOCTYPE html>
             <html lang="pt-BR">
@@ -124,16 +106,7 @@ app.get('/', (req, res) => {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>QR Code - Weiss Multimarcas</title>
                 <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
-                        height: 100vh;
-                        margin: 0;
-                        background-color: #f0f0f0;
-                    }
+                    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f0f0f0; }
                     h1 { color: #333; }
                     p { color: #555; }
                 </style>
@@ -236,6 +209,32 @@ async function salvarFoto(msg, chatId, tipo) {
             fs.mkdirSync(path.join(__dirname, 'Uploads'), { recursive: true });
             fs.writeFileSync(filePath, Buffer.from(media.data, 'base64'));
             console.log(`✅ Foto salva: ${filePath}`);
+
+            // Clean up old photos (older than 24 hours)
+            const uploadDir = path.join(__dirname, 'Uploads');
+            fs.readdir(uploadDir, (err, files) => {
+                if (err) {
+                    console.error('❌ Erro ao limpar Uploads:', err);
+                    return;
+                }
+                files.forEach(file => {
+                    const filePath = path.join(uploadDir, file);
+                    fs.stat(filePath, (err, stats) => {
+                        if (err) return;
+                        const ageInHours = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60);
+                        if (ageInHours > 24) {
+                            fs.unlink(filePath, err => {
+                                if (err) {
+                                    console.error(`❌ Erro ao deletar ${filePath}:`, err);
+                                } else {
+                                    console.log(`🗑️ Foto antiga deletada: ${filePath}`);
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+
             return fileName;
         } catch (err) {
             console.error(`❌ Erro ao salvar foto de ${tipo}:`, err);
@@ -250,7 +249,7 @@ async function enviarImagensDoCarro(chatId, carro) {
         console.log(`ℹ️ Nenhuma imagem disponível para o carro ${carro.nome}`);
         return;
     }
-    const maxImages = 3; // Limitar a 3 imagens para evitar sobrecarga
+    const maxImages = 1; // Reduced to 1 to minimize resource usage
     for (let i = 0; i < Math.min(carro.imagens.length, maxImages); i++) {
         const imagemPath = carro.imagens[i];
         try {
@@ -259,7 +258,7 @@ async function enviarImagensDoCarro(chatId, carro) {
                 const media = MessageMedia.fromFilePath(fullPath);
                 await client.sendMessage(chatId, media);
                 console.log(`✅ Imagem enviada: ${fullPath}`);
-                await delay(200); // Reduzir delay para 200ms
+                await delay(200);
             } else {
                 console.error(`❌ Imagem não encontrada: ${fullPath}`);
             }
@@ -386,12 +385,18 @@ client.on('ready', () => {
     qrCodeDataUrl = null;
 });
 
-client.on('disconnected', (reason) => {
+client.on('disconnected', async (reason) => {
     console.log('❌ Bot desconectado:', reason);
-    console.log('Tentando reiniciar o cliente...');
     isBotReady = false;
     qrCodeDataUrl = null;
-    client.initialize();
+    console.log('⏳ Aguardando 10 segundos antes de reiniciar o cliente...');
+    await delay(10000); // Prevent rapid reinitialization loops
+    try {
+        console.log('🔄 Tentando reiniciar o cliente...');
+        await client.initialize();
+    } catch (err) {
+        console.error('❌ Erro ao reiniciar o cliente:', err);
+    }
 });
 
 client.initialize().catch(err => {
@@ -402,8 +407,12 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function enviarMenuInicial(chatId) {
     const mensagem = `🤩 Weiss Multimarcas - Menu Principal\n\nEscolha uma opção digitando o número:\n1 - Ver modelos disponíveis\n2 - Quero um carro financiado\n3 - Quero agendar uma visita\n4 - Falar com um vendedor humano\n5 - Quero trocar meu carro\n6 - Quero vender meu carro`;
-    await client.sendMessage(chatId, mensagem);
-    console.log(`✅ Menu inicial enviado para ${chatId}`);
+    try {
+        await client.sendMessage(chatId, mensagem);
+        console.log(`✅ Menu inicial enviado para ${chatId}`);
+    } catch (err) {
+        console.error(`❌ Erro ao enviar menu inicial para ${chatId}:`, err);
+    }
 }
 
 async function enviarListaCarros(chatId) {
@@ -412,8 +421,12 @@ async function enviarListaCarros(chatId) {
         lista += `🚘 *${carro.nome}* - ${carro.preco}\n`;
     }
     lista += `\nDigite o nome do carro que te interessou ou escolha outra opção do menu (1-6).`;
-    await client.sendMessage(chatId, lista);
-    console.log(`✅ Lista de carros enviada para ${chatId}`);
+    try {
+        await client.sendMessage(chatId, lista);
+        console.log(`✅ Lista de carros enviada para ${chatId}`);
+    } catch (err) {
+        console.error(`❌ Erro ao enviar lista de carros para ${chatId}:`, err);
+    }
 }
 
 client.on('message', async msg => {
@@ -428,12 +441,16 @@ client.on('message', async msg => {
         console.log(`ℹ️ Novo usuário detectado: ${chatId}`);
         await wait(1000);
         if (podeEnviarBoasVindas(chatId)) {
-            await client.sendMessage(
-                chatId,
-                `Olá! 👋 Seja muito bem-vindo à 🤩Weiss Multimarcas 🤩!\nMe chamo Zailon, sou seu consultor virtual. 🚗✨`
-            );
-            registrarBoasVindas(chatId);
-            console.log(`✅ Boas-vindas enviadas para ${chatId}`);
+            try {
+                await client.sendMessage(
+                    chatId,
+                    `Olá! 👋 Seja muito bem-vindo à 🤩Weiss Multimarcas 🤩!\nMe chamo Zailon, sou seu consultor virtual. 🚗✨`
+                );
+                registrarBoasVindas(chatId);
+                console.log(`✅ Boas-vindas enviadas para ${chatId}`);
+            } catch (err) {
+                console.error(`❌ Erro ao enviar boas-vindas para ${chatId}:`, err);
+            }
         }
         estadoCliente.set(chatId, { etapa: 'menuInicial' });
         await enviarMenuInicial(chatId);
