@@ -1,34 +1,34 @@
+const express = require('express');
 const qrcode = require('qrcode');
 const { Client, MessageMedia } = require('whatsapp-web.js');
 const fs = require('fs');
 const path = require('path');
-const express = require('express');
 
 const app = express();
-const port = process.env.PORT || 3000; // Porta dinâmica para Render
+const port = process.env.PORT || 3000;
 let qrCodeDataUrl = null;
 
-// Configuração do cliente WhatsApp
 const client = new Client({
-    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }, // Compatível com Render
-    session: fs.existsSync('session.json') ? JSON.parse(fs.readFileSync('session.json', 'utf-8')) : null // Carrega sessão
+    puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] },
+    session: fs.existsSync('session.json') ? JSON.parse(fs.readFileSync('session.json', 'utf-8')) : null
 });
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
 let carros;
 try {
-    carros = JSON.parse(fs.readFileSync('carros.json', 'utf-8'));
+    carros = JSON.parse(fs.readFileSync('./carros.json', 'utf-8'));
+    console.log('✅ carros.json carregado com sucesso.');
 } catch (err) {
-    console.error('Erro ao carregar carros.json:', err);
-    process.exit(1); // Sai se o arquivo essencial falhar
+    console.error('❌ Erro ao carregar carros.json:', err);
+    process.exit(1);
 }
 
 const estadoCliente = new Map();
 const interessesClientes = new Map();
 const ultimoBoasVindas = new Map();
 
-// Rota para exibir o QR code
 app.get('/', (req, res) => {
+    console.log(`📄 Página acessada. qrCodeDataUrl: ${qrCodeDataUrl ? 'Presente' : 'Ausente'}`);
     if (qrCodeDataUrl) {
         res.send(`
             <!DOCTYPE html>
@@ -58,7 +58,7 @@ app.get('/', (req, res) => {
                     }
                 </style>
                 <script>
-                    setInterval(() => location.reload(), 5000); // Atualiza QR code
+                    setTimeout(() => location.reload(), 5000);
                 </script>
             </head>
             <body>
@@ -87,23 +87,30 @@ app.get('/', (req, res) => {
                         background-color: #f0f0f0;
                     }
                     h1 { color: #333; }
+                    p { color: #555; }
                 </style>
+                <script>
+                    setTimeout(() => location.reload(), 5000);
+                </script>
             </head>
             <body>
                 <h1>Aguardando QR Code...</h1>
-                <p>Por favor, aguarde enquanto o QR code é gerado.</p>
+                <p>Por favor, aguarde enquanto o QR code é gerado. Se demorar muito, verifique os logs do servidor.</p>
             </body>
             </html>
         `);
     }
 });
 
-// Iniciar o servidor
-app.listen(port, () => {
-    console.log(`✅ Servidor iniciado na porta ${port}. Acesse a URL pública do Render.`);
+app.get('/ping', (req, res) => {
+    res.status(200).send('Bot is alive!');
+    console.log('✅ Recebido ping para manter o bot ativo.');
 });
 
-// Funções de validação
+app.listen(port, () => {
+    console.log(`✅ Servidor iniciado na porta ${port}. Acesse http://localhost:${port} localmente ou a URL do Render.`);
+});
+
 function podeEnviarBoasVindas(chatId) {
     const ultimoEnvio = ultimoBoasVindas.get(chatId);
     if (!ultimoEnvio) return true;
@@ -162,9 +169,10 @@ async function salvarFoto(msg, chatId, tipo) {
             const filePath = path.join(__dirname, 'Uploads', fileName);
             fs.mkdirSync(path.join(__dirname, 'Uploads'), { recursive: true });
             fs.writeFileSync(filePath, Buffer.from(media.data, 'base64'));
+            console.log(`✅ Foto salva: ${filePath}`);
             return fileName;
         } catch (err) {
-            console.error(`Erro ao salvar foto de ${tipo}:`, err);
+            console.error(`❌ Erro ao salvar foto de ${tipo}:`, err);
             return null;
         }
     }
@@ -172,21 +180,33 @@ async function salvarFoto(msg, chatId, tipo) {
 }
 
 async function enviarImagensDoCarro(chatId, carro) {
+    if (!carro.imagens || !Array.isArray(carro.imagens)) {
+        console.log(`ℹ️ Nenhuma imagem disponível para o carro ${carro.nome}`);
+        return;
+    }
     for (const imagemPath of carro.imagens) {
         try {
             const fullPath = path.join(__dirname, imagemPath);
-            const media = MessageMedia.fromFilePath(fullPath);
-            await client.sendMessage(chatId, media);
-            await delay(500);
+            if (fs.existsSync(fullPath)) {
+                const media = MessageMedia.fromFilePath(fullPath);
+                await client.sendMessage(chatId, media);
+                console.log(`✅ Imagem enviada: ${fullPath}`);
+                await delay(500);
+            } else {
+                console.error(`❌ Imagem não encontrada: ${fullPath}`);
+            }
         } catch (err) {
-            console.error(`Erro ao enviar imagem: ${imagemPath}`, err);
+            console.error(`❌ Erro ao enviar imagem: ${imagemPath}`, err);
         }
     }
 }
 
 async function enviarRelatorioParaContatos(chatId) {
     const dados = interessesClientes.get(chatId);
-    if (!dados) return;
+    if (!dados) {
+        console.log(`ℹ️ Nenhum dado encontrado para o chatId ${chatId}`);
+        return;
+    }
 
     let mensagem = `📊 *Novo Relatório de Cliente:*\n📱 Cliente: ${chatId}\n`;
 
@@ -245,8 +265,9 @@ async function enviarRelatorioParaContatos(chatId) {
                 if (fs.existsSync(fotoPath)) {
                     const media = MessageMedia.fromFilePath(fotoPath);
                     await client.sendMessage(numeroWhatsApp, media, { caption: 'Foto do veículo (Troca)' });
+                    console.log(`✅ Foto de troca enviada para ${contato.nome}`);
                 } else {
-                    console.error(`Foto de troca não encontrada: ${fotoPath}`);
+                    console.error(`❌ Foto de troca não encontrada: ${fotoPath}`);
                 }
             }
 
@@ -255,47 +276,54 @@ async function enviarRelatorioParaContatos(chatId) {
                 if (fs.existsSync(fotoPath)) {
                     const media = MessageMedia.fromFilePath(fotoPath);
                     await client.sendMessage(numeroWhatsApp, media, { caption: 'Foto do veículo (Venda)' });
+                    console.log(`✅ Foto de venda enviada para ${contato.nome}`);
                 } else {
-                    console.error(`Foto de venda não encontrada: ${fotoPath}`);
+                    console.error(`❌ Foto de venda não encontrada: ${fotoPath}`);
                 }
             }
 
             console.log(`✅ Relatório enviado para ${contato.nome}`);
         } catch (err) {
-            console.error(`Erro ao enviar relatório para ${contato.nome}:`, err);
+            console.error(`❌ Erro ao enviar relatório para ${contato.nome}:`, err);
         }
     }
 }
 
-// Eventos do WhatsApp
 client.on('qr', async qr => {
-    console.log('📱 Novo QR code gerado');
+    console.log('📱 Novo QR code gerado. Dados brutos:', qr);
     try {
         qrCodeDataUrl = await qrcode.toDataURL(qr);
-        console.log(`✅ QR code disponível na URL pública do Render (porta ${port})`);
+        console.log(`✅ QR code gerado com sucesso. Disponível em http://localhost:${port} ou na URL do Render`);
     } catch (err) {
-        console.error('Erro ao gerar QR code:', err);
+        console.error('❌ Erro ao gerar QR code:', err);
+        qrCodeDataUrl = null;
     }
 });
 
 client.on('authenticated', (session) => {
-    console.log('✅ Sessão autenticada!');
-    fs.writeFileSync('session.json', JSON.stringify(session));
+    console.log('✅ Sessão autenticada! Salvando session.json...');
+    try {
+        fs.writeFileSync('session.json', JSON.stringify(session));
+        console.log('✅ session.json salvo com sucesso.');
+    } catch (err) {
+        console.error('❌ Erro ao salvar session.json:', err);
+    }
 });
 
 client.on('ready', () => {
-    console.log('✅ Bot da Weiss Multimarcas online!');
+    console.log('✅ Bot da Weiss Multimarcas online! Conexão WebSocket ativa.');
     qrCodeDataUrl = null;
 });
 
 client.on('disconnected', (reason) => {
     console.log('❌ Bot desconectado:', reason);
-    // Tenta reiniciar o cliente
+    console.log('Tentando reiniciar o cliente...');
+    qrCodeDataUrl = null;
     client.initialize();
 });
 
 client.initialize().catch(err => {
-    console.error('Erro ao inicializar o cliente WhatsApp:', err);
+    console.error('❌ Erro ao inicializar o cliente WhatsApp:', err);
 });
 
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -303,6 +331,7 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 async function enviarMenuInicial(chatId) {
     const mensagem = `🤩 Weiss Multimarcas - Menu Principal\n\nEscolha uma opção digitando o número:\n1 - Ver modelos disponíveis\n2 - Quero um carro financiado\n3 - Quero agendar uma visita\n4 - Falar com um vendedor humano\n5 - Quero trocar meu carro\n6 - Quero vender meu carro`;
     await client.sendMessage(chatId, mensagem);
+    console.log(`✅ Menu inicial enviado para ${chatId}`);
 }
 
 async function enviarListaCarros(chatId) {
@@ -312,10 +341,11 @@ async function enviarListaCarros(chatId) {
     }
     lista += `\nDigite o nome do carro que te interessou ou escolha outra opção do menu (1-6).`;
     await client.sendMessage(chatId, lista);
+    console.log(`✅ Lista de carros enviada para ${chatId}`);
 }
 
 client.on('message', async msg => {
-    console.log(`📩 Mensagem recebida de ${msg.from}: ${msg.body}`); // Log para depuração
+    console.log(`📩 Mensagem recebida de ${msg.from}: ${msg.body} - Estado atual: ${JSON.stringify(estadoCliente.get(msg.from))}`);
     const chatId = msg.from;
     const textoOriginal = msg.body.trim();
     const texto = textoOriginal.toUpperCase();
@@ -331,6 +361,7 @@ client.on('message', async msg => {
                 `Olá! 👋 Seja muito bem-vindo à 🤩Weiss Multimarcas 🤩!\nMe chamo Zailon, sou seu consultor virtual. 🚗✨`
             );
             registrarBoasVindas(chatId);
+            console.log(`✅ Boas-vindas enviadas para ${chatId}`);
         }
         estadoCliente.set(chatId, { etapa: 'menuInicial' });
         await enviarMenuInicial(chatId);
@@ -591,11 +622,10 @@ client.on('message', async msg => {
 
     if (estado?.etapa === 'aguardandoNascimento') {
         if (isValidDate(textoOriginal)) {
-            let dados = interessesClientes.get(chatId);
-            if (dados && dados.financiamento) {
-                dados.financiamento.nascimento = textoOriginal;
-                interessesClientes.set(chatId, dados);
-            }
+            let dados = interessesClientes.get(chatId) || { interesses: [] };
+            if (!dados.financiamento) dados.financiamento = {};
+            dados.financiamento.nascimento = textoOriginal;
+            interessesClientes.set(chatId, dados);
 
             await client.sendMessage(chatId, `✅ Obrigado! Encaminhando para um de nossos consultores para finalizar a simulação. 😊`);
             await enviarRelatorioParaContatos(chatId);
