@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZailonSoft Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #10B981 0%, #34D399 70%); color: #1F2937; min-height: 100vh; padding: 20px; overflow-x: hidden; }
+        .container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
+        .header { background: #10B981; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); animation: fadeIn 1s ease-in-out; }
+        .header h1 { font-size: 2.5em; font-weight: 700; letter-spacing: 2px; color: #FFFFFF; text-transform: uppercase; }
+        .nav { display: flex; justify-content: center; gap: 20px; background: rgba(16, 185, 129, 0.9); padding: 15px; border-radius: 15px; backdrop-filter: blur(10px); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); }
+        .nav a { color: #FFFFFF; text-decoration: none; font-size: 1.1em; font-weight: 600; padding: 10px 20px; transition: all 0.3s ease; }
+        .nav a:hover, .nav a.active { background: #34D399; color: #1F2937; border-radius: 10px; transform: scale(1.05); }
+        .tab-content { display: none; background: rgba(255, 255, 255, 0.95); color: #1F2937; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); animation: slideUp 0.5s ease-out; }
+        .tab-content.active { display: block; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px; }
+        .card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(5px); padding: 20px; border-radius: 15px; text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; border: 1px solid #34D399; display: flex; align-items: center; justify-content: center; height: 150px; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); }
+        .card h3 { color: #10B981; font-size: 1.5em; margin-bottom: 10px; text-transform: uppercase; font-weight: 600; }
+        .btn { background: #34D399; color: #1F2937; padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; transition: background 0.3s ease, transform 0.2s ease; }
+        .btn:hover { background: #10B981; transform: scale(1.05); }
+        #add-car, #add-car-step2 { display: flex; flex-direction: column; gap: 15px; max-width: 400px; margin: 20px auto; background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        input { padding: 10px; border: 2px solid #34D399; border-radius: 10px; font-size: 1em; color: #1F2937; background: #FFFFFF; }
+        #qrcode-container { text-align: center; padding: 20px; }
+        #qrcode-container img { max-width: 300px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); border: 2px solid #34D399; }
+        #client-dialog, #car-dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #FFFFFF; padding: 30px; border-radius: 15px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); color: #1F2937; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
+        #car-dialog h3, #client-dialog h3 { color: #10B981; margin-bottom: 20px; font-size: 1.8em; }
+        #car-dialog p, #client-dialog p { margin: 10px 0; font-size: 1.1em; color: #1F2937; }
+        .edit-form { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .edit-form input { margin-bottom: 10px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ZailonSoft Dashboard</h1>
+        </div>
+        <div class="nav">
+            <a href="#" onclick="showTab('catalog')" class="active">Catálogo</a>
+            <a href="#" onclick="showTab('crm')">CRM</a>
+            <a href="#" onclick="showTab('qrcode')">Conexão WhatsApp</a>
+        </div>
+
+        <div id="catalog" class="tab-content active">
+            <h2>Gerenciar Carros</h2>
+            <div id="add-car">
+                <input type="text" id="car-name" placeholder="Nome do Carro" required>
+                <button class="btn" onclick="addCarStep1()">Próximo</button>
+            </div>
+            <div id="add-car-step2" style="display: none;">
+                <input type="text" id="car-year" placeholder="Ano">
+                <input type="text" id="car-description" placeholder="Descrição">
+                <input type="file" id="car-images" multiple>
+                <button class="btn" onclick="saveCar()">Salvar</button>
+                <button class="btn" onclick="cancelCar()">Cancelar</button>
+            </div>
+            <div class="card-grid" id="car-list"></div>
+        </div>
+
+        <div id="crm" class="tab-content">
+            <h2>Gerenciar Clientes</h2>
+            <div class="card-grid" id="client-list"></div>
+        </div>
+
+        <div id="qrcode" class="tab-content">
+            <h2>Conexão WhatsApp</h2>
+            <div id="qrcode-container">
+                <img id="qrcode-img" src="" alt="QR Code para Conexão WhatsApp">
+            </div>
+            <button class="btn" onclick="refreshQR()">Gerar QR para Conexão</button>
+            <p id="connection-status" style="margin-top: 10px; color: #1F2937;"></p>
+        </div>
+
+        <div id="car-dialog">
+            <h3>Detalhes do Carro</h3>
+            <p><strong>Nome:</strong> <span id="car-name-detail"></span></p>
+            <p><strong>Ano:</strong> <span id="car-year-detail"></span></p>
+            <p><strong>Descrição:</strong> <span id="car-description-detail"></span></p>
+            <div class="edit-form" id="car-edit-form" style="display: none;">
+                <input type="text" id="edit-car-name" placeholder="Novo Nome">
+                <input type="text" id="edit-car-year" placeholder="Novo Ano">
+                <input type="text" id="edit-car-description" placeholder="Nova Descrição">
+                <input type="file" id="edit-car-images" multiple>
+                <button class="btn" onclick="saveCarEdit()">Salvar</button>
+                <button class="btn" onclick="cancelCarEdit()">Cancelar</button>
+            </div>
+            <button class="btn" id="edit-car-btn">Editar</button>
+            <button class="btn" onclick="deleteCar()">Excluir</button>
+            <button class="btn" onclick="closeCarDialog()">Fechar</button>
+        </div>
+
+        <div id="client-dialog">
+            <h3>Detalhes do Cliente</h3>
+            <p><strong>Nome:</strong> <span id="client-name"></span></p>
+            <p><strong>Telefone:</strong> <span id="client-phone"></span></p>
+            <p><strong>Intenção:</strong> <span id="client-intention"></span></p>
+            <p><strong>Tipo:</strong> <span id="client-type"></span></p>
+            <p><strong>Carro Interessado:</strong> <span id="client-car"></span></p>
+            <p><strong>Trabalho:</strong> <span id="client-job"></span></p>
+            <h4>Documentos:</h4>
+            <p><strong>CPF:</strong> <span id="client-cpf"></span></p>
+            <p><strong>Data de Nascimento:</strong> <span id="client-birthdate"></span></p>
+            <p><strong>RG:</strong> <span id="client-rg"></span></p>
+            <p><strong>Comprovante de Renda:</strong> <span id="client-income"></span></p>
+            <p><strong>Comprovante de Residência:</strong> <span id="client-residence"></span></p>
+            <button class="btn" onclick="closeDialog()">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        let cars = [];
+        let clients = [];
+
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav a').forEach(a => a.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.nav a[onclick*="showTab('${tabId}')"]`).classList.add('active');
+        }
+
+        function loadData() {
+            fetch('http://localhost:5000/api/cars')
+                .then(r => r.json())
+                .then(data => {
+                    cars = data;
+                    renderCars();
+                });
+            fetch('http://localhost:5000/api/clients')
+                .then(r => r.json())
+                .then(data => {
+                    clients = data;
+                    renderClients();
+                });
+        }
+        loadData();
+
+        function addCarStep1() {
+            const name = document.getElementById('car-name').value;
+            if (name) {
+                document.getElementById('add-car').style.display = 'none';
+                document.getElementById('add-car-step2').style.display = 'flex';
+            }
+        }
+
+        function saveCar() {
+            const formData = new FormData();
+            formData.append('name', document.getElementById('car-name').value);
+            formData.append('year', document.getElementById('car-year').value);
+            formData.append('description', document.getElementById('car-description').value);
+            const files = document.getElementById('car-images').files;
+            for (let file of files) formData.append('images', file);
+
+            fetch('http://localhost:5000/api/cars', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(car => {
+                    cars.push(car);
+                    renderCars();
+                    document.getElementById('add-car').style.display = 'flex';
+                    document.getElementById('add-car-step2').style.display = 'none';
+                    document.getElementById('car-name').value = '';
+                });
+        }
+
+        function cancelCar() {
+            document.getElementById('add-car').style.display = 'flex';
+            document.getElementById('add-car-step2').style.display = 'none';
+            document.getElementById('car-name').value = '';
+        }
+
+        function renderCars() {
+            const container = document.getElementById('car-list');
+            container.innerHTML = '';
+            cars.forEach(car => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<h3>${car.name}</h3>`;
+                card.onclick = () => showCarDetails(car.id);
+                container.appendChild(card);
+            });
+        }
+
+        function showCarDetails(carId) {
+            const car = cars.find(c => c.id === carId);
+            document.getElementById('car-name-detail').textContent = car.name;
+            document.getElementById('car-year-detail').textContent = car.year || 'Não informado';
+            document.getElementById('car-description-detail').textContent = car.description || 'Sem descrição';
+            document.getElementById('edit-car-name').value = car.name;
+            document.getElementById('edit-car-year').value = car.year || '';
+            document.getElementById('edit-car-description').value = car.description || '';
+            document.getElementById('car-edit-form').style.display = 'none';
+            document.getElementById('edit-car-btn').onclick = () => toggleEditCar(carId);
+            document.getElementById('car-dialog').style.display = 'block';
+            document.getElementById('car-dialog').dataset.carId = carId;
+        }
+
+        function toggleEditCar(carId) {
+            const form = document.getElementById('car-edit-form');
+            form.style.display = form.style.display === 'none' ? 'flex' : 'none';
+        }
+
+        function saveCarEdit() {
+            const carId = document.getElementById('car-dialog').dataset.carId;
+            const formData = new FormData();
+            formData.append('name', document.getElementById('edit-car-name').value);
+            formData.append('year', document.getElementById('edit-car-year').value);
+            formData.append('description', document.getElementById('edit-car-description').value);
+            const files = document.getElementById('edit-car-images').files;
+            for (let file of files) formData.append('images', file);
+
+            fetch(`http://localhost:5000/api/cars/${carId}`, { method: 'PUT', body: formData })
+                .then(r => r.json())
+                .then(updatedCar => {
+                    cars = cars.map(c => c.id === carId ? updatedCar : c);
+                    renderCars();
+                    closeCarDialog();
+                });
+        }
+
+        function cancelCarEdit() {
+            document.getElementById('car-edit-form').style.display = 'none';
+        }
+
+        function deleteCar() {
+            const carId = document.getElementById('car-dialog').dataset.carId;
+            if (confirm('Tem certeza que deseja excluir este carro?')) {
+                fetch(`http://localhost:5000/api/cars/${carId}`, { method: 'DELETE' })
+                    .then(() => {
+                        cars = cars.filter(c => c.id !== carId);
+                        renderCars();
+                        closeCarDialog();
+                    });
+            }
+        }
+
+        function closeCarDialog() {
+            document.getElementById('car-dialog').style.display = 'none';
+        }
+
+        function renderClients() {
+            const container = document.getElementById('client-list');
+            container.innerHTML = '';
+            clients.forEach(client => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<h3>${client.name || 'Sem nome'}</h3>`;
+                card.onclick = () => showClientDetails(client.id);
+                container.appendChild(card);
+            });
+        }
+
+        function showClientDetails(clientId) {
+            const client = clients.find(c => c.id === clientId);
+            document.getElementById('client-name').textContent = client.name || 'Sem nome';
+            document.getElementById('client-phone').textContent = client.phone;
+            document.getElementById('client-intention').textContent = client.interests.interest || 'Não especificado';
+            document.getElementById('client-type').textContent = client.interests.type || 'Não especificado';
+            document.getElementById('client-car').textContent = client.interests.carInterested || 'Nenhum';
+            document.getElementById('client-job').textContent = client.job || 'Não informado';
+            document.getElementById('client-cpf').textContent = client.documents.cpf || 'Não enviado';
+            document.getElementById('client-birthdate').textContent = client.documents.birthdate || 'Não enviado';
+            document.getElementById('client-rg').textContent = client.documents.rg ? 'Enviado' : 'Não enviado';
+            document.getElementById('client-income').textContent = client.documents.income ? 'Enviado' : 'Não enviado';
+            document.getElementById('client-residence').textContent = client.documents.residence ? 'Enviado' : 'Não enviado';
+            document.getElementById('client-dialog').style.display = 'block';
+        }
+
+        function closeDialog() {
+            document.getElementById('client-dialog').style.display = 'none';
+        }
+
+        function refreshQR() {
+            fetch('http://localhost:3000/get-qrcode')
+                .then(r => {
+                    if (!r.ok) throw new Error('Erro na requisição: ' + r.statusText);
+                    return r.json();
+                })
+                .then(data => {
+                    console.log('Resposta da API:', data);
+                    if (data.qrcode) {
+                        document.getElementById('qrcode-img').src = data.qrcode; // Exibe o QR Code em base64
+                        document.getElementById('connection-status').textContent = 'Escaneie o QR Code com o WhatsApp para conectar...';
+                        checkStatusInterval = setInterval(checkStatus, 5000); // Verifica a cada 5 segundos
+                    } else {
+                        document.getElementById('qrcode-img').src = 'https://via.placeholder.com/300?text=QR+Code+Indisponível';
+                        document.getElementById('connection-status').textContent = 'Erro ao gerar QR Code.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar QR Code:', error);
+                    document.getElementById('qrcode-img').src = 'https://via.placeholder.com/300?text=Erro+no+QR+Code';
+                    document.getElementById('connection-status').textContent = 'Erro na conexão com o servidor.';
+                });
+        }
+
+        function checkStatus() {
+            fetch('http://localhost:3000/status')
+                .then(r => {
+                    if (!r.ok) throw new Error('Erro ao verificar status');
+                    return r.json();
+                })
+                .then(data => {
+                    if (data.isReady) {
+                        document.getElementById('connection-status').textContent = 'Bot conectado ao WhatsApp com sucesso!';
+                        clearInterval(checkStatusInterval);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao verificar status:', error);
+                });
+        }
+    </script>
+</body>
+</html>

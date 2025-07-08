@@ -1,0 +1,33 @@
+{
+    "cars": [
+        {
+            "id": "5860d0a0-5288-4115-97d5-686ae13108d4",
+            "name": "Gol",
+            "year": "2005",
+            "description": "Gol topp, dire\u00e7\u00e3o hidraulica, vidros eletricos e pneus novos",
+            "images": [
+                "5860d0a0-5288-4115-97d5-686ae13108d4\\image_1.jpg"
+            ]
+        },
+        {
+            "id": "7c5a1f7e-d7a1-47b3-b819-edff99337f43",
+            "name": "Palio",
+            "year": "2001",
+            "description": "Palio topp, dire\u00e7\u00e3o hidraulica, vidros eletricos e pneus novos",
+            "images": [
+                "7c5a1f7e-d7a1-47b3-b819-edff99337f43\\image_1.jpg"
+            ]
+        },
+        {
+            "id": "c4523e74-ab48-460e-8309-dc0bf1604395",
+            "name": "Celta",
+            "year": "2009",
+            "description": "2 portas, vermelho, placa abc-1234",
+            "images": [
+                "c4523e74-ab48-460e-8309-dc0bf1604395\\image_1.jpeg",
+                "c4523e74-ab48-460e-8309-dc0bf1604395\\image_2.jpeg"
+            ]
+        }
+    ],
+    "clients": []
+}
