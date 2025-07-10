@@ -105,26 +105,6 @@
             "imagens": [
                 "cars\\190720ef-85b8-4f89-abc7-67b76922f621\\image_1.png"
             ]
-        },
-        {
-            "id": "ddbe8f49-ee5a-46c5-86ce-c963f3b1c404",
-            "nome": "rrrrr",
-            "ano": "55555",
-            "preco": "666666",
-            "descricao": "hhhhhhhhhhhhh",
-            "imagens": [
-                "cars\\ddbe8f49-ee5a-46c5-86ce-c963f3b1c404\\image_1.png"
-            ]
-        },
-        {
-            "id": "267cb6d9-1c5e-401e-bcf7-19cddc6aaadc",
-            "nome": "55555",
-            "ano": "444444",
-            "preco": "44444",
-            "descricao": "dddddddddddd",
-            "imagens": [
-                "cars\\267cb6d9-1c5e-401e-bcf7-19cddc6aaadc\\image_1.png"
-            ]
         }
     ],
     "numeros_para_contato": [
