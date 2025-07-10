@@ -56,8 +56,12 @@
         #car-dialog .edit-field { display: none; width: 60%; padding: 10px; border: 1px solid #6B8E23; border-radius: 8px; font-size: 1.1em; background: #FFF; transition: border-color 0.3s ease; }
         #car-dialog .edit-field:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); outline: none; }
         #car-dialog .car-images { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; justify-content: center; }
-        #car-dialog .car-images img { max-width: 180px; border-radius: 10px; border: 1px solid #E5E7EB; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
+        #car-dialog .car-images img { max-width: 180px; border-radius: 10px; border: 1px solid #E5E7EB; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; position: relative; }
         #car-dialog .car-images img:hover { transform: scale(1.05); }
+        #car-dialog .car-images .remove-btn { position: absolute; top: 5px; right: 5px; background: #EF4444; color: #FFF; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: none; }
+        #car-dialog .car-images img:hover + .remove-btn { display: block; }
+        #car-dialog .car-images .remove-btn:hover { background: #DC2626; }
+        #car-dialog .add-image-input { margin-top: 15px; display: none; }
         #car-dialog .dialog-actions { margin-top: 20px; display: flex; justify-content: center; gap: 15px; padding-top: 15px; border-top: 1px solid #E5E7EB; }
         #car-dialog .dialog-actions .btn { background: linear-gradient(90deg, #2F4F2F 0%, #6B8E23 100%); color: #FFD700; padding: 12px 25px; font-size: 1.1em; border-radius: 10px; border: none; cursor: pointer; transition: all 0.3s ease; }
         #car-dialog .dialog-actions .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(47, 79, 47, 0.3); }
@@ -69,7 +73,6 @@
         .edit-form input, .edit-form textarea { margin-bottom: 15px; }
         .edit-save-btns { display: flex; gap: 15px; margin-top: 20px; }
 
-        /* Scrollbar styling for a luxurious look */
         #car-dialog .dialog-content::-webkit-scrollbar {
             width: 8px;
         }
@@ -153,7 +156,7 @@
                 <p><strong>Preço:</strong> <span id="car-price-detail"></span> <input type="text" id="edit-car-price" class="edit-field"></p>
                 <p><strong>Descrição:</strong> <span id="car-description-detail"></span> <textarea id="edit-car-description" class="edit-field" rows="2"></textarea></p>
                 <div class="car-images" id="car-images-detail"></div>
-                <input type="file" id="edit-car-images" multiple accept="image/*" style="display: none; margin-top: 10px;">
+                <input type="file" id="edit-car-images" multiple accept="image/*" class="add-image-input">
             </div>
             <div class="dialog-actions">
                 <button class="btn" onclick="toggleEditMode()">Editar</button>
@@ -457,15 +460,16 @@
             const imagesContainer = document.getElementById('car-images-detail');
             imagesContainer.innerHTML = '';
             if (car.imagens && car.imagens.length > 0) {
-                car.imagens.forEach(img => {
-                    const imgElement = document.createElement('img');
-                    imgElement.src = img;
-                    imgElement.alt = `Imagem de ${car.nome}`;
-                    imgElement.onload = () => imgElement.style.opacity = '1';
-                    imgElement.onerror = () => { imgElement.style.display = 'none'; console.error('Erro ao carregar imagem no diálogo:', img); };
-                    imgElement.style.opacity = '0';
-                    imgElement.style.transition = 'opacity 0.5s';
-                    imagesContainer.appendChild(imgElement);
+                car.imagens.forEach((img, index) => {
+                    const imgWrapper = document.createElement('div');
+                    imgWrapper.style.position = 'relative';
+                    imgWrapper.innerHTML = `
+                        <img src="${img}" alt="Imagem de ${car.nome}" onload="this.style.opacity='1'" onerror="this.style.display='none';">
+                        <button class="remove-btn" onclick="removeImage('${carId}', ${index})">X</button>
+                    `;
+                    imgWrapper.querySelector('img').style.opacity = '0';
+                    imgWrapper.querySelector('img').style.transition = 'opacity 0.5s';
+                    imagesContainer.appendChild(imgWrapper);
                 });
             } else {
                 imagesContainer.innerHTML = '<p>Sem imagens disponíveis</p>';
@@ -474,6 +478,29 @@
             document.getElementById('car-dialog').dataset.carId = carId;
             document.getElementById('car-dialog').dataset.originalData = JSON.stringify(car);
             toggleEditMode(false); // Start in view mode
+            document.getElementById('edit-car-images').value = ''; // Clear file input
+        }
+
+        function removeImage(carId, imageIndex) {
+            if (confirm('Tem certeza que deseja remover esta imagem?')) {
+                const car = cars.modelos.find(c => (c.id || cars.modelos.indexOf(c) + 1).toString() === carId);
+                if (car && car.imagens && car.imagens[imageIndex]) {
+                    // Assuming backend supports image deletion by index or URL
+                    fetch(`http://localhost:5000/api/cars/${carId}/images/${imageIndex}`, {
+                        method: 'DELETE'
+                    }).then(response => {
+                        if (response.ok) {
+                            car.imagens.splice(imageIndex, 1);
+                            showCarDetails(carId); // Refresh dialog
+                        } else {
+                            throw new Error('Erro ao remover imagem');
+                        }
+                    }).catch(error => {
+                        console.error('Erro ao remover imagem:', error);
+                        alert('Erro ao remover a imagem. Verifique o console.');
+                    });
+                }
+            }
         }
 
         function showDeleteDialog(carId) {
@@ -512,15 +539,20 @@
             const dialog = document.getElementById('car-dialog');
             const editFields = dialog.querySelectorAll('.edit-field');
             const saveBtn = dialog.querySelector('.save-btn');
+            const addImageInput = document.getElementById('edit-car-images');
 
             if (edit) {
                 document.querySelectorAll('#car-dialog span').forEach(span => span.style.display = 'none');
                 editFields.forEach(field => field.style.display = 'inline-block');
                 saveBtn.style.display = 'inline-block';
+                addImageInput.style.display = 'block';
+                document.querySelectorAll('.remove-btn').forEach(btn => btn.style.display = 'block');
             } else {
                 document.querySelectorAll('#car-dialog span').forEach(span => span.style.display = 'inline');
                 editFields.forEach(field => field.style.display = 'none');
                 saveBtn.style.display = 'none';
+                addImageInput.style.display = 'none';
+                document.querySelectorAll('.remove-btn').forEach(btn => btn.style.display = 'none');
             }
         }
 
