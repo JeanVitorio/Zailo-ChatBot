@@ -53,6 +53,7 @@ def save_carros(data):
             json.dump(data, f, indent=4, ensure_ascii=False)
     except Exception as e:
         print(f"Erro ao salvar JSON: {e}")
+        raise  # Re-lança a exceção pra ser capturada
 
 carros_data = load_carros()
 
@@ -127,12 +128,34 @@ def update_car(car_id):
 @app.route('/api/cars/<car_id>', methods=['DELETE'])
 def delete_car(car_id):
     global carros_data
-    carros_data['modelos'] = [c for c in carros_data['modelos'] if c['id'] != car_id]
-    car_dir = os.path.join(CAR_DIR, car_id)
-    if os.path.exists(car_dir):
-        shutil.rmtree(car_dir)
-    save_carros(carros_data)
-    return jsonify({"message": "Carro removido"}), 200
+    try:
+        # Depuração: listar carros antes da remoção
+        print(f"Carros antes da remoção: {[c.get('id', 'Sem ID') for c in carros_data['modelos']]}")
+        
+        # Encontrar e remover o carro da lista
+        car_to_delete = next((c for c in carros_data['modelos'] if c.get('id') == car_id), None)
+        if not car_to_delete:
+            return jsonify({"error": "Carro não encontrado"}), 404
+        carros_data['modelos'] = [c for c in carros_data['modelos'] if c.get('id') != car_id]
+
+        # Remover o diretório de imagens
+        car_dir = os.path.join(CAR_DIR, car_id)
+        if os.path.exists(car_dir):
+            print(f"Tentando remover diretório: {car_dir}")
+            shutil.rmtree(car_dir)
+            print(f"Diretório {car_dir} removido com sucesso.")
+        else:
+            print(f"Diretório não encontrado para remoção: {car_dir}")
+
+        # Salvar as alterações no JSON
+        save_carros(carros_data)
+        return jsonify({"message": "Carro removido"}), 200
+    except PermissionError as pe:
+        print(f"Erro de permissão ao deletar diretório {car_dir}: {str(pe)}")
+        return jsonify({"error": "Erro de permissão ao deletar arquivos. Verifique as permissões."}), 500
+    except Exception as e:
+        print(f"Erro ao deletar carro {car_id}: {str(e)} - Carros afetados: {carros_data['modelos']}")
+        return jsonify({"error": f"Erro interno ao deletar carro: {str(e)}"}), 500
 
 @app.route('/api/clients', methods=['GET'])
 def get_clients():

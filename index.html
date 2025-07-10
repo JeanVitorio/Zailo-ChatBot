@@ -4,53 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZailonSoft Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: linear-gradient(135deg, #0D947A 0%, #34D399 70%); color: #1F2937; min-height: 100vh; padding: 20px; overflow-x: hidden; }
-        .container { max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; gap: 30px; }
-        .header { background: linear-gradient(90deg, #0D947A, #10B981); padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2); animation: fadeIn 1s ease-in-out; }
-        .header h1 { font-size: 2.8em; font-weight: 800; letter-spacing: 2px; color: #FFFFFF; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
-        .nav { display: flex; justify-content: center; gap: 25px; background: rgba(13, 148, 122, 0.9); padding: 15px; border-radius: 15px; backdrop-filter: blur(12px); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15); }
-        .nav a { color: #FFFFFF; text-decoration: none; font-size: 1.2em; font-weight: 600; padding: 12px 25px; transition: all 0.3s ease; border-radius: 10px; }
-        .nav a:hover, .nav a.active { background: #34D399; color: #1F2937; transform: scale(1.1); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-        .tab-content { display: none; background: linear-gradient(135deg, #FFFFFF, #F9FAFB); color: #1F2937; padding: 35px; border-radius: 20px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15); animation: slideUp 0.6s ease-out; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%); color: #1F2937; font-family: 'Poppins', sans-serif; min-height: 100vh; padding: 20px; }
+        .container { max-width: 1600px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
+        .header { background: linear-gradient(90deg, #1E3A8A 0%, #3B82F6 100%); padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 8px 24px rgba(30, 58, 138, 0.2); position: relative; overflow: hidden; }
+        .header::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, transparent 70%); animation: pulse 10s infinite; }
+        .header h1 { font-family: 'Montserrat', sans-serif; font-size: 2.8em; font-weight: 800; color: #FFFFFF; text-transform: uppercase; z-index: 1; }
+        .nav { display: flex; justify-content: center; gap: 25px; background: #1E3A8A; padding: 20px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); }
+        .nav a { color: #D1D5DB; text-decoration: none; font-size: 1.2em; font-weight: 500; padding: 12px 25px; transition: all 0.3s ease; border-radius: 8px; position: relative; }
+        .nav a:hover, .nav a.active { background: #3B82F6; color: #FFFFFF; }
+        .nav a::after { content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: #FBBF24; transition: width 0.3s ease; }
+        .nav a:hover::after, .nav a.active::after { width: 50%; }
+        .tab-content { display: none; background: #FFFFFF; padding: 30px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05); animation: fadeIn 0.5s ease; }
         .tab-content.active { display: block; }
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 25px; }
-        .card { background: #FFFFFF; border-radius: 20px; overflow: hidden; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; height: 420px; position: relative; }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); }
-        .card-image { width: 100%; height: 260px; background-color: #F5F5F5; position: relative; }
-        .card-image img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.4s ease; }
+        .tab-content h2 { font-family: 'Montserrat', sans-serif; font-size: 2em; font-weight: 600; color: #1E3A8A; margin-bottom: 20px; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-top: 20px; }
+        .card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; height: 450px; position: relative; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15); }
+        .card-image { width: 100%; height: 280px; background: #F3F4F6; position: relative; overflow: hidden; }
+        .card-image img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease; }
+        .card-image .badge { position: absolute; top: 15px; left: 15px; background: #FBBF24; color: #FFFFFF; padding: 5px 15px; border-radius: 20px; font-size: 0.9em; font-weight: 500; }
         .card-content { padding: 20px; text-align: left; }
-        .card h3 { color: #0D947A; font-size: 1.6em; margin-bottom: 12px; font-weight: 700; }
-        .card p { color: #1F2937; font-size: 1.2em; margin-bottom: 12px; }
-        .card-buttons { position: absolute; bottom: 15px; left: 15px; right: 15px; display: flex; justify-content: flex-end; align-items: center; }
-        .btn { background: #0D947A; color: #FFFFFF; padding: 12px 25px; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
-        .btn:hover { background: #34D399; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-        .btn:disabled { background: #A3BFFA; cursor: not-allowed; }
+        .card h3 { color: #1E3A8A; font-size: 1.6em; margin-bottom: 10px; font-weight: 600; }
+        .card p { color: #6B7280; font-size: 1.1em; margin-bottom: 10px; }
+        .card-buttons { position: absolute; bottom: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .delete-btn { position: absolute; top: 15px; right: 15px; background: #EF4444; color: #FFFFFF; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.2em; cursor: pointer; transition: background-color 0.3s ease, transform 0.3s ease; }
+        .delete-btn:hover { background-color: #DC2626; transform: scale(1.1); }
+        .btn { background: linear-gradient(90deg, #1E3A8A 0%, #3B82F6 100%); color: #FFFFFF; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; transition: transform 0.3s ease, background 0.3s ease; }
+        .btn:hover { transform: translateY(-2px); background: linear-gradient(90deg, #1E40AF 0%, #60A5FA 100%); }
+        .btn:disabled { background: #D1D5DB; cursor: not-allowed; }
         #add-car-container { display: flex; justify-content: center; align-items: center; min-height: 70vh; }
-        #add-car-card { display: none; flex-direction: column; gap: 25px; max-width: 550px; margin: 20px auto; background: linear-gradient(135deg, #FFFFFF, #F0F4F8); padding: 30px; border-radius: 25px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); text-align: center; animation: popIn 0.5s ease-out; }
+        #add-car-card { display: none; flex-direction: column; gap: 25px; max-width: 600px; margin: 20px auto; background: #FFFFFF; padding: 30px; border-radius: 12px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1); text-align: left; animation: slideUp 0.5s ease; }
         #add-car-card.active { display: flex; }
-        input, textarea { padding: 14px; border: 2px solid #34D399; border-radius: 15px; font-size: 1.1em; color: #1F2937; background: #FFFFFF; width: 100%; transition: all 0.3s ease; }
+        input, textarea { padding: 12px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 1.1em; color: #1F2937; background: #F9FAFB; width: 100%; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
         textarea { resize: vertical; }
-        input:focus, textarea:focus { border-color: #0D947A; outline: none; box-shadow: 0 0 8px rgba(13, 148, 122, 0.3); }
-        .step-buttons { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
-        .progress-dots { display: flex; justify-content: center; gap: 15px; margin-top: 25px; }
-        .progress-dot { width: 12px; height: 12px; background: #D1D5DB; border-radius: 50%; transition: all 0.3s ease; }
-        .progress-dot.active { background: #0D947A; transform: scale(1.4); box-shadow: 0 0 6px rgba(13, 148, 122, 0.5); }
-        #qrcode-container { text-align: center; padding: 20px; }
-        #qrcode-container img { max-width: 300px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); border: 2px solid #34D399; }
-        #qrcode-container .no-qrcode { color: #FF6B6B; font-weight: 600; }
-        #car-dialog, #client-dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #FFFFFF; padding: 30px; border-radius: 15px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); color: #1F2937; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
-        #car-dialog h3, #client-dialog h3 { color: #0D947A; margin-bottom: 20px; font-size: 1.8em; }
-        #car-dialog p, #client-dialog p { margin: 10px 0; font-size: 1.1em; color: #1F2937; }
-        .edit-form { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
-        .edit-form input, .edit-form textarea { margin-bottom: 10px; }
-        .car-images { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
-        .car-images img { max-width: 150px; border-radius: 10px; border: 1px solid #34D399; }
-        .edit-save-btns { display: flex; gap: 10px; margin-top: 20px; }
+        input:focus, textarea:focus { border-color: #3B82F6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.2); outline: none; }
+        .step-buttons { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
+        .progress-dots { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .progress-dot { width: 10px; height: 10px; background: #D1D5DB; border-radius: 50%; transition: background-color 0.3s ease, transform 0.3s ease; }
+        .progress-dot.active { background: #FBBF24; transform: scale(1.3); }
+        #qrcode-container { text-align: center; padding: 30px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05); }
+        #qrcode-container img { max-width: 300px; border-radius: 8px; border: 1px solid #E5E7EB; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
+        #qrcode-container img:hover { transform: scale(1.05); }
+        #qrcode-container .no-qrcode { color: #EF4444; font-weight: 500; font-size: 1.1em; }
+        #car-dialog, #client-dialog, #delete-dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #FFFFFF; padding: 30px; border-radius: 12px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2); color: #1F2937; width: 90%; max-width: 500px; text-align: center; animation: fadeIn 0.5s ease; }
+        #car-dialog h3, #client-dialog h3, #delete-dialog h3 { font-family: 'Montserrat', sans-serif; color: #1E3A8A; margin-bottom: 20px; font-size: 1.8em; }
+        #car-dialog p, #client-dialog p, #delete-dialog p { margin: 12px 0; font-size: 1.1em; color: #4B5563; }
+        .edit-form { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .edit-form input, .edit-form textarea { margin-bottom: 15px; }
+        .car-images { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; }
+        .car-images img { max-width: 180px; border-radius: 8px; border: 1px solid #E5E7EB; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
+        .car-images img:hover { transform: scale(1.05); }
+        .edit-save-btns { display: flex; gap: 15px; margin-top: 20px; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -66,7 +77,7 @@
         </div>
 
         <div id="catalog" class="tab-content active">
-            <h2>Gerenciar Carros</h2>
+            <h2>Gerenciar Veículos</h2>
             <div class="card-grid" id="car-list"></div>
         </div>
 
@@ -79,10 +90,10 @@
             <h2>Conexão WhatsApp</h2>
             <div id="qrcode-container">
                 <img id="qrcode-img" src="http://localhost:5000/QRCODE/qrcode.png" alt="QR Code para Conexão WhatsApp" onerror="this.style.display='none'; document.getElementById('no-qrcode-msg').style.display='block';">
-                <div id="no-qrcode-msg" class="no-qrcode" style="display: none;">O servidor está aguardando a geração do QR code.</div>
+                <div id="no-qrcode-msg" class="no-qrcode" style="display: none;">O servidor está aguardando a geração do QR Code.</div>
             </div>
             <button class="btn" onclick="refreshQR()">Gerar QR para Conexão</button>
-            <p id="connection-status" style="margin-top: 10px; color: #1F2937;"></p>
+            <p id="connection-status" style="margin-top: 15px; color: #4B5563;"></p>
         </div>
 
         <div id="add-car" class="tab-content">
@@ -108,7 +119,7 @@
         </div>
 
         <div id="car-dialog">
-            <h3>Detalhes do Carro</h3>
+            <h3>Detalhes do Veículo</h3>
             <p><strong>Nome:</strong> <span id="car-name-detail"></span> <input type="text" id="edit-car-name" style="display: none;"></p>
             <p><strong>Ano:</strong> <span id="car-year-detail"></span> <input type="number" id="edit-car-year" style="display: none;"></p>
             <p><strong>Preço:</strong> <span id="car-price-detail"></span> <input type="text" id="edit-car-price" style="display: none;"></p>
@@ -160,12 +171,22 @@
             <p><strong>Foto:</strong> <span id="client-sale-photo"></span></p>
             <button class="btn" onclick="closeDialog()">Fechar</button>
         </div>
+
+        <div id="delete-dialog">
+            <h3>Confirmar Exclusão</h3>
+            <p>Tem certeza que deseja excluir este veículo?</p>
+            <div style="margin-top: 20px; display: flex; gap: 15px; justify-content: center;">
+                <button class="btn" onclick="confirmDelete()">Deletar</button>
+                <button class="btn" onclick="closeDeleteDialog()">Cancelar</button>
+            </div>
+        </div>
     </div>
 
     <script>
         let cars = {};
         let currentStep = 1;
         let carData = {};
+        let carToDelete = null;
 
         async function loadCars() {
             try {
@@ -175,7 +196,7 @@
                 renderCars();
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
-                document.getElementById('car-list').innerHTML = '<p style="color: #FF6B6B; text-align: center;">Erro ao carregar carros. Verifique o servidor.</p>';
+                document.getElementById('car-list').innerHTML = '<p style="color: #EF4444; text-align: center; font-weight: 500;">Erro ao carregar carros. Verifique o servidor.</p>';
             }
         }
 
@@ -196,10 +217,10 @@
         function nextStep() {
             const input = document.getElementById('car-input');
             if (!input.value.trim() && currentStep < 6) {
-                input.style.borderColor = '#FF6B6B';
+                input.style.borderColor = '#EF4444';
                 return;
             }
-            input.style.borderColor = '#34D399';
+            input.style.borderColor = '#E5E7EB';
 
             if (currentStep === 1) carData.name = input.value;
             else if (currentStep === 2) carData.year = input.value;
@@ -211,7 +232,7 @@
                     alert('Por favor, selecione pelo menos uma foto.');
                     return;
                 }
-                carData.files = files; // Armazena os arquivos diretamente
+                carData.files = files;
             }
 
             currentStep++;
@@ -252,7 +273,7 @@
                 input.outerHTML = `<input type="file" id="car-input" accept="${steps[currentStep - 1].accept}" multiple>`;
             } else if (steps[currentStep - 1].type === 'review') {
                 input.outerHTML = `
-                    <div>
+                    <div style="text-align: left;">
                         <p><strong>Nome:</strong> ${carData.name || 'Não informado'}</p>
                         <p><strong>Ano:</strong> ${carData.year || 'Não informado'}</p>
                         <p><strong>Valor:</strong> ${carData.price || 'Não informado'}</p>
@@ -307,12 +328,12 @@
                     throw new Error(`Erro ao cadastrar carro: ${errorText}`);
                 }
                 await loadCars();
-                showTab('catalog'); // Volta diretamente pro catálogo após salvar
+                showTab('catalog');
             } catch (error) {
                 console.error('Erro ao salvar carro:', error);
                 alert(`Erro ao cadastrar o veículo. Detalhes: ${error.message}. Verifique o console para mais informações.`);
             } finally {
-                carData = {}; // Limpa carData após o envio
+                carData = {};
             }
         }
 
@@ -347,7 +368,6 @@
                 loadCars();
                 currentStep = 1;
                 carData = {};
-                // Reinicia o conteúdo de forma segura
                 const card = document.getElementById('add-car-card');
                 card.innerHTML = `
                     <h3 id="step-title">Etapa 1: Nome do Veículo</h3>
@@ -369,13 +389,13 @@
             const container = document.getElementById('car-list');
             container.innerHTML = '';
             if (!cars.modelos || cars.modelos.length === 0) {
-                container.innerHTML = '<p style="color: #FF6B6B; text-align: center;">Nenhum carro disponível.</p>';
+                container.innerHTML = '<p style="color: #EF4444; text-align: center; font-weight: 500;">Nenhum veículo disponível.</p>';
                 return;
             }
             cars.modelos.forEach((car, index) => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                let imageSrc = car.imagens && car.imagens.length > 0 ? car.imagens[0] : 'https://via.placeholder.com/300x250?text=Sem+Imagem';
+                let imageSrc = car.imagens && car.imagens.length > 0 ? car.imagens[0] : 'https://via.placeholder.com/350x280?text=Sem+Imagem';
                 card.innerHTML = `
                     <div class="card-image">
                         <img src="${imageSrc}" alt="${car.nome}" onload="this.style.opacity='1'" onerror="this.style.display='none';">
@@ -387,6 +407,7 @@
                     <div class="card-buttons">
                         <button class="btn" onclick="event.stopPropagation(); showCarDetails('${car.id || index + 1}')">Ver Detalhes</button>
                     </div>
+                    <button class="delete-btn" onclick="event.stopPropagation(); showDeleteDialog('${car.id || index + 1}')">X</button>
                 `;
                 container.appendChild(card);
             });
@@ -417,7 +438,7 @@
                     imgElement.onload = () => imgElement.style.opacity = '1';
                     imgElement.onerror = () => { imgElement.style.display = 'none'; console.error('Erro ao carregar imagem no diálogo:', img); };
                     imgElement.style.opacity = '0';
-                    imgElement.style.transition = 'opacity 0.3s';
+                    imgElement.style.transition = 'opacity 0.5s';
                     imagesContainer.appendChild(imgElement);
                 });
             } else {
@@ -426,6 +447,38 @@
             document.getElementById('car-dialog').style.display = 'block';
             document.getElementById('car-dialog').dataset.carId = carId;
             document.getElementById('car-dialog').dataset.originalData = JSON.stringify(car);
+        }
+
+        function showDeleteDialog(carId) {
+            carToDelete = carId;
+            document.getElementById('delete-dialog').style.display = 'block';
+        }
+
+        function closeDeleteDialog() {
+            carToDelete = null;
+            document.getElementById('delete-dialog').style.display = 'none';
+        }
+
+        function confirmDelete() {
+            if (carToDelete) {
+                fetch(`http://localhost:5000/api/cars/${carToDelete}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(errorText => { throw new Error(errorText || 'Erro ao deletar o veículo'); });
+                    }
+                    return loadCars();
+                })
+                .then(() => {
+                    closeDeleteDialog();
+                    alert('Veículo deletado com sucesso!');
+                })
+                .catch(error => {
+                    console.error('Erro ao deletar carro:', error);
+                    alert(`Erro ao deletar o veículo. Detalhes: ${error.message}. Verifique o console ou configure o CORS no backend.`);
+                });
+            }
         }
 
         function toggleEditMode() {
@@ -500,7 +553,7 @@
 
         function closeCarDialog() {
             document.getElementById('car-dialog').style.display = 'none';
-            toggleEditMode(); // Garante que saia do modo edição ao fechar
+            toggleEditMode();
         }
 
         function closeDialog() {
