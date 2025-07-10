@@ -4,9 +4,11 @@ import os
 import json
 import uuid
 import shutil
+from bancodedados import Database
 
 app = Flask(__name__)
 CORS(app)
+db = Database()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CAR_DIR = os.path.join(BASE_DIR, 'cars')
@@ -56,6 +58,7 @@ def add_car():
     
     data['cars'].append(new_car)
     save_data()
+    db.add_car(name, new_car['year'], new_car['description'], '', new_car['images'])
     return jsonify(new_car), 201
 
 @app.route('/api/cars/<car_id>', methods=['PUT'])
@@ -80,6 +83,7 @@ def update_car(car_id):
                 car['images'].append(os.path.join(car_id, filename))
     
     save_data()
+    db.add_car(car['name'], car['year'], car['description'], '', car['images'])
     return jsonify(car), 200
 
 @app.route('/api/cars/<car_id>', methods=['DELETE'])
@@ -89,6 +93,7 @@ def delete_car(car_id):
     car_dir = os.path.join(CAR_DIR, car_id)
     if os.path.exists(car_dir):
         shutil.rmtree(car_dir)
+    db.delete_car(car_id)
     save_data()
     return jsonify({"message": "Carro removido"}), 200
 
@@ -103,8 +108,11 @@ def add_client():
     client_data['interests'] = client_data.get('interests', {})
     client_data['documents'] = client_data.get('documents', {})
     client_data['job'] = client_data.get('job', '')
+    client_data['state'] = client_data.get('state', 'inicial')
+    client_data['report'] = client_data.get('report', 'Relatório inicial')
     data['clients'].append(client_data)
     save_data()
+    db.add_client(client_data['id'], '', '', client_data['interests'], client_data['state'])
     return jsonify(client_data), 201
 
 @app.route('/api/clients/<client_id>', methods=['PUT'])
@@ -116,12 +124,14 @@ def update_client(client_id):
     
     client.update(client_data)
     save_data()
+    db.add_client(client_id, '', '', client_data.get('interests', {}), client_data.get('state', 'inicial'))
     return jsonify(client), 200
 
 @app.route('/api/clients/<client_id>', methods=['DELETE'])
 def delete_client(client_id):
     global data
     data['clients'] = [c for c in data['clients'] if c['id'] != client_id]
+    db.delete_client(client_id)
     save_data()
     return jsonify({"message": "Cliente removido"}), 200
 

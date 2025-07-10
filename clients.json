@@ -19,14 +19,11 @@
             ]
         },
         {
-            "id": "c4523e74-ab48-460e-8309-dc0bf1604395",
-            "name": "Celta",
-            "year": "2009",
-            "description": "2 portas, vermelho, placa abc-1234",
-            "images": [
-                "c4523e74-ab48-460e-8309-dc0bf1604395\\image_1.jpeg",
-                "c4523e74-ab48-460e-8309-dc0bf1604395\\image_2.jpeg"
-            ]
+            "id": "5fe8934a-51df-4ad6-b9d5-0f39f89785e1",
+            "name": "BMW",
+            "year": "2019",
+            "description": "carro novo",
+            "images": []
         }
     ],
     "clients": []
