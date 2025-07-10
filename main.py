@@ -62,7 +62,7 @@ def get_cars():
 
 @app.route('/api/cars', methods=['POST'])
 def add_car():
-    car_data = request.form
+    car_data = request.form.to_dict()
     name = car_data.get('name')
     if not name:
         return jsonify({"error": "Nome do carro é obrigatório"}), 400
@@ -83,7 +83,7 @@ def add_car():
     if 'images' in request.files:
         files = request.files.getlist('images')
         for i, file in enumerate(files, 1):
-            if file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+            if file and file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
                 filename = f"image_{i}.{file.filename.split('.')[-1]}"
                 filepath = os.path.join(car_dir, filename)
                 file.save(filepath)
@@ -95,25 +95,27 @@ def add_car():
 
 @app.route('/api/cars/<car_id>', methods=['PUT'])
 def update_car(car_id):
-    car_data = request.form
+    car_data = request.form.to_dict()
     car = next((c for c in carros_data['modelos'] if c['id'] == car_id), None)
     if not car:
         return jsonify({"error": "Carro não encontrado"}), 404
     
+    # Atualizar campos básicos
     car['nome'] = car_data.get('name', car['nome'])
     car['ano'] = car_data.get('year', car['ano'])
     car['preco'] = car_data.get('price', car['preco'])
     car['descricao'] = car_data.get('description', car['descricao'])
     
+    # Gerenciar imagens apenas se houver upload
+    car_dir = os.path.join(CAR_DIR, car_id)
     if 'images' in request.files:
-        car_dir = os.path.join(CAR_DIR, car_id)
         if os.path.exists(car_dir):
             shutil.rmtree(car_dir)
         os.makedirs(car_dir, exist_ok=True)
         car['imagens'] = []
         files = request.files.getlist('images')
         for i, file in enumerate(files, 1):
-            if file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+            if file and file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
                 filename = f"image_{i}.{file.filename.split('.')[-1]}"
                 filepath = os.path.join(car_dir, filename)
                 file.save(filepath)
@@ -219,16 +221,14 @@ def delete_client(chat_id):
 def serve_image(filename):
     return send_from_directory(BASE_DIR, filename)
 
-# 🔥 ROTA PARA SERVIR O QRCODE
 @app.route('/QRCODE/<path:filename>')
 def serve_qrcode(filename):
     qrcode_dir = os.path.join(BASE_DIR, 'QRCODE')
     return send_from_directory(qrcode_dir, filename)
 
-# Opcional: Rota simulada de status
 @app.route('/status')
 def bot_status():
-    return jsonify({"isReady": False})  # Altere para True se quiser simular "conectado"
+    return jsonify({"isReady": False})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
