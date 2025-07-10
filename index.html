@@ -49,15 +49,42 @@
         #qrcode-container img { max-width: 300px; border-radius: 8px; border: 1px solid #E5E7EB; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
         #qrcode-container img:hover { transform: scale(1.05); }
         #qrcode-container .no-qrcode { color: #EF4444; font-weight: 500; font-size: 1.1em; }
-        #car-dialog, #client-dialog, #delete-dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #FFFFFF; padding: 30px; border-radius: 12px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2); color: #2F4F2F; width: 90%; max-width: 500px; text-align: center; animation: fadeIn 0.5s ease; }
-        #car-dialog h3, #client-dialog h3, #delete-dialog h3 { font-family: 'Montserrat', sans-serif; color: #2F4F2F; margin-bottom: 20px; font-size: 1.8em; }
-        #car-dialog p, #client-dialog p, #delete-dialog p { margin: 12px 0; font-size: 1.1em; color: #4B5563; }
+        #car-dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, #FFFFFF 0%, #F5F7FA 100%); padding: 30px; border-radius: 15px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); color: #2F4F2F; width: 90%; max-width: 700px; max-height: 80vh; overflow: hidden; animation: fadeIn 0.5s ease; border: 1px solid #E5E7EB; }
+        #car-dialog .dialog-content { max-height: 60vh; overflow-y: auto; padding-right: 15px; }
+        #car-dialog h3 { font-family: 'Montserrat', sans-serif; color: #2F4F2F; margin-bottom: 20px; font-size: 2.2em; text-transform: uppercase; letter-spacing: 1px; }
+        #car-dialog p { margin: 15px 0; font-size: 1.1em; color: #4B5563; display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #F9FAFB; border-radius: 8px; }
+        #car-dialog .edit-field { display: none; width: 60%; padding: 10px; border: 1px solid #6B8E23; border-radius: 8px; font-size: 1.1em; background: #FFF; transition: border-color 0.3s ease; }
+        #car-dialog .edit-field:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); outline: none; }
+        #car-dialog .car-images { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; justify-content: center; }
+        #car-dialog .car-images img { max-width: 180px; border-radius: 10px; border: 1px solid #E5E7EB; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
+        #car-dialog .car-images img:hover { transform: scale(1.05); }
+        #car-dialog .dialog-actions { margin-top: 20px; display: flex; justify-content: center; gap: 15px; padding-top: 15px; border-top: 1px solid #E5E7EB; }
+        #car-dialog .dialog-actions .btn { background: linear-gradient(90deg, #2F4F2F 0%, #6B8E23 100%); color: #FFD700; padding: 12px 25px; font-size: 1.1em; border-radius: 10px; border: none; cursor: pointer; transition: all 0.3s ease; }
+        #car-dialog .dialog-actions .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(47, 79, 47, 0.3); }
+        #car-dialog .dialog-actions .save-btn { display: none; }
+        #client-dialog, #delete-dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #FFFFFF; padding: 30px; border-radius: 12px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2); color: #1F2937; width: 90%; max-width: 500px; text-align: center; animation: fadeIn 0.5s ease; }
+        #client-dialog h3, #delete-dialog h3 { font-family: 'Montserrat', sans-serif; color: #1E3A8A; margin-bottom: 20px; font-size: 1.8em; }
+        #client-dialog p, #delete-dialog p { margin: 12px 0; font-size: 1.1em; color: #4B5563; }
         .edit-form { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
         .edit-form input, .edit-form textarea { margin-bottom: 15px; }
-        .car-images { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; }
-        .car-images img { max-width: 180px; border-radius: 8px; border: 1px solid #E5E7EB; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
-        .car-images img:hover { transform: scale(1.05); }
         .edit-save-btns { display: flex; gap: 15px; margin-top: 20px; }
+
+        /* Scrollbar styling for a luxurious look */
+        #car-dialog .dialog-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        #car-dialog .dialog-content::-webkit-scrollbar-track {
+            background: #F5F7FA;
+            border-radius: 10px;
+        }
+        #car-dialog .dialog-content::-webkit-scrollbar-thumb {
+            background: #6B8E23;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        #car-dialog .dialog-content::-webkit-scrollbar-thumb:hover {
+            background: #FFD700;
+        }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -119,20 +146,19 @@
         </div>
 
         <div id="car-dialog">
-            <h3>Detalhes do Veículo</h3>
-            <p><strong>Nome:</strong> <span id="car-name-detail"></span> <input type="text" id="edit-car-name" style="display: none;"></p>
-            <p><strong>Ano:</strong> <span id="car-year-detail"></span> <input type="number" id="edit-car-year" style="display: none;"></p>
-            <p><strong>Preço:</strong> <span id="car-price-detail"></span> <input type="text" id="edit-car-price" style="display: none;"></p>
-            <p><strong>Descrição:</strong> <span id="car-description-detail"></span> <textarea id="edit-car-description" style="display: none;" rows="2"></textarea></p>
-            <div class="car-images" id="car-images-detail"></div>
-            <input type="file" id="edit-car-images" multiple accept="image/*" style="display: none; margin-top: 10px;">
-            <div class="edit-save-btns" style="display: none;">
-                <button class="btn" onclick="saveCarChanges()">Salvar Alterações</button>
-                <button class="btn" onclick="discardCarChanges()">Descartar Alterações</button>
+            <div class="dialog-content">
+                <h3>Detalhes do Veículo</h3>
+                <p><strong>Nome:</strong> <span id="car-name-detail"></span> <input type="text" id="edit-car-name" class="edit-field"></p>
+                <p><strong>Ano:</strong> <span id="car-year-detail"></span> <input type="number" id="edit-car-year" class="edit-field"></p>
+                <p><strong>Preço:</strong> <span id="car-price-detail"></span> <input type="text" id="edit-car-price" class="edit-field"></p>
+                <p><strong>Descrição:</strong> <span id="car-description-detail"></span> <textarea id="edit-car-description" class="edit-field" rows="2"></textarea></p>
+                <div class="car-images" id="car-images-detail"></div>
+                <input type="file" id="edit-car-images" multiple accept="image/*" style="display: none; margin-top: 10px;">
             </div>
-            <div style="margin-top: 20px;">
+            <div class="dialog-actions">
                 <button class="btn" onclick="toggleEditMode()">Editar</button>
                 <button class="btn" onclick="closeCarDialog()">Fechar</button>
+                <button class="btn save-btn" onclick="saveCarChanges()">Salvar</button>
             </div>
         </div>
 
@@ -447,6 +473,7 @@
             document.getElementById('car-dialog').style.display = 'block';
             document.getElementById('car-dialog').dataset.carId = carId;
             document.getElementById('car-dialog').dataset.originalData = JSON.stringify(car);
+            toggleEditMode(false); // Start in view mode
         }
 
         function showDeleteDialog(carId) {
@@ -481,35 +508,19 @@
             }
         }
 
-        function toggleEditMode() {
+        function toggleEditMode(edit = true) {
             const dialog = document.getElementById('car-dialog');
-            const isEditing = dialog.dataset.editing === 'true';
-            if (isEditing) {
-                document.getElementById('car-name-detail').style.display = 'inline';
-                document.getElementById('car-year-detail').style.display = 'inline';
-                document.getElementById('car-price-detail').style.display = 'inline';
-                document.getElementById('car-description-detail').style.display = 'inline';
-                document.getElementById('edit-car-name').style.display = 'none';
-                document.getElementById('edit-car-year').style.display = 'none';
-                document.getElementById('edit-car-price').style.display = 'none';
-                document.getElementById('edit-car-description').style.display = 'none';
-                document.getElementById('edit-car-images').style.display = 'none';
-                document.querySelector('.edit-save-btns').style.display = 'none';
-                dialog.dataset.editing = 'false';
-                document.querySelector('button[onclick="toggleEditMode()"]').textContent = 'Editar';
+            const editFields = dialog.querySelectorAll('.edit-field');
+            const saveBtn = dialog.querySelector('.save-btn');
+
+            if (edit) {
+                document.querySelectorAll('#car-dialog span').forEach(span => span.style.display = 'none');
+                editFields.forEach(field => field.style.display = 'inline-block');
+                saveBtn.style.display = 'inline-block';
             } else {
-                document.getElementById('car-name-detail').style.display = 'none';
-                document.getElementById('car-year-detail').style.display = 'none';
-                document.getElementById('car-price-detail').style.display = 'none';
-                document.getElementById('car-description-detail').style.display = 'none';
-                document.getElementById('edit-car-name').style.display = 'inline';
-                document.getElementById('edit-car-year').style.display = 'inline';
-                document.getElementById('edit-car-price').style.display = 'inline';
-                document.getElementById('edit-car-description').style.display = 'inline';
-                document.getElementById('edit-car-images').style.display = 'block';
-                document.querySelector('.edit-save-btns').style.display = 'flex';
-                dialog.dataset.editing = 'true';
-                document.querySelector('button[onclick="toggleEditMode()"]').textContent = 'Cancelar Edição';
+                document.querySelectorAll('#car-dialog span').forEach(span => span.style.display = 'inline');
+                editFields.forEach(field => field.style.display = 'none');
+                saveBtn.style.display = 'none';
             }
         }
 
@@ -533,8 +544,9 @@
             }).then(response => {
                 if (response.ok) {
                     loadCars();
-                    toggleEditMode();
+                    toggleEditMode(false); // Return to view mode
                     alert('Alterações salvas com sucesso!');
+                    showCarDetails(carId); // Refresh details
                 } else {
                     return response.text().then(errorText => { throw new Error(errorText || 'Erro ao salvar alterações'); });
                 }
@@ -544,16 +556,9 @@
             });
         }
 
-        function discardCarChanges() {
-            const dialog = document.getElementById('car-dialog');
-            const originalData = JSON.parse(dialog.dataset.originalData);
-            showCarDetails(dialog.dataset.carId);
-            toggleEditMode();
-        }
-
         function closeCarDialog() {
             document.getElementById('car-dialog').style.display = 'none';
-            toggleEditMode();
+            toggleEditMode(false); // Ensure edit mode is off when closing
         }
 
         function closeDialog() {
