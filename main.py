@@ -1,33 +1,64 @@
 from flask import Flask, request, jsonify, send_from_directory
-from flask_cors import CORS
 import os
 import json
 import uuid
 import shutil
-from bancodedados import Database
+import sqlite3
+from datetime import datetime
+from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-db = Database()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CAR_DIR = os.path.join(BASE_DIR, 'cars')
-CLIENT_DATA_FILE = os.path.join(BASE_DIR, 'clients.json')
+CARROS_JSON = os.path.join(BASE_DIR, 'carros.json')
 if not os.path.exists(CAR_DIR):
     os.makedirs(CAR_DIR)
 
-# Carregar dados iniciais
-def load_data():
-    if os.path.exists(CLIENT_DATA_FILE):
-        with open(CLIENT_DATA_FILE, 'r') as f:
-            return json.load(f)
-    return {"cars": [], "clients": []}
+# Inicializar banco de dados
+def init_db():
+    conn = sqlite3.connect('weiss_multimarcas.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS clients (
+            chat_id TEXT PRIMARY KEY,
+            message TEXT,
+            response TEXT,
+            interests TEXT,
+            state TEXT,
+            last_interaction TIMESTAMP,
+            report TEXT
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
-data = load_data()
+init_db()
+
+# Carregar e salvar carros.json
+def load_carros():
+    if os.path.exists(CARROS_JSON):
+        try:
+            with open(CARROS_JSON, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Erro ao carregar JSON: {e}")
+            return {"modelos": [], "numeros_para_contato": []}
+    return {"modelos": [], "numeros_para_contato": []}
+
+def save_carros(data):
+    try:
+        with open(CARROS_JSON, 'w', encoding='utf-8') as f:
+            json.dump(data, f, indent=4, ensure_ascii=False)
+    except Exception as e:
+        print(f"Erro ao salvar JSON: {e}")
+
+carros_data = load_carros()
 
 @app.route('/api/cars', methods=['GET'])
 def get_cars():
-    return jsonify(data['cars'])
+    return jsonify(carros_data)
 
 @app.route('/api/cars', methods=['POST'])
 def add_car():
@@ -42,110 +73,162 @@ def add_car():
     
     new_car = {
         "id": car_id,
-        "name": name,
-        "year": car_data.get('year', ''),
-        "description": car_data.get('description', ''),
-        "images": []
+        "nome": name,
+        "ano": car_data.get('year', ''),
+        "preco": car_data.get('price', 'R$ 0'),
+        "descricao": car_data.get('description', ''),
+        "imagens": []
     }
     
     if 'images' in request.files:
         files = request.files.getlist('images')
         for i, file in enumerate(files, 1):
-            if file and file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+            if file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
                 filename = f"image_{i}.{file.filename.split('.')[-1]}"
-                file.save(os.path.join(car_dir, filename))
-                new_car['images'].append(os.path.join(car_id, filename))
+                filepath = os.path.join(car_dir, filename)
+                file.save(filepath)
+                new_car['imagens'].append(os.path.join('cars', car_id, filename))
     
-    data['cars'].append(new_car)
-    save_data()
-    db.add_car(name, new_car['year'], new_car['description'], '', new_car['images'])
+    carros_data['modelos'].append(new_car)
+    save_carros(carros_data)
     return jsonify(new_car), 201
 
 @app.route('/api/cars/<car_id>', methods=['PUT'])
 def update_car(car_id):
     car_data = request.form
-    car = next((c for c in data['cars'] if c['id'] == car_id), None)
+    car = next((c for c in carros_data['modelos'] if c['id'] == car_id), None)
     if not car:
         return jsonify({"error": "Carro não encontrado"}), 404
     
-    car['name'] = car_data.get('name', car['name'])
-    car['year'] = car_data.get('year', car['year'])
-    car['description'] = car_data.get('description', car['description'])
+    car['nome'] = car_data.get('name', car['nome'])
+    car['ano'] = car_data.get('year', car['ano'])
+    car['preco'] = car_data.get('price', car['preco'])
+    car['descricao'] = car_data.get('description', car['descricao'])
     
     if 'images' in request.files:
         car_dir = os.path.join(CAR_DIR, car_id)
+        if os.path.exists(car_dir):
+            shutil.rmtree(car_dir)
+        os.makedirs(car_dir, exist_ok=True)
+        car['imagens'] = []
         files = request.files.getlist('images')
-        car['images'] = []
         for i, file in enumerate(files, 1):
-            if file and file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+            if file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
                 filename = f"image_{i}.{file.filename.split('.')[-1]}"
-                file.save(os.path.join(car_dir, filename))
-                car['images'].append(os.path.join(car_id, filename))
+                filepath = os.path.join(car_dir, filename)
+                file.save(filepath)
+                car['imagens'].append(os.path.join('cars', car_id, filename))
     
-    save_data()
-    db.add_car(car['name'], car['year'], car['description'], '', car['images'])
+    save_carros(carros_data)
     return jsonify(car), 200
 
 @app.route('/api/cars/<car_id>', methods=['DELETE'])
 def delete_car(car_id):
-    global data
-    data['cars'] = [c for c in data['cars'] if c['id'] != car_id]
+    global carros_data
+    carros_data['modelos'] = [c for c in carros_data['modelos'] if c['id'] != car_id]
     car_dir = os.path.join(CAR_DIR, car_id)
     if os.path.exists(car_dir):
         shutil.rmtree(car_dir)
-    db.delete_car(car_id)
-    save_data()
+    save_carros(carros_data)
     return jsonify({"message": "Carro removido"}), 200
 
 @app.route('/api/clients', methods=['GET'])
 def get_clients():
-    return jsonify(data['clients'])
+    conn = sqlite3.connect('weiss_multimarcas.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM clients')
+    clients = [
+        {
+            'chat_id': row[0],
+            'message': row[1],
+            'response': row[2],
+            'interests': json.loads(row[3]) if row[3] else [],
+            'state': row[4],
+            'last_interaction': row[5],
+            'report': row[6]
+        } for row in cursor.fetchall()
+    ]
+    conn.close()
+    return jsonify(clients)
 
 @app.route('/api/clients', methods=['POST'])
 def add_client():
     client_data = request.json
-    client_data['id'] = str(uuid.uuid4())
-    client_data['interests'] = client_data.get('interests', {})
-    client_data['documents'] = client_data.get('documents', {})
-    client_data['job'] = client_data.get('job', '')
-    client_data['state'] = client_data.get('state', 'inicial')
-    client_data['report'] = client_data.get('report', 'Relatório inicial')
-    data['clients'].append(client_data)
-    save_data()
-    db.add_client(client_data['id'], '', '', client_data['interests'], client_data['state'])
-    return jsonify(client_data), 201
+    chat_id = client_data.get('chat_id', str(uuid.uuid4()))
+    interests = client_data.get('interests', {})
+    state = client_data.get('state', 'inicial')
+    report = client_data.get('report', 'Conversa iniciada')
+    
+    conn = sqlite3.connect('weiss_multimarcas.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT OR REPLACE INTO clients (chat_id, message, response, interests, state, last_interaction, report)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ''', (chat_id, client_data.get('message', ''), client_data.get('response', ''),
+          json.dumps(interests), state, datetime.now(), report))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'chat_id': chat_id, 'state': state, 'interests': interests, 'report': report}), 201
 
-@app.route('/api/clients/<client_id>', methods=['PUT'])
-def update_client(client_id):
+@app.route('/api/clients/<chat_id>', methods=['PUT'])
+def update_client(chat_id):
     client_data = request.json
-    client = next((c for c in data['clients'] if c['id'] == client_id), None)
+    conn = sqlite3.connect('weiss_multimarcas.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM clients WHERE chat_id = ?', (chat_id,))
+    client = cursor.fetchone()
     if not client:
+        conn.close()
         return jsonify({"error": "Cliente não encontrado"}), 404
     
-    client.update(client_data)
-    save_data()
-    db.add_client(client_id, '', '', client_data.get('interests', {}), client_data.get('state', 'inicial'))
-    return jsonify(client), 200
+    cursor.execute('''
+        UPDATE clients SET
+            message = ?,
+            response = ?,
+            interests = ?,
+            state = ?,
+            last_interaction = ?,
+            report = ?
+        WHERE chat_id = ?
+    ''', (client_data.get('message', client[1]),
+          client_data.get('response', client[2]),
+          json.dumps(client_data.get('interests', json.loads(client[3]) if client[3] else {})),
+          client_data.get('state', client[4]),
+          datetime.now(),
+          client_data.get('report', client[6]),
+          chat_id))
+    conn.commit()
+    conn.close()
+    
+    return jsonify(client_data), 200
 
-@app.route('/api/clients/<client_id>', methods=['DELETE'])
-def delete_client(client_id):
-    global data
-    data['clients'] = [c for c in data['clients'] if c['id'] != client_id]
-    db.delete_client(client_id)
-    save_data()
-    return jsonify({"message": "Cliente removido"}), 200
+@app.route('/api/clients/<chat_id>', methods=['DELETE'])
+def delete_client(chat_id):
+    conn = sqlite3.connect('weiss_multimarcas.db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM clients WHERE chat_id = ?', (chat_id,))
+    deleted = cursor.rowcount > 0
+    conn.commit()
+    conn.close()
+    if deleted:
+        return jsonify({"message": "Cliente removido"}), 200
+    return jsonify({"error": "Cliente não encontrado"}), 404
 
 @app.route('/cars/<path:filename>')
 def serve_image(filename):
-    return send_from_directory(CAR_DIR, filename)
+    return send_from_directory(BASE_DIR, filename)
 
-@app.route('/qrcode')
-def get_qrcode():
-    return jsonify({"qrcode": "Simulated QR Code URL"})  # Placeholder
+# 🔥 ROTA PARA SERVIR O QRCODE
+@app.route('/QRCODE/<path:filename>')
+def serve_qrcode(filename):
+    qrcode_dir = os.path.join(BASE_DIR, 'QRCODE')
+    return send_from_directory(qrcode_dir, filename)
 
-def save_data():
-    with open(CLIENT_DATA_FILE, 'w') as f:
-        json.dump(data, f, indent=4)
+# Opcional: Rota simulada de status
+@app.route('/status')
+def bot_status():
+    return jsonify({"isReady": False})  # Altere para True se quiser simular "conectado"
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
