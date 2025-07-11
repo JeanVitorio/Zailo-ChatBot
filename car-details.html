@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, maximum-scale=1, height=device-height">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Detalhes do Veículo - ZailonSoft</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Variáveis de Cor para facilitar a manutenção do tema */
+        :root {
+            --cor-fundo-escuro: #121212;
+            --cor-fundo-card: #1E1E1E;
+            --cor-borda: #2c2c2c;
+            --cor-destaque: #D4A017; /* Dourado/Amarelo */
+            --cor-texto-principal: #E5E5E5;
+            --cor-texto-secundario: #a0a0a0;
+        }
+
+        /* Reset e Configurações Globais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo-escuro);
+            color: var(--cor-texto-principal);
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--cor-borda);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-radius: 12px;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--cor-destaque);
+            text-decoration: none;
+        }
+
+        .content {
+            background: var(--cor-fundo-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease;
+            position: relative;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px; /* Aumentada para garantir espaço antes das imagens */
+            position: relative;
+            z-index: 20; /* Garante que os detalhes fiquem acima das imagens */
+        }
+
+        .detail-item {
+            background-color: var(--cor-fundo-card);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--cor-destaque);
+            transition: all 0.3s ease;
+            height: 150px;
+            position: relative;
+        }
+
+        .detail-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--cor-texto-secundario);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-item span {
+            font-size: 1.2em;
+            color: var(--cor-texto-principal);
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            display: block;
+            word-break: break-word;
+        }
+
+        .edit-field {
+            display: none;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            font-size: 1.1em;
+            color: var(--cor-texto-principal);
+            background: rgba(255, 255, 255, 0.1);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 30; /* Garante que os campos de edição fiquem acima de tudo */
+        }
+
+        .edit-field:focus {
+            border-color: var(--cor-destaque);
+            box-shadow: 0 0 8px rgba(212, 160, 23, 0.2);
+            outline: none;
+        }
+
+        .car-images {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px; /* Adicionada margem superior para separar das edições */
+            position: relative;
+            z-index: 10; /* Mantém as imagens abaixo dos campos de edição */
+        }
+
+        .car-images img {
+            max-width: 200px;
+            border-radius: 10px;
+            border: 1px solid var(--cor-borda);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .car-images img:hover {
+            transform: scale(1.05);
+        }
+
+        .car-images .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--cor-destaque);
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            font-size: 14px;
+            cursor: pointer;
+            display: none;
+            z-index: 15; /* Garante que o botão de remoção fique acima das imagens */
+        }
+
+        .car-images img:hover + .remove-btn {
+            display: block;
+        }
+
+        .car-images .remove-btn:hover {
+            background: #FFD700;
+        }
+
+        .add-image-input {
+            margin-top: 20px;
+            display: none;
+            padding: 12px 25px;
+            background: var(--cor-destaque);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-image-input:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(212, 160, 23, 0.2);
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(212, 160, 23, 0.3);
+        }
+
+        .btn {
+            background-color: var(--cor-destaque);
+            color: #000;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(212, 160, 23, 0.2);
+        }
+
+        .btn:disabled {
+            background: var(--cor-texto-secundario);
+            cursor: not-allowed;
+        }
+
+        .save-btn {
+            display: none;
+        }
+
+        .loader {
+            width: calc(100% - 34px);
+            z-index: 9999;
+            position: fixed;
+            top: 50%;
+            left: 17px;
+            transition: opacity 250ms ease;
+            opacity: 0;
+        }
+
+        .loader--show {
+            opacity: 1;
+        }
+
+        .loader__spin {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 5px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--cor-destaque);
+            animation: loader-spin 1s infinite linear;
+            display: block;
+            margin: 0 auto;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes loader-spin {
+            0% { transform: rotate(0); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader" id="loader">
+        <div class="loader__spin"></div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <a href="#" class="logo" onclick="window.history.back()">ZAILONSOFT</a>
+        </div>
+        <div class="content">
+            <div class="details" id="car-details"></div>
+            <div class="car-images" id="car-images-detail"></div>
+            <input type="file" id="edit-car-images" multiple accept="image/*" class="add-image-input">
+            <div class="actions">
+                <button class="btn" onclick="toggleEditMode()">Editar</button>
+                <button class="btn" onclick="closeDetails()">Fechar</button>
+                <button class="btn save-btn" onclick="saveCarChanges()">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let carId = new URLSearchParams(window.location.search).get('id');
+        let cars = {};
+        const loader = document.getElementById('loader');
+
+        function showLoader() {
+            loader.classList.add('loader--show');
+        }
+
+        function hideLoader() {
+            loader.classList.remove('loader--show');
+        }
+
+        async function loadCars() {
+            showLoader();
+            try {
+                const response = await fetch('http://localhost:5000/api/cars');
+                if (!response.ok) throw new Error('Erro ao carregar carros');
+                cars = await response.json();
+                showCarDetails(carId);
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                document.getElementById('car-details').innerHTML = '<p style="color: var(--cor-destaque); text-align: center;">Erro ao carregar detalhes.</p>';
+            } finally {
+                hideLoader();
+            }
+        }
+
+        window.onload = loadCars;
+
+        function showCarDetails(carId) {
+            const car = cars.modelos.find(c => (c.id || cars.modelos.indexOf(c) + 1).toString() === carId);
+            if (!car) {
+                console.error('Carro não encontrado:', carId);
+                return;
+            }
+            const details = document.getElementById('car-details');
+            details.innerHTML = `
+                <div class="detail-item">
+                    <label for="edit-car-name">Nome</label>
+                    <span id="car-name-detail">${car.nome || 'Não informado'}</span>
+                    <input type="text" id="edit-car-name" class="edit-field" value="${car.nome || ''}">
+                </div>
+                <div class="detail-item">
+                    <label for="edit-car-year">Ano</label>
+                    <span id="car-year-detail">${car.ano || 'Não informado'}</span>
+                    <input type="number" id="edit-car-year" class="edit-field" value="${car.ano || ''}">
+                </div>
+                <div class="detail-item">
+                    <label for="edit-car-price">Preço</label>
+                    <span id="car-price-detail">${car.preco || 'Não informado'}</span>
+                    <input type="text" id="edit-car-price" class="edit-field" value="${car.preco || ''}">
+                </div>
+                <div class="detail-item">
+                    <label for="edit-car-description">Descrição</label>
+                    <span id="car-description-detail">${car.descricao || 'Sem descrição'}</span>
+                    <textarea id="edit-car-description" class="edit-field" rows="8" style="width: 100%; min-height: 150px;"></textarea>
+                </div>
+            `;
+            const imagesContainer = document.getElementById('car-images-detail');
+            imagesContainer.innerHTML = '';
+            if (car.imagens && car.imagens.length > 0) {
+                car.imagens.forEach((img, index) => {
+                    const imgWrapper = document.createElement('div');
+                    imgWrapper.style.position = 'relative';
+                    imgWrapper.innerHTML = `
+                        <img src="${img}" alt="Imagem de ${car.nome}" onload="this.style.opacity='1'">
+                        <button class="remove-btn" onclick="removeImage('${carId}', ${index})">X</button>
+                    `;
+                    imagesContainer.appendChild(imgWrapper);
+                });
+            } else {
+                imagesContainer.innerHTML = '<p>Sem imagens disponíveis</p>';
+            }
+            document.getElementById('edit-car-description').value = car.descricao || '';
+            toggleEditMode(false);
+            document.getElementById('edit-car-images').value = '';
+        }
+
+        function removeImage(carId, imageIndex) {
+            if (confirm('Tem certeza que deseja remover esta imagem?')) {
+                const car = cars.modelos.find(c => (c.id || cars.modelos.indexOf(c) + 1).toString() === carId);
+                if (car && car.imagens && car.imagens[imageIndex]) {
+                    fetch(`http://localhost:5000/api/cars/${carId}/images/${imageIndex}`, {
+                        method: 'DELETE'
+                    }).then(response => {
+                        if (response.ok) {
+                            car.imagens.splice(imageIndex, 1);
+                            showCarDetails(carId);
+                        } else {
+                            throw new Error('Erro ao remover imagem');
+                        }
+                    }).catch(error => {
+                        console.error('Erro ao remover imagem:', error);
+                        alert('Erro ao remover a imagem. Verifique o console.');
+                    });
+                }
+            }
+        }
+
+        function toggleEditMode(edit = true) {
+            const editFields = document.querySelectorAll('.edit-field');
+            const saveBtn = document.querySelector('.save-btn');
+            const addImageInput = document.getElementById('edit-car-images');
+            const spans = document.querySelectorAll('#car-details span');
+
+            if (edit) {
+                spans.forEach(span => span.style.display = 'none');
+                editFields.forEach(field => field.style.display = 'block');
+                saveBtn.style.display = 'inline-block';
+                addImageInput.style.display = 'block';
+                document.querySelectorAll('.remove-btn').forEach(btn => btn.style.display = 'block');
+            } else {
+                spans.forEach(span => span.style.display = 'block');
+                editFields.forEach(field => field.style.display = 'none');
+                saveBtn.style.display = 'none';
+                addImageInput.style.display = 'none';
+                document.querySelectorAll('.remove-btn').forEach(btn => btn.style.display = 'none');
+            }
+        }
+
+        function saveCarChanges() {
+            const carId = new URLSearchParams(window.location.search).get('id');
+            const formData = new FormData();
+            formData.append('name', document.getElementById('edit-car-name').value);
+            formData.append('year', document.getElementById('edit-car-year').value);
+            formData.append('price', document.getElementById('edit-car-price').value);
+            formData.append('description', document.getElementById('edit-car-description').value);
+            const files = document.getElementById('edit-car-images').files;
+            if (files.length > 0) {
+                for (let file of files) {
+                    formData.append('images', file);
+                }
+            }
+
+            showLoader();
+            fetch(`http://localhost:5000/api/cars/${carId}`, {
+                method: 'PUT',
+                body: formData
+            }).then(response => {
+                if (response.ok) {
+                    loadCars();
+                    toggleEditMode(false);
+                    alert('Alterações salvas com sucesso!');
+                } else {
+                    return response.text().then(errorText => { throw new Error(errorText || 'Erro ao salvar alterações'); });
+                }
+            }).catch(error => {
+                console.error('Erro ao salvar alterações:', error);
+                alert(`Erro ao salvar as alterações. Detalhes: ${error.message}. Verifique o console para mais informações.`);
+            }).finally(hideLoader);
+        }
+
+        function closeDetails() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

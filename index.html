@@ -4,106 +4,363 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZailonSoft Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: linear-gradient(135deg, #E8ECEF 0%, #D3D8DC 100%); color: #2F4F2F; font-family: 'Poppins', sans-serif; min-height: 100vh; padding: 20px; }
-        .container { max-width: 1600px; margin: 0 auto; display: flex; flex-direction: column; gap: 40px; }
-        .header { background: linear-gradient(90deg, #2F4F2F 0%, #6B8E23 100%); padding: 30px; border-radius: 12px; text-align: center; box-shadow: 0 8px 24px rgba(47, 79, 47, 0.2); position: relative; overflow: hidden; }
-        .header::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%); animation: pulse 10s infinite; }
-        .header h1 { font-family: 'Montserrat', sans-serif; font-size: 2.8em; font-weight: 800; color: #FFD700; text-transform: uppercase; z-index: 1; }
-        .nav { display: flex; justify-content: center; gap: 25px; background: #2F4F2F; padding: 20px; border-radius: 12px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); }
-        .nav a { color: #D1D5DB; text-decoration: none; font-size: 1.2em; font-weight: 500; padding: 12px 25px; transition: all 0.3s ease; border-radius: 8px; position: relative; }
-        .nav a:hover, .nav a.active { background: #6B8E23; color: #FFD700; }
-        .nav a::after { content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 0; height: 2px; background: #FFD700; transition: width 0.3s ease; }
-        .nav a:hover::after, .nav a.active::after { width: 50%; }
-        .tab-content { display: none; background: #FFFFFF; padding: 30px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05); animation: fadeIn 0.5s ease; }
-        .tab-content.active { display: block; }
-        .tab-content h2 { font-family: 'Montserrat', sans-serif; font-size: 2em; font-weight: 600; color: #2F4F2F; margin-bottom: 20px; }
-        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; margin-top: 20px; }
-        .card { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; height: 450px; position: relative; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15); }
-        .card-image { width: 100%; height: 280px; background: #E8ECEF; position: relative; overflow: hidden; }
-        .card-image img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease; }
-        .card-image .badge { position: absolute; top: 15px; left: 15px; background: #FFD700; color: #2F4F2F; padding: 5px 15px; border-radius: 20px; font-size: 0.9em; font-weight: 500; }
-        .card-content { padding: 20px; text-align: left; }
-        .card h3 { color: #2F4F2F; font-size: 1.6em; margin-bottom: 10px; font-weight: 600; }
-        .card p { color: #6B7280; font-size: 1.1em; margin-bottom: 10px; }
-        .card-buttons { position: absolute; bottom: 20px; left: 20px; right: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .delete-btn { position: absolute; top: 15px; right: 15px; background: #EF4444; color: #FFFFFF; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 1.2em; cursor: pointer; transition: background-color 0.3s ease, transform 0.3s ease; }
-        .delete-btn:hover { background-color: #DC2626; transform: scale(1.1); }
-        .btn { background: linear-gradient(90deg, #2F4F2F 0%, #6B8E23 100%); color: #FFD700; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: 500; transition: transform 0.3s ease, background 0.3s ease; }
-        .btn:hover { transform: translateY(-2px); background: linear-gradient(90deg, #355E3B 0%, #9ACD32 100%); }
-        .btn:disabled { background: #D1D5DB; cursor: not-allowed; }
-        #add-car-container { display: flex; justify-content: center; align-items: center; min-height: 70vh; }
-        #add-car-card { display: none; flex-direction: column; gap: 25px; max-width: 600px; margin: 20px auto; background: #FFFFFF; padding: 30px; border-radius: 12px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1); text-align: left; animation: slideUp 0.5s ease; }
-        #add-car-card.active { display: flex; }
-        input, textarea { padding: 12px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 1.1em; color: #2F4F2F; background: #F9FAFB; width: 100%; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
-        textarea { resize: vertical; }
-        input:focus, textarea:focus { border-color: #6B8E23; box-shadow: 0 0 8px rgba(107, 142, 35, 0.2); outline: none; }
-        .step-buttons { display: flex; justify-content: space-between; gap: 15px; margin-top: 20px; }
-        .progress-dots { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
-        .progress-dot { width: 10px; height: 10px; background: #D1D5DB; border-radius: 50%; transition: background-color 0.3s ease, transform 0.3s ease; }
-        .progress-dot.active { background: #FFD700; transform: scale(1.3); }
-        #qrcode-container { text-align: center; padding: 30px; background: #FFFFFF; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05); }
-        #qrcode-container img { max-width: 300px; border-radius: 8px; border: 1px solid #E5E7EB; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; }
-        #qrcode-container img:hover { transform: scale(1.05); }
-        #qrcode-container .no-qrcode { color: #EF4444; font-weight: 500; font-size: 1.1em; }
-        #car-dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, #FFFFFF 0%, #F5F7FA 100%); padding: 30px; border-radius: 15px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); color: #2F4F2F; width: 90%; max-width: 700px; max-height: 80vh; overflow: hidden; animation: fadeIn 0.5s ease; border: 1px solid #E5E7EB; }
-        #car-dialog .dialog-content { max-height: 60vh; overflow-y: auto; padding-right: 15px; }
-        #car-dialog h3 { font-family: 'Montserrat', sans-serif; color: #2F4F2F; margin-bottom: 20px; font-size: 2.2em; text-transform: uppercase; letter-spacing: 1px; }
-        #car-dialog p { margin: 15px 0; font-size: 1.1em; color: #4B5563; display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #F9FAFB; border-radius: 8px; }
-        #car-dialog .edit-field { display: none; width: 60%; padding: 10px; border: 1px solid #6B8E23; border-radius: 8px; font-size: 1.1em; background: #FFF; transition: border-color 0.3s ease; }
-        #car-dialog .edit-field:focus { border-color: #FFD700; box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); outline: none; }
-        #car-dialog .car-images { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 20px; justify-content: center; }
-        #car-dialog .car-images img { max-width: 180px; border-radius: 10px; border: 1px solid #E5E7EB; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease; position: relative; }
-        #car-dialog .car-images img:hover { transform: scale(1.05); }
-        #car-dialog .car-images .remove-btn { position: absolute; top: 5px; right: 5px; background: #EF4444; color: #FFF; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: none; }
-        #car-dialog .car-images img:hover + .remove-btn { display: block; }
-        #car-dialog .car-images .remove-btn:hover { background: #DC2626; }
-        #car-dialog .add-image-input { margin-top: 15px; display: none; }
-        #car-dialog .dialog-actions { margin-top: 20px; display: flex; justify-content: center; gap: 15px; padding-top: 15px; border-top: 1px solid #E5E7EB; }
-        #car-dialog .dialog-actions .btn { background: linear-gradient(90deg, #2F4F2F 0%, #6B8E23 100%); color: #FFD700; padding: 12px 25px; font-size: 1.1em; border-radius: 10px; border: none; cursor: pointer; transition: all 0.3s ease; }
-        #car-dialog .dialog-actions .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(47, 79, 47, 0.3); }
-        #car-dialog .dialog-actions .save-btn { display: none; }
-        #client-dialog, #delete-dialog { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #FFFFFF; padding: 30px; border-radius: 12px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2); color: #1F2937; width: 90%; max-width: 500px; text-align: center; animation: fadeIn 0.5s ease; }
-        #client-dialog h3, #delete-dialog h3 { font-family: 'Montserrat', sans-serif; color: #1E3A8A; margin-bottom: 20px; font-size: 1.8em; }
-        #client-dialog p, #delete-dialog p { margin: 12px 0; font-size: 1.1em; color: #4B5563; }
-        .edit-form { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
-        .edit-form input, .edit-form textarea { margin-bottom: 15px; }
-        .edit-save-btns { display: flex; gap: 15px; margin-top: 20px; }
-
-        #car-dialog .dialog-content::-webkit-scrollbar {
-            width: 8px;
-        }
-        #car-dialog .dialog-content::-webkit-scrollbar-track {
-            background: #F5F7FA;
-            border-radius: 10px;
-        }
-        #car-dialog .dialog-content::-webkit-scrollbar-thumb {
-            background: #6B8E23;
-            border-radius: 10px;
-            transition: background 0.3s ease;
-        }
-        #car-dialog .dialog-content::-webkit-scrollbar-thumb:hover {
-            background: #FFD700;
+        /* Variáveis de Cor para facilitar a manutenção do tema */
+        :root {
+            --cor-fundo-escuro: #121212;
+            --cor-fundo-card: #1E1E1E;
+            --cor-borda: #2c2c2c;
+            --cor-destaque: #D4A017; /* Dourado/Amarelo */
+            --cor-texto-principal: #E5E5E5;
+            --cor-texto-secundario: #a0a0a0;
         }
 
+        /* Reset e Configurações Globais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--cor-fundo-escuro);
+            color: var(--cor-texto-principal);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* Cabeçalho e Navegação */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background-color: rgba(30, 30, 30, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--cor-borda);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-radius: 12px;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--cor-destaque);
+            text-decoration: none;
+        }
+
+        .nav {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav a {
+            color: var(--cor-texto-principal);
+            text-decoration: none;
+            font-weight: 500;
+            padding-bottom: 5px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav a:hover {
+            color: var(--cor-destaque);
+            border-bottom-color: var(--cor-destaque);
+        }
+
+        .nav a.active {
+            color: var(--cor-destaque);
+            border-bottom-color: var(--cor-destaque);
+        }
+
+        /* Seção Principal (Tabs) */
+        .tab-content {
+            display: none;
+            background: var(--cor-fundo-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content h2 {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .vehicle-card {
+            background-color: var(--cor-fundo-card);
+            border: 1px solid var(--cor-borda);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            height: 450px;
+            position: relative;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--cor-destaque);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .vehicle-card-image img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            display: block;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .vehicle-card-image img[onload] {
+            opacity: 1;
+        }
+
+        .vehicle-card-content {
+            padding: 25px;
+            text-align: left;
+        }
+
+        .vehicle-card h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .vehicle-card p {
+            color: var(--cor-texto-secundario);
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .details-button {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            background-color: transparent;
+            color: var(--cor-destaque);
+            border: 2px solid var(--cor-destaque);
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .details-button:hover {
+            background-color: var(--cor-destaque);
+            color: #000;
+        }
+
+        /* Formulário de Cadastro */
+        #add-car-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+        }
+
+        #add-car-card {
+            display: none;
+            flex-direction: column;
+            gap: 25px;
+            max-width: 600px;
+            margin: 20px auto;
+            background: var(--cor-fundo-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: left;
+            animation: slideUp 0.5s ease;
+        }
+
+        #add-car-card.active {
+            display: flex;
+        }
+
+        #add-car-card h3 {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        input, textarea {
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            font-size: 1.1em;
+            color: var(--cor-texto-principal);
+            background: rgba(255, 255, 255, 0.1);
+            width: 100%;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--cor-destaque);
+            box-shadow: 0 0 8px rgba(212, 160, 23, 0.2);
+            outline: none;
+        }
+
+        .step-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .progress-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--cor-texto-secundario);
+            border-radius: 50%;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .progress-dot.active {
+            background: var(--cor-destaque);
+            transform: scale(1.3);
+        }
+
+        /* QR Code */
+        #qrcode-container {
+            text-align: center;
+            padding: 30px;
+            background: var(--cor-fundo-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #qrcode-container img {
+            max-width: 300px;
+            border-radius: 8px;
+            border: 1px solid var(--cor-borda);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        #qrcode-container img:hover {
+            transform: scale(1.05);
+        }
+
+        #qrcode-container .no-qrcode {
+            color: #EF4444;
+            font-weight: 500;
+            font-size: 1.1em;
+        }
+
+        .btn {
+            background-color: var(--cor-destaque);
+            color: #000;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(212, 160, 23, 0.2);
+        }
+
+        .btn:disabled {
+            background: var(--cor-texto-secundario);
+            cursor: not-allowed;
+        }
+
+        /* Diálogos */
+        #client-dialog, #delete-dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--cor-fundo-card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+            color: var(--cor-texto-principal);
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        #client-dialog h3, #delete-dialog h3 {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        #client-dialog p, #delete-dialog p {
+            margin: 12px 0;
+            font-size: 1.1em;
+            color: var(--cor-texto-secundario);
+        }
+
+        /* Animações */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>ZailonSoft Dashboard</h1>
-        </div>
-        <div class="nav">
-            <a href="#" onclick="showTab('catalog')" class="active">Catálogo</a>
-            <a href="#" onclick="showTab('crm')">CRM</a>
-            <a href="#" onclick="showTab('qrcode')">Conexão WhatsApp</a>
-            <a href="#" onclick="showTab('add-car')">Cadastro</a>
+            <a href="#" class="logo">ZAILONSOFT</a>
+            <nav class="nav">
+                <a href="#" onclick="showTab('catalog')" class="active">Catálogo</a>
+                <a href="#" onclick="showTab('crm')">CRM</a>
+                <a href="#" onclick="showTab('qrcode')">Conexão WhatsApp</a>
+                <a href="#" onclick="showTab('add-car')">Cadastro</a>
+            </nav>
         </div>
 
         <div id="catalog" class="tab-content active">
@@ -123,7 +380,7 @@
                 <div id="no-qrcode-msg" class="no-qrcode" style="display: none;">O servidor está aguardando a geração do QR Code.</div>
             </div>
             <button class="btn" onclick="refreshQR()">Gerar QR para Conexão</button>
-            <p id="connection-status" style="margin-top: 15px; color: #4B5563;"></p>
+            <p id="connection-status" style="margin-top: 15px; color: var(--cor-texto-secundario);"></p>
         </div>
 
         <div id="add-car" class="tab-content">
@@ -145,23 +402,6 @@
                     <div class="progress-dot"></div>
                     <div class="progress-dot"></div>
                 </div>
-            </div>
-        </div>
-
-        <div id="car-dialog">
-            <div class="dialog-content">
-                <h3>Detalhes do Veículo</h3>
-                <p><strong>Nome:</strong> <span id="car-name-detail"></span> <input type="text" id="edit-car-name" class="edit-field"></p>
-                <p><strong>Ano:</strong> <span id="car-year-detail"></span> <input type="number" id="edit-car-year" class="edit-field"></p>
-                <p><strong>Preço:</strong> <span id="car-price-detail"></span> <input type="text" id="edit-car-price" class="edit-field"></p>
-                <p><strong>Descrição:</strong> <span id="car-description-detail"></span> <textarea id="edit-car-description" class="edit-field" rows="2"></textarea></p>
-                <div class="car-images" id="car-images-detail"></div>
-                <input type="file" id="edit-car-images" multiple accept="image/*" class="add-image-input">
-            </div>
-            <div class="dialog-actions">
-                <button class="btn" onclick="toggleEditMode()">Editar</button>
-                <button class="btn" onclick="closeCarDialog()">Fechar</button>
-                <button class="btn save-btn" onclick="saveCarChanges()">Salvar</button>
             </div>
         </div>
 
@@ -423,13 +663,13 @@
             }
             cars.modelos.forEach((car, index) => {
                 const card = document.createElement('div');
-                card.className = 'card';
+                card.className = 'vehicle-card';
                 let imageSrc = car.imagens && car.imagens.length > 0 ? car.imagens[0] : 'https://via.placeholder.com/350x280?text=Sem+Imagem';
                 card.innerHTML = `
-                    <div class="card-image">
+                    <div class="vehicle-card-image">
                         <img src="${imageSrc}" alt="${car.nome}" onload="this.style.opacity='1'" onerror="this.style.display='none';">
                     </div>
-                    <div class="card-content">
+                    <div class="vehicle-card-content">
                         <h3>${car.nome}</h3>
                         <p>${car.preco || 'Preço não informado'}</p>
                     </div>
@@ -443,55 +683,19 @@
         }
 
         function showCarDetails(carId) {
-            console.log('Abrindo detalhes para carId:', carId);
-            const car = cars.modelos.find(c => (c.id || cars.modelos.indexOf(c) + 1).toString() === carId);
-            if (!car) {
-                console.error('Carro não encontrado:', carId);
-                return;
-            }
-            document.getElementById('car-name-detail').textContent = car.nome || 'Não informado';
-            document.getElementById('car-year-detail').textContent = car.ano || 'Não informado';
-            document.getElementById('car-price-detail').textContent = car.preco || 'Não informado';
-            document.getElementById('car-description-detail').textContent = car.descricao || 'Sem descrição';
-            document.getElementById('edit-car-name').value = car.nome || '';
-            document.getElementById('edit-car-year').value = car.ano || '';
-            document.getElementById('edit-car-price').value = car.preco || '';
-            document.getElementById('edit-car-description').value = car.descricao || '';
-            const imagesContainer = document.getElementById('car-images-detail');
-            imagesContainer.innerHTML = '';
-            if (car.imagens && car.imagens.length > 0) {
-                car.imagens.forEach((img, index) => {
-                    const imgWrapper = document.createElement('div');
-                    imgWrapper.style.position = 'relative';
-                    imgWrapper.innerHTML = `
-                        <img src="${img}" alt="Imagem de ${car.nome}" onload="this.style.opacity='1'" onerror="this.style.display='none';">
-                        <button class="remove-btn" onclick="removeImage('${carId}', ${index})">X</button>
-                    `;
-                    imgWrapper.querySelector('img').style.opacity = '0';
-                    imgWrapper.querySelector('img').style.transition = 'opacity 0.5s';
-                    imagesContainer.appendChild(imgWrapper);
-                });
-            } else {
-                imagesContainer.innerHTML = '<p>Sem imagens disponíveis</p>';
-            }
-            document.getElementById('car-dialog').style.display = 'block';
-            document.getElementById('car-dialog').dataset.carId = carId;
-            document.getElementById('car-dialog').dataset.originalData = JSON.stringify(car);
-            toggleEditMode(false); // Start in view mode
-            document.getElementById('edit-car-images').value = ''; // Clear file input
+            window.location.href = `car-details.html?id=${carId}`;
         }
 
         function removeImage(carId, imageIndex) {
             if (confirm('Tem certeza que deseja remover esta imagem?')) {
                 const car = cars.modelos.find(c => (c.id || cars.modelos.indexOf(c) + 1).toString() === carId);
                 if (car && car.imagens && car.imagens[imageIndex]) {
-                    // Assuming backend supports image deletion by index or URL
                     fetch(`http://localhost:5000/api/cars/${carId}/images/${imageIndex}`, {
                         method: 'DELETE'
                     }).then(response => {
                         if (response.ok) {
                             car.imagens.splice(imageIndex, 1);
-                            showCarDetails(carId); // Refresh dialog
+                            showCarDetails(carId);
                         } else {
                             throw new Error('Erro ao remover imagem');
                         }
@@ -576,9 +780,9 @@
             }).then(response => {
                 if (response.ok) {
                     loadCars();
-                    toggleEditMode(false); // Return to view mode
+                    toggleEditMode(false);
                     alert('Alterações salvas com sucesso!');
-                    showCarDetails(carId); // Refresh details
+                    showCarDetails(carId);
                 } else {
                     return response.text().then(errorText => { throw new Error(errorText || 'Erro ao salvar alterações'); });
                 }
@@ -590,7 +794,7 @@
 
         function closeCarDialog() {
             document.getElementById('car-dialog').style.display = 'none';
-            toggleEditMode(false); // Ensure edit mode is off when closing
+            toggleEditMode(false);
         }
 
         function closeDialog() {
@@ -629,4 +833,5 @@
                 });
         }
     </script>
+</body>
 </html>
