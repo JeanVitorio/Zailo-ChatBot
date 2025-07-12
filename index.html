@@ -15,7 +15,7 @@
             --cor-fundo-escuro: #121212;
             --cor-fundo-card: #1E1E1E;
             --cor-borda: #2c2c2c;
-            --cor-destaque: #D4A017; /* Dourado/Amarelo */
+            --cor-destaque: #D4A017;
             --cor-texto-principal: #E5E5E5;
             --cor-texto-secundario: #a0a0a0;
         }
@@ -131,6 +131,9 @@
             transition: all 0.3s ease;
             height: 450px;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .vehicle-card:hover {
@@ -155,11 +158,13 @@
         .vehicle-card-content {
             padding: 25px;
             text-align: left;
+            flex-grow: 1;
         }
 
         .vehicle-card h3 {
             font-size: 1.5em;
             margin-bottom: 10px;
+            word-break: break-word;
         }
 
         .vehicle-card p {
@@ -167,20 +172,29 @@
             font-size: 0.95em;
             line-height: 1.6;
             margin-bottom: 20px;
+            word-break: break-word;
+        }
+
+        .card-buttons {
+            padding: 0 25px 25px;
+            text-align: center;
         }
 
         .details-button {
             display: inline-block;
             width: 100%;
-            text-align: center;
+            padding: 12px 20px;
             background-color: transparent;
             color: var(--cor-destaque);
             border: 2px solid var(--cor-destaque);
-            padding: 12px 20px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 700;
             transition: all 0.3s ease;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.2;
+            min-height: 48px; /* Altura mínima para garantir o texto */
         }
 
         .details-button:hover {
@@ -698,26 +712,18 @@
             updateProgressDots();
         }
 
-        function updateProgressDots() {
-            const dots = document.querySelectorAll('.progress-dot');
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index < currentStep - 1);
-            });
-        }
-
         async function submitCar() {
             const formData = new FormData();
             formData.append('name', carData.name || '');
             formData.append('year', carData.year || '');
             formData.append('price', carData.price || '');
             formData.append('description', carData.description || '');
-            const files = carData.files || [];
-            if (currentStep === 6 && files.length === 0) {
-                alert('Por favor, selecione pelo menos uma foto na etapa anterior.');
-                return;
-            }
-            for (let file of files) {
-                formData.append('images', file);
+            if (carData.files && carData.files.length > 0) {
+                for (let file of carData.files) {
+                    formData.append('images', file);
+                }
+            } else {
+                console.warn('Nenhuma imagem selecionada para upload.');
             }
 
             try {
@@ -745,13 +751,12 @@
             formData.append('year', carData.year || '');
             formData.append('price', carData.price || '');
             formData.append('description', carData.description || '');
-            const files = carData.files || [];
-            if (files.length === 0) {
-                alert('Por favor, selecione pelo menos uma foto na etapa anterior.');
-                return;
-            }
-            for (let file of files) {
-                formData.append('images', file);
+            if (carData.files && carData.files.length > 0) {
+                for (let file of carData.files) {
+                    formData.append('images', file);
+                }
+            } else {
+                console.warn('Nenhuma imagem selecionada para upload.');
             }
 
             fetch('http://localhost:5000/api/cars', {
@@ -795,21 +800,22 @@
                 return;
             }
             cars.modelos.forEach((car, index) => {
+                const carId = car.id || (index + 1).toString(); // Usa o ID ou index como fallback
                 const card = document.createElement('div');
                 card.className = 'vehicle-card';
-                let imageSrc = car.imagens && car.imagens.length > 0 ? car.imagens[0] : 'https://via.placeholder.com/350x280?text=Sem+Imagem';
+                let imageSrc = car.imagens && car.imagens.length > 0 ? `http://localhost:5000/${car.imagens[0]}` : 'https://via.placeholder.com/350x280?text=Sem+Imagem';
                 card.innerHTML = `
                     <div class="vehicle-card-image">
-                        <img src="${imageSrc}" alt="${car.nome}" onload="this.style.opacity='1'" onerror="this.style.display='none';">
+                        <img src="${imageSrc}" alt="${car.nome || 'Veículo sem nome'}" onload="this.style.opacity='1'" onerror="this.onerror=null; this.src='https://via.placeholder.com/350x280?text=Sem+Imagem';">
                     </div>
                     <div class="vehicle-card-content">
-                        <h3>${car.nome}</h3>
+                        <h3>${car.nome || 'Sem nome'}</h3>
                         <p>${car.preco || 'Preço não informado'}</p>
                     </div>
                     <div class="card-buttons">
-                        <button class="btn" onclick="event.stopPropagation(); showCarDetails('${car.id || index + 1}')">Ver Detalhes</button>
+                        <button class="details-button" onclick="event.stopPropagation(); showCarDetails('${carId}')">Ver Detalhes</button>
                     </div>
-                    <button class="delete-btn" onclick="event.stopPropagation(); showDeleteDialog('${car.id || index + 1}')">🗑️</button>
+                    <button class="delete-btn" onclick="event.stopPropagation(); showDeleteDialog('${carId}')">🗑️</button>
                 `;
                 container.appendChild(card);
             });
@@ -1022,6 +1028,13 @@
             fileInput.multiple = true;
             fileInput.onchange = handleFileSelect;
             fileInput.click();
+        }
+
+        function updateProgressDots() {
+            const dots = document.querySelectorAll('.progress-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index < currentStep - 1);
+            });
         }
     </script>
 </body>
