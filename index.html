@@ -44,7 +44,7 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 40px;
+            gap: 20px;
         }
 
         /* Cabeçalho e Navegação */
@@ -52,18 +52,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 40px;
+            padding: 15px 20px;
             background-color: rgba(30, 30, 30, 0.8);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--cor-borda);
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-radius: 12px;
+            border-radius: 8px;
         }
 
         .logo {
-            font-size: 1.8em;
+            font-size: 1.5em;
             font-weight: 700;
             color: var(--cor-destaque);
             text-decoration: none;
@@ -72,16 +72,17 @@
         .nav {
             list-style: none;
             display: flex;
-            gap: 30px;
+            gap: 15px;
         }
 
         .nav a {
             color: var(--cor-texto-principal);
             text-decoration: none;
             font-weight: 500;
-            padding-bottom: 5px;
+            padding-bottom: 3px;
             border-bottom: 2px solid transparent;
             transition: all 0.3s ease;
+            font-size: 0.9em;
         }
 
         .nav a:hover {
@@ -98,8 +99,8 @@
         .tab-content {
             display: none;
             background: var(--cor-fundo-card);
-            padding: 30px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             animation: fadeIn 0.5s ease;
         }
@@ -109,27 +110,27 @@
         }
 
         .tab-content h2 {
-            font-size: 2.8em;
+            font-size: 2em;
             font-weight: 700;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             text-align: center;
         }
 
         .card-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
         }
 
         .vehicle-card {
             background-color: var(--cor-fundo-card);
             border: 1px solid var(--cor-borda);
-            border-radius: 12px;
+            border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
-            height: 450px;
+            height: 400px;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -137,14 +138,14 @@
         }
 
         .vehicle-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-5px);
             border-color: var(--cor-destaque);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
         .vehicle-card-image img {
             width: 100%;
-            height: 280px;
+            height: 240px;
             object-fit: cover;
             display: block;
             opacity: 0;
@@ -156,7 +157,7 @@
         }
 
         .vehicle-card-content {
-            padding: 25px;
+            padding: 15px;
             text-align: left;
             flex-grow: 1;
             display: flex;
@@ -165,41 +166,42 @@
         }
 
         .vehicle-card h3 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-            white-space: nowrap; /* Impede a quebra de linha */
-            overflow: hidden; /* Oculta o texto que ultrapassar */
-            text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+            font-size: 1.2em;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .vehicle-card p {
             color: var(--cor-texto-secundario);
-            font-size: 0.95em;
-            line-height: 1.6;
-            margin-bottom: 20px;
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 15px;
             word-break: break-word;
         }
 
         .card-buttons {
-            padding: 0 25px 25px;
+            padding: 0 15px 15px;
             text-align: center;
         }
 
         .details-button {
             display: inline-block;
             width: 100%;
-            padding: 12px 20px;
+            padding: 10px;
             background-color: transparent;
             color: var(--cor-destaque);
             border: 2px solid var(--cor-destaque);
-            border-radius: 8px;
+            border-radius: 6px;
             text-decoration: none;
             font-weight: 700;
             transition: all 0.3s ease;
             white-space: normal;
             word-break: break-word;
             line-height: 1.2;
-            min-height: 48px; /* Altura mínima para garantir o texto */
+            min-height: 40px;
+            font-size: 0.9em;
         }
 
         .details-button:hover {
@@ -209,15 +211,15 @@
 
         .delete-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 8px;
+            right: 8px;
             background-color: #EF4444;
             color: #fff;
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            font-size: 16px;
+            width: 25px;
+            height: 25px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
             z-index: 10;
@@ -233,18 +235,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 70vh;
+            min-height: 60vh;
         }
 
         #add-car-card {
             display: none;
             flex-direction: column;
-            gap: 25px;
-            max-width: 900px;
-            margin: 20px auto;
+            gap: 15px;
+            max-width: 90%;
+            margin: 15px auto;
             background: var(--cor-fundo-card);
-            padding: 40px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             text-align: left;
             animation: slideUp 0.5s ease;
@@ -255,16 +257,16 @@
         }
 
         #add-car-card h3 {
-            font-size: 1.8em;
+            font-size: 1.5em;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         input, textarea {
-            padding: 18px;
+            padding: 12px;
             border: 1px solid var(--cor-borda);
-            border-radius: 10px;
-            font-size: 1.2em;
+            border-radius: 6px;
+            font-size: 1em;
             color: var(--cor-texto-principal);
             background: rgba(255, 255, 255, 0.1);
             width: 100%;
@@ -273,32 +275,32 @@
 
         textarea {
             resize: vertical;
-            min-height: 150px;
+            min-height: 120px;
         }
 
         input:focus, textarea:focus {
             border-color: var(--cor-destaque);
-            box-shadow: 0 0 10px rgba(212, 160, 23, 0.2);
+            box-shadow: 0 0 8px rgba(212, 160, 23, 0.2);
             outline: none;
         }
 
         .step-buttons {
             display: flex;
             justify-content: space-between;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 15px;
         }
 
         .progress-dots {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 15px;
         }
 
         .progress-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             background: var(--cor-texto-secundario);
             border-radius: 50%;
             transition: background-color 0.3s ease, transform 0.3s ease;
@@ -306,14 +308,14 @@
 
         .progress-dot.active {
             background: var(--cor-destaque);
-            transform: scale(1.3);
+            transform: scale(1.2);
         }
 
         /* Fotos Seção */
         .photo-upload {
             border: 2px dashed var(--cor-borda);
-            padding: 20px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 6px;
             text-align: center;
             background: rgba(255, 255, 255, 0.05);
             transition: border-color 0.3s ease;
@@ -332,30 +334,31 @@
             display: inline-block;
             background: var(--cor-destaque);
             color: #000;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 8px 15px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: 700;
             transition: all 0.3s ease;
+            font-size: 0.9em;
         }
 
         .photo-upload label:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 5px 15px rgba(212, 160, 23, 0.3);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(212, 160, 23, 0.2);
         }
 
         .photo-preview {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 10px;
         }
 
         .photo-preview img {
-            max-width: 100px;
-            max-height: 100px;
+            max-width: 80px;
+            max-height: 80px;
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid var(--cor-borda);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             position: relative;
@@ -366,13 +369,13 @@
             color: #fff;
             border: none;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
             cursor: pointer;
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 4px;
+            right: 4px;
             transition: background-color 0.3s ease;
         }
 
@@ -384,10 +387,10 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 100px;
-            height: 100px;
+            width: 80px;
+            height: 80px;
             border: 2px dashed var(--cor-borda);
-            border-radius: 8px;
+            border-radius: 6px;
             background: rgba(255, 255, 255, 0.05);
             cursor: pointer;
             transition: all 0.3s ease;
@@ -399,27 +402,27 @@
         }
 
         .add-more-photo span {
-            font-size: 2em;
+            font-size: 1.5em;
             color: var(--cor-texto-secundario);
         }
 
         /* QR Code */
         #qrcode-container {
             text-align: center;
-            padding: 30px;
+            padding: 20px;
             background: var(--cor-fundo-card);
-            border-radius: 12px;
+            border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 300px;
+            min-height: 250px;
         }
 
         #qrcode-container img {
-            max-width: 300px;
-            border-radius: 8px;
+            max-width: 200px;
+            border-radius: 6px;
             border: 1px solid var(--cor-borda);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
@@ -434,23 +437,24 @@
         #qrcode-container .no-qrcode {
             color: #EF4444;
             font-weight: 500;
-            font-size: 1.1em;
+            font-size: 1em;
         }
 
         .btn {
             background-color: var(--cor-destaque);
             color: #000;
-            padding: 12px 25px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: 700;
             transition: all 0.3s ease;
+            font-size: 0.9em;
         }
 
         .btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 10px 20px rgba(212, 160, 23, 0.2);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 18px rgba(212, 160, 23, 0.2);
         }
 
         .btn:disabled {
@@ -466,32 +470,255 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: var(--cor-fundo-card);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
             color: var(--cor-texto-principal);
             width: 90%;
-            max-width: 500px;
+            max-width: 400px;
             text-align: center;
             animation: fadeIn 0.5s ease;
             z-index: 1001;
         }
 
         #client-dialog h3, #delete-dialog h3 {
-            font-size: 1.8em;
+            font-size: 1.5em;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         #client-dialog p, #delete-dialog p {
-            margin: 12px 0;
-            font-size: 1.1em;
+            margin: 10px 0;
+            font-size: 0.95em;
             color: var(--cor-texto-secundario);
         }
 
         /* Animações */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Media Queries para Responsividade */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+                gap: 15px;
+            }
+
+            .header {
+                padding: 10px;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav {
+                gap: 10px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .tab-content h2 {
+                font-size: 1.5em;
+                margin-bottom: 15px;
+            }
+
+            .card-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 10px;
+            }
+
+            .vehicle-card {
+                height: 350px;
+            }
+
+            .vehicle-card-image img {
+                height: 200px;
+            }
+
+            .vehicle-card h3 {
+                font-size: 1em;
+            }
+
+            .vehicle-card p {
+                font-size: 0.85em;
+                margin-bottom: 10px;
+            }
+
+            .details-button {
+                padding: 8px;
+                font-size: 0.85em;
+                min-height: 36px;
+            }
+
+            .delete-btn {
+                width: 20px;
+                height: 20px;
+                font-size: 12px;
+            }
+
+            #add-car-card {
+                padding: 15px;
+                max-width: 100%;
+            }
+
+            #add-car-card h3 {
+                font-size: 1.2em;
+            }
+
+            input, textarea {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+
+            textarea {
+                min-height: 100px;
+            }
+
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.85em;
+            }
+
+            .photo-preview img {
+                max-width: 60px;
+                max-height: 60px;
+            }
+
+            .add-more-photo {
+                width: 60px;
+                height: 60px;
+            }
+
+            .add-more-photo span {
+                font-size: 1.2em;
+            }
+
+            #qrcode-container {
+                padding: 15px;
+                min-height: 200px;
+            }
+
+            #qrcode-container img {
+                max-width: 150px;
+            }
+
+            #client-dialog, #delete-dialog {
+                padding: 15px;
+                max-width: 350px;
+            }
+
+            #client-dialog h3, #delete-dialog h3 {
+                font-size: 1.2em;
+            }
+
+            #client-dialog p, #delete-dialog p {
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 5px;
+                gap: 10px;
+            }
+
+            .header {
+                padding: 5px;
+            }
+
+            .logo {
+                font-size: 1.2em;
+            }
+
+            .nav a {
+                font-size: 0.8em;
+                padding-bottom: 2px;
+            }
+
+            .tab-content h2 {
+                font-size: 1.2em;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .vehicle-card {
+                height: 300px;
+            }
+
+            .vehicle-card-image img {
+                height: 180px;
+            }
+
+            .vehicle-card h3 {
+                font-size: 0.9em;
+            }
+
+            .vehicle-card p {
+                font-size: 0.8em;
+            }
+
+            .details-button {
+                padding: 6px;
+                font-size: 0.8em;
+                min-height: 32px;
+            }
+
+            #add-car-card {
+                padding: 10px;
+            }
+
+            #add-car-card h3 {
+                font-size: 1em;
+            }
+
+            input, textarea {
+                padding: 8px;
+                font-size: 0.85em;
+            }
+
+            .btn {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
+
+            .photo-preview img {
+                max-width: 50px;
+                max-height: 50px;
+            }
+
+            .add-more-photo {
+                width: 50px;
+                height: 50px;
+            }
+
+            .add-more-photo span {
+                font-size: 1em;
+            }
+
+            #qrcode-container {
+                padding: 10px;
+                min-height: 150px;
+            }
+
+            #qrcode-container img {
+                max-width: 120px;
+            }
+
+            #client-dialog, #delete-dialog {
+                padding: 10px;
+                max-width: 300px;
+            }
+
+            #client-dialog h3, #delete-dialog h3 {
+                font-size: 1em;
+            }
+
+            #client-dialog p, #delete-dialog p {
+                font-size: 0.85em;
+            }
+        }
     </style>
 </head>
 <body>
@@ -523,7 +750,7 @@
                 <div id="no-qrcode-msg" class="no-qrcode" style="display: none;">O servidor está aguardando a geração do QR Code.</div>
             </div>
             <button class="btn" onclick="refreshQR()">Gerar QR para Conexão</button>
-            <p id="connection-status" style="margin-top: 15px; color: var(--cor-texto-secundario);"></p>
+            <p id="connection-status" style="margin-top: 10px; color: var(--cor-texto-secundario);"></p>
         </div>
 
         <div id="add-car" class="tab-content">
@@ -536,14 +763,14 @@
                         <button class="btn" id="prev-btn" style="display: none;" onclick="prevStep()">Voltar</button>
                         <button class="btn" id="next-btn" onclick="nextStep()">Próximo</button>
                     </div>
-                </div>
-                <div class="progress-dots">
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
-                    <div class="progress-dot"></div>
+                    <div class="progress-dots">
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -587,7 +814,7 @@
         <div id="delete-dialog">
             <h3>Confirmar Exclusão</h3>
             <p>Tem certeza que deseja excluir este veículo?</p>
-            <div style="margin-top: 20px; display: flex; gap: 15px; justify-content: center;">
+            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
                 <button class="btn" onclick="confirmDelete()">Deletar</button>
                 <button class="btn" onclick="closeDeleteDialog()">Cancelar</button>
             </div>
@@ -788,6 +1015,14 @@
                     <div class="step-buttons">
                         <button class="btn" id="prev-btn" style="display: none;" onclick="prevStep()">Voltar</button>
                         <button class="btn" id="next-btn" onclick="nextStep()">Próximo</button>
+                    </div>
+                    <div class="progress-dots">
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
                     </div>
                 `;
                 updateProgressDots();
