@@ -159,12 +159,17 @@
             padding: 25px;
             text-align: left;
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
         .vehicle-card h3 {
             font-size: 1.5em;
             margin-bottom: 10px;
-            word-break: break-word;
+            white-space: nowrap; /* Impede a quebra de linha */
+            overflow: hidden; /* Oculta o texto que ultrapassar */
+            text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
         }
 
         .vehicle-card p {
@@ -599,7 +604,8 @@
             try {
                 const response = await fetch('http://localhost:5000/api/cars');
                 if (!response.ok) throw new Error('Erro ao carregar carros');
-                cars = await response.json();
+                const data = await response.json();
+                cars = data; // Atribui diretamente o objeto retornado
                 renderCars();
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
@@ -795,7 +801,7 @@
         function renderCars() {
             const container = document.getElementById('car-list');
             container.innerHTML = '';
-            if (!cars.modelos || cars.modelos.length === 0) {
+            if (!cars.modelos || !Array.isArray(cars.modelos) || cars.modelos.length === 0) {
                 container.innerHTML = '<p style="color: #EF4444; text-align: center; font-weight: 500;">Nenhum veículo disponível.</p>';
                 return;
             }
