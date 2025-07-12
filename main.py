@@ -5,10 +5,16 @@ import uuid
 import shutil
 import sqlite3
 from datetime import datetime
-from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
+
+# Middleware CORS
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+    return response
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CAR_DIR = os.path.join(BASE_DIR, 'cars')
@@ -53,7 +59,7 @@ def save_carros(data):
             json.dump(data, f, indent=4, ensure_ascii=False)
     except Exception as e:
         print(f"Erro ao salvar JSON: {e}")
-        raise  # Re-lança a exceção pra ser capturada
+        raise
 
 carros_data = load_carros()
 
@@ -88,7 +94,7 @@ def add_car():
                 filename = f"image_{i}.{file.filename.split('.')[-1]}"
                 filepath = os.path.join(car_dir, filename)
                 file.save(filepath)
-                new_car['imagens'].append(os.path.join('cars', car_id, filename))
+                new_car['imagens'].append(os.path.join('cars', car_id, filename))  # Store full relative path
     
     carros_data['modelos'].append(new_car)
     save_carros(carros_data)
@@ -101,26 +107,24 @@ def update_car(car_id):
     if not car:
         return jsonify({"error": "Carro não encontrado"}), 404
     
-    # Atualizar campos básicos
     car['nome'] = car_data.get('name', car['nome'])
     car['ano'] = car_data.get('year', car['ano'])
     car['preco'] = car_data.get('price', car['preco'])
     car['descricao'] = car_data.get('description', car['descricao'])
     
-    # Gerenciar imagens apenas se houver upload
     car_dir = os.path.join(CAR_DIR, car_id)
+    os.makedirs(car_dir, exist_ok=True)
+    
     if 'images' in request.files:
-        if os.path.exists(car_dir):
-            shutil.rmtree(car_dir)
-        os.makedirs(car_dir, exist_ok=True)
-        car['imagens'] = []
         files = request.files.getlist('images')
-        for i, file in enumerate(files, 1):
-            if file and file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-                filename = f"image_{i}.{file.filename.split('.')[-1]}"
-                filepath = os.path.join(car_dir, filename)
-                file.save(filepath)
-                car['imagens'].append(os.path.join('cars', car_id, filename))
+        if files:
+            start_index = len(car['imagens']) + 1
+            for i, file in enumerate(files, start_index):
+                if file and file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+                    filename = f"image_{i}.{file.filename.split('.')[-1]}"
+                    filepath = os.path.join(car_dir, filename)
+                    file.save(filepath)
+                    car['imagens'].append(os.path.join('cars', car_id, filename))  # Store full relative path
     
     save_carros(carros_data)
     return jsonify(car), 200
@@ -129,16 +133,12 @@ def update_car(car_id):
 def delete_car(car_id):
     global carros_data
     try:
-        # Depuração: listar carros antes da remoção
         print(f"Carros antes da remoção: {[c.get('id', 'Sem ID') for c in carros_data['modelos']]}")
-        
-        # Encontrar e remover o carro da lista
         car_to_delete = next((c for c in carros_data['modelos'] if c.get('id') == car_id), None)
         if not car_to_delete:
             return jsonify({"error": "Carro não encontrado"}), 404
         carros_data['modelos'] = [c for c in carros_data['modelos'] if c.get('id') != car_id]
 
-        # Remover o diretório de imagens
         car_dir = os.path.join(CAR_DIR, car_id)
         if os.path.exists(car_dir):
             print(f"Tentando remover diretório: {car_dir}")
@@ -147,7 +147,6 @@ def delete_car(car_id):
         else:
             print(f"Diretório não encontrado para remoção: {car_dir}")
 
-        # Salvar as alterações no JSON
         save_carros(carros_data)
         return jsonify({"message": "Carro removido"}), 200
     except PermissionError as pe:
@@ -156,6 +155,38 @@ def delete_car(car_id):
     except Exception as e:
         print(f"Erro ao deletar carro {car_id}: {str(e)} - Carros afetados: {carros_data['modelos']}")
         return jsonify({"error": f"Erro interno ao deletar carro: {str(e)}"}), 500
+
+@app.route('/api/cars/<car_id>/images/<int:image_index>', methods=['DELETE'])
+def delete_car_image(car_id, image_index):
+    global carros_data
+    try:
+        print(f"Tentando remover imagem do carro {car_id}, índice {image_index}")
+        car = next((c for c in carros_data['modelos'] if c.get('id') == car_id), None)
+        if not car:
+            print(f"Carro {car_id} não encontrado.")
+            return jsonify({"error": "Carro não encontrado"}), 404
+        
+        if not car.get('imagens') or image_index < 0 or image_index >= len(car['imagens']):
+            print(f"Índice inválido {image_index}. Número de imagens: {len(car.get('imagens', []))}")
+            return jsonify({"error": f"Índice de imagem inválido. Máximo: {len(car.get('imagens', [])) - 1}"}), 400
+        
+        image_path = car['imagens'].pop(image_index)
+        full_path = os.path.join(BASE_DIR, image_path)
+        print(f"Tentando remover arquivo: {full_path}")
+        if os.path.exists(full_path):
+            os.remove(full_path)
+            print(f"Imagem {full_path} removida com sucesso.")
+        else:
+            print(f"Imagem {full_path} não encontrada para remoção. Pulando exclusão física.")
+
+        save_carros(carros_data)
+        return jsonify({"message": "Imagem removida", "imagens_restantes": car['imagens']}), 200
+    except PermissionError as pe:
+        print(f"Erro de permissão ao deletar imagem {full_path}: {str(pe)}")
+        return jsonify({"error": "Erro de permissão ao deletar imagem. Verifique as permissões."}), 500
+    except Exception as e:
+        print(f"Erro ao deletar imagem do carro {car_id}: {str(e)} - Carros afetados: {carros_data['modelos']}")
+        return jsonify({"error": f"Erro interno ao deletar imagem: {str(e)}"}), 500
 
 @app.route('/api/clients', methods=['GET'])
 def get_clients():
@@ -240,9 +271,9 @@ def delete_client(chat_id):
         return jsonify({"message": "Cliente removido"}), 200
     return jsonify({"error": "Cliente não encontrado"}), 404
 
-@app.route('/cars/<path:filename>')
-def serve_image(filename):
-    return send_from_directory(BASE_DIR, filename)
+@app.route('/cars/<car_id>/<path:filename>')
+def serve_image(car_id, filename):
+    return send_from_directory(os.path.join(CAR_DIR, car_id), filename)
 
 @app.route('/QRCODE/<path:filename>')
 def serve_qrcode(filename):

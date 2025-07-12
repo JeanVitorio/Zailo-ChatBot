@@ -1,26 +1,11 @@
 {
     "modelos": [
         {
-            "nome": "Gol G5 2010",
-            "ano": "2010",
-            "preco": "R$ 0",
-            "descricao": "🤩Weiss Multimarcas 🤩\n🤩Ótima oportunidade para negociação veículo com ótimo custo benefício🤩\n\n🔋Gol G5 2010 \n🔋Motor 1.0 8 válvulas \n🔋4pneus novos \n🔋Direção hidráulica \n🔋Vidros elétricos \n🔋Documentação em dia \n🔋Transferência na hora da compra",
-            "imagens": [
-                "imagens/Gol_G5_2010/dentroBancoTras.jpeg",
-                "imagens/Gol_G5_2010/dentroLado.jpeg",
-                "imagens/Gol_G5_2010/ladoFrenteDireito.jpeg",
-                "imagens/Gol_G5_2010/ladoFrenteEsquerdo.jpeg",
-                "imagens/Gol_G5_2010/ladoFrenteEsquerdoLado.jpeg",
-                "imagens/Gol_G5_2010/ladoTrasDentroEsquerdo.jpeg",
-                "imagens/Gol_G5_2010/ladoTrasEsquerdo.jpeg",
-                "imagens/Gol_G5_2010/ladpTrasDireito.jpeg"
-            ]
-        },
-        {
-            "nome": "L200 Triton 2018 Sport GLS",
-            "ano": "2018",
-            "preco": "R$ 0",
-            "descricao": "🤩Weiss Multimarcas 🤩\n🚗🚗Ótima oportunidade para negociação disponível em nosso estoque 🚗🚗\n🧑🏼‍🌾🧑🏼‍🌾🧑🏼‍🌾🧑🏼‍🌾🧑🏼‍🌾🧑🏼‍🌾\n🚗🚗Pra você amigo e cliente que procura uma caminhoneta com qualidade e procedência você encontra aqui 🚗🚗🚗\n🌳🌴🪵🍀🌲🏖️🏡⛰️\n👨🏻‍🌾L200 Triton 2018 Sport GLS \n👨🏻‍🌾Ar-condicionado \n👨🏻‍🌾Direção hidráulica \n👨🏻‍🌾Bancos em couro \n👨🏻‍🌾DVD multimídia com câmera de ré \n👨🏻‍🌾Câmbio manual de 6 marchas \n👨🏻‍🌾Tração 4x4 a disel \n🧑🏼‍🌾Engate de caretinha \n👩‍🌾Placas Mercosul\n👩‍🌾Laudo cautelar aprovado! \n🧑🏼‍🌾Pneus meia vida revisões em dia \n👩‍🌾Aceitamos trocas agilizamos financiamento 🤩🤩🤩",
+            "id": "2",
+            "nome": "L200 Triton 2018 Sport GLSS",
+            "ano": "2015",
+            "preco": "R$ 200000",
+            "descricao": "🚗🚗Ótima oportunidade para negociação disponível em nosso estoque 🚗🚗\r\n🧑🏼‍🌾🧑🏼‍🌾🧑🏼‍🌾🧑🏼‍🌾🧑🏼‍🌾🧑🏼‍🌾\r\n🚗🚗Pra você amigo e cliente que procura uma caminhoneta com qualidade e procedência você encontra aqui 🚗🚗🚗\r\n🌳🌴🪵🍀🌲🏖️🏡⛰️\r\n👨🏻‍🌾L200 Triton 2018 Sport GLS \r\n👨🏻‍🌾Ar-condicionado \r\n👨🏻‍🌾Direção hidráulica \r\n👨🏻‍🌾Bancos em couro \r\n👨🏻‍🌾DVD multimídia com câmera de ré \r\n👨🏻‍🌾Câmbio manual de 6 marchas \r\n👨🏻‍🌾Tração 4x4 a disel \r\n🧑🏼‍🌾Engate de caretinha \r\n👩‍🌾Placas Mercosul\r\n👩‍🌾Laudo cautelar aprovado! \r\n🧑🏼‍🌾Pneus meia vida revisões em dia \r\n👩‍🌾Aceitamos trocas agilizamos financiamento 🤩🤩🤩",
             "imagens": [
                 "imagens/L200 Triton_2018_Sport_GLS/ladoFrenteEsquerdaMeio.jpeg",
                 "imagens/L200 Triton_2018_Sport_GLS/ladoTrasEsquerda.jpeg",
@@ -29,28 +14,26 @@
                 "imagens/L200 Triton_2018_Sport_GLS/WhatsApp Image 2025-05-15 at 19.34.32 (2).jpeg",
                 "imagens/L200 Triton_2018_Sport_GLS/WhatsApp Image 2025-05-15 at 19.34.32 (3).jpeg",
                 "imagens/L200 Triton_2018_Sport_GLS/WhatsApp Image 2025-05-15 at 19.34.32.jpeg",
-                "imagens/L200 Triton_2018_Sport_GLS/WhatsApp Image 2025-05-15 at 19.34.33 (1).jpeg",
-                "imagens/L200 Triton_2018_Sport_GLS/WhatsApp Image 2025-05-15 at 19.34.33 (2).jpeg",
-                "imagens/L200 Triton_2018_Sport_GLS/WhatsApp Image 2025-05-15 at 19.34.33 (3).jpeg",
-                "imagens/L200 Triton_2018_Sport_GLS/WhatsApp Image 2025-05-15 at 19.34.33.jpeg"
+                "imagens/L200 Triton_2018_Sport_GLS/WhatsApp Image 2025-05-15 at 19.34.33 (1).jpeg"
             ]
         },
         {
+            "id": "3",
             "nome": "Fiat uno 2016",
             "ano": "2016",
-            "preco": "R$ 0",
-            "descricao": "🤩Weiss Multimarcas 🤩\n🚗🚗Chegou novidade em nosso estoque pessoal disponível à venda Fiat uno 2016\nCompleto 🚗🚗\n\n🚗Ar-condicionado gelando \n🚗Vidros elétricos \n🚗Direção hidráulica\n🚗Painel digital \n🚗Arbegs \n🚗Freio abs \n🚗Pneus meia vida \n✅Documentação em dia \n✅Melhor avaliação no seu usado você encontra aqui",
+            "preco": "R25000",
+            "descricao": "🤩Weiss Multimarcas 🤩\r\n🚗🚗Chegou novidade em nosso estoque pessoal disponível à venda Fiat uno 2016\r\nCompleto 🚗🚗\r\n\r\n🚗Ar-condicionado gelando \r\n🚗Vidros elétricos \r\n🚗Direção hidráulica\r\n🚗Painel digital \r\n🚗Arbegs \r\n🚗Freio abs \r\n🚗Pneus meia vida \r\n✅Documentação em dia \r\n✅Melhor avaliação no seu usado você encontra aqui",
             "imagens": [
                 "imagens/Fiat_uno_2016/WhatsApp Image 2025-05-15 at 19.34.45.jpeg",
                 "imagens/Fiat_uno_2016/WhatsApp Image 2025-05-15 at 19.34.46 (1).jpeg",
                 "imagens/Fiat_uno_2016/WhatsApp Image 2025-05-15 at 19.34.46 (2).jpeg",
                 "imagens/Fiat_uno_2016/WhatsApp Image 2025-05-15 at 19.34.46 (3).jpeg",
                 "imagens/Fiat_uno_2016/WhatsApp Image 2025-05-15 at 19.34.46 (4).jpeg",
-                "imagens/Fiat_uno_2016/WhatsApp Image 2025-05-15 at 19.34.46.jpeg",
-                "imagens/Fiat_uno_2016/WhatsApp Image 2025-05-15 at 19.34.47.jpeg"
+                "imagens/Fiat_uno_2016/WhatsApp Image 2025-05-15 at 19.34.46.jpeg"
             ]
         },
         {
+            "id": "4",
             "nome": "Kawasaki 600c",
             "ano": "",
             "preco": "R$ 0",
@@ -67,6 +50,7 @@
             ]
         },
         {
+            "id": "5",
             "nome": "Gol GL 2.0",
             "ano": "",
             "preco": "R$ 19.990",
@@ -83,10 +67,11 @@
             ]
         },
         {
+            "id": "6",
             "nome": "Corsa 1.0",
-            "ano": "2007/2008",
+            "ano": "2001",
             "preco": "R$ 17.900",
-            "descricao": "🤩Weiss Multimarcas🤩\n\n🚗Ótima oportunidade para negociação veículo em ótimo estádio de conservação🚗\n\n🚗Corsa 2007/2008 1.0\n🚗Ar quente e desembaçador\n🚗Travas elétricas\n🚗Vidros elétricos\n🚗Pneus meia vida\n🚗Documentação em dia\n🚗Veículo ideal para dia a dia",
+            "descricao": "🤩Weiss Multimarcas🤩\r\n\r\n🚗Ótima oportunidade para negociação veículo em ótimo estádio de conservação🚗\r\n\r\n🚗Corsa 2007/2008 1.0\r\n🚗Ar quente e desembaçador\r\n🚗Travas elétricas\r\n🚗Vidros elétricos\r\n🚗Pneus meia vida\r\n🚗Documentação em dia\r\n🚗Veículo ideal para dia a dia",
             "imagens": [
                 "imagens/Corsa_2007_2008_1_0/Corsa_2007_2008_1_0.jpg",
                 "imagens/Corsa_2007_2008_1_0/Corsa_2007_2008_1_01.jpg",

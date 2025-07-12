@@ -13,7 +13,6 @@ class Database:
     def create_tables(self):
         with self.connect() as conn:
             cursor = conn.cursor()
-            # Tabela de carros
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS cars (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,7 +23,6 @@ class Database:
                     images TEXT
                 )
             ''')
-            # Tabela de clientes
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS clients (
                     chat_id TEXT PRIMARY KEY,
@@ -94,7 +92,6 @@ class Database:
             conn.commit()
             return cursor.rowcount > 0
 
-# Exemplo de uso com Flask (para integração com o app)
 def init_db(app):
     db = Database()
     app.db = db

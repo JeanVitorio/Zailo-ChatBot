@@ -107,7 +107,7 @@ function normalizeText(text) {
 const clientStates = new Map();
 
 client.on('message', async msg => {
-    console.log('Mensagem recebida:', msg.body); // Log pra debug
+    console.log('Mensagem recebida:', msg.body);
     const chatId = msg.from;
     const originalText = msg.body.trim();
     const normalizedText = normalizeText(originalText);
@@ -122,7 +122,7 @@ client.on('message', async msg => {
         try {
             const response = await axios.get('http://localhost:5000/api/cars');
             const cars = response.data;
-            const carList = cars.map(c => `- ${c.name} (${c.year || 'sem ano'})`).join('\n') || 'Nenhum carro no bagulho!';
+            const carList = cars.modelos.map(c => `- ${c.nome} (${c.ano || 'sem ano'})`).join('\n') || 'Nenhum carro no bagulho!';
             await client.sendMessage(chatId, `Salve, irmão! 👊 Eu sou a Zailon, teu parceiro virtual. Tem esses carros no estoque:\n${carList}\nQuer comprar, financiar, vender ou só dar uma olhada?`);
             state.step = 'aguardando_intencao';
             const clientData = { name: chatId.split('@')[0], phone: chatId, state: 'inicial', interests: {}, documents: {}, report: 'Conversa iniciada' };
@@ -150,7 +150,7 @@ client.on('message', async msg => {
             if (intent === 'comprar' || intent === 'financiar') {
                 state.step = 'aguardando_carro';
                 const cars = (await axios.get('http://localhost:5000/api/cars')).data;
-                const carList = cars.map(c => `${c.name} (${c.year || 'sem ano'})`).join(', ');
+                const carList = cars.modelos.map(c => `${c.nome} (${c.ano || 'sem ano'})`).join(', ');
                 await client.sendMessage(chatId, `Beleza, irmão! Quer ${intent === 'financiar' ? 'financiar' : 'comprar'} um carro? Temos: ${carList}. Qual te interessa?`);
                 state.clientData.interest = intent === 'financiar' ? 'financiamento' : 'compra à vista';
                 state.clientData.state = 'aguardando_carro';
@@ -163,7 +163,7 @@ client.on('message', async msg => {
                 await axios.put('http://localhost:5000/api/clients/' + state.clientData.id, { interests: state.clientData, state: state.step });
             } else if (intent === 'detalhes') {
                 if (state.lastCar) {
-                    await client.sendMessage(chatId, `Detalhes do ${state.lastCar.name}: Ano ${state.lastCar.year || 'sem ano'}, ${state.lastCar.description || 'sem descrição'}. Quer financiar ou ver outro?`);
+                    await client.sendMessage(chatId, `Detalhes do ${state.lastCar.nome}: Ano ${state.lastCar.ano || 'sem ano'}, ${state.lastCar.descricao || 'sem descrição'}. Quer financiar ou ver outro?`);
                 } else {
                     await client.sendMessage(chatId, 'Fala qual carro tu quer saber mais, irmão!');
                 }
@@ -180,12 +180,12 @@ client.on('message', async msg => {
 
     if (state.step === 'aguardando_carro') {
         const cars = (await axios.get('http://localhost:5000/api/cars')).data;
-        const carMatch = cars.find(c => normalizedText.includes(normalizeText(c.name)));
+        const carMatch = cars.modelos.find(c => normalizeText(c.nome).includes(normalizeText(originalText)));
         if (carMatch) {
             state.lastCar = carMatch;
-            state.clientData.carInterested = carMatch.name;
+            state.clientData.carInterested = carMatch.nome;
             state.step = state.clientData.interest === 'financiamento' ? 'aguardando_documentos' : 'aguardando_confirmacao';
-            await client.sendMessage(chatId, `Top, curtiu o ${carMatch.name}! ${state.clientData.interest === 'financiamento' ? 'Pra simular, me passa teu CPF (só números):' : 'Quer fechar essa compra? Diz sim ou não!'}`);
+            await client.sendMessage(chatId, `Top, curtiu o ${carMatch.nome}! ${state.clientData.interest === 'financiamento' ? 'Pra simular, me passa teu CPF (só números):' : 'Quer fechar essa compra? Diz sim ou não!'}`);
             state.clientData.state = state.step;
             await axios.put('http://localhost:5000/api/clients/' + state.clientData.id, { interests: state.clientData, state: state.step });
         } else {
