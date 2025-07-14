@@ -1,0 +1,147 @@
+2025-07-13 03:10:31,670 - INFO - Database initialized successfully
+2025-07-13 03:10:31,686 - WARNING -  * Debugger is active!
+2025-07-13 03:10:31,691 - INFO -  * Debugger PIN: 124-471-006
+2025-07-13 03:10:36,801 - INFO - 127.0.0.1 - - [13/Jul/2025 03:10:36] "[33mGET /QRCODE/qrcode.png HTTP/1.1[0m" 404 -
+2025-07-13 03:10:37,111 - ERROR - Failed to fetch clients: no such column: name
+2025-07-13 03:10:37,111 - INFO - 127.0.0.1 - - [13/Jul/2025 03:10:37] "[35m[1mGET /api/clients HTTP/1.1[0m" 500 -
+2025-07-13 03:10:37,112 - ERROR - Failed to fetch cars: no such column: nome
+2025-07-13 03:10:37,112 - INFO - 127.0.0.1 - - [13/Jul/2025 03:10:37] "[35m[1mGET /api/cars HTTP/1.1[0m" 500 -
+2025-07-13 03:14:20,413 - INFO -  * Detected change in 'C:\\Users\\PulseMarketing\\Documents\\ZailonChatBot\\Zailo-ChatBot\\main.py', reloading
+2025-07-13 03:14:20,813 - INFO - Database initialized successfully
+2025-07-13 03:14:20,830 - WARNING -  * Debugger is active!
+2025-07-13 03:14:20,833 - INFO -  * Debugger PIN: 124-471-006
+2025-07-13 03:14:28,430 - INFO - 127.0.0.1 - - [13/Jul/2025 03:14:28] "[33mGET /QRCODE/qrcode.png HTTP/1.1[0m" 404 -
+2025-07-13 03:14:28,745 - ERROR - Failed to fetch cars: no such column: nome
+2025-07-13 03:14:28,745 - ERROR - Failed to fetch clients: no such column: name
+2025-07-13 03:14:28,746 - INFO - 127.0.0.1 - - [13/Jul/2025 03:14:28] "[35m[1mGET /api/cars HTTP/1.1[0m" 500 -
+2025-07-13 03:14:28,746 - INFO - 127.0.0.1 - - [13/Jul/2025 03:14:28] "[35m[1mGET /api/clients HTTP/1.1[0m" 500 -
+2025-07-13 03:14:39,777 - INFO -  * Detected change in 'C:\\Users\\PulseMarketing\\Documents\\ZailonChatBot\\Zailo-ChatBot\\main.py', reloading
+2025-07-13 03:14:40,073 - INFO - Database initialized successfully
+2025-07-13 03:14:40,095 - WARNING -  * Debugger is active!
+2025-07-13 03:14:40,099 - INFO -  * Debugger PIN: 124-471-006
+2025-07-13 03:14:42,424 - INFO -  * Detected change in 'C:\\Users\\PulseMarketing\\Documents\\ZailonChatBot\\Zailo-ChatBot\\main.py', reloading
+2025-07-13 03:48:53,558 - INFO - Database initialized successfully
+2025-07-13 03:48:53,582 - WARNING -  * Debugger is active!
+2025-07-13 03:48:53,585 - INFO -  * Debugger PIN: 124-471-006
+2025-07-13 03:48:53,740 - INFO -  * Detected change in 'C:\\Users\\PulseMarketing\\Documents\\ZailonChatBot\\Zailo-ChatBot\\main.py', reloading
+2025-07-13 03:48:57,633 - INFO - Database initialized successfully
+2025-07-13 03:48:57,662 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.0.112:5000
+2025-07-13 03:48:57,662 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-13 03:48:57,664 - INFO -  * Restarting with stat
+2025-07-13 03:48:57,880 - INFO - Database initialized successfully
+2025-07-13 03:48:57,894 - WARNING -  * Debugger is active!
+2025-07-13 03:48:57,898 - INFO -  * Debugger PIN: 124-471-006
+2025-07-13 03:49:02,539 - DEBUG - Added CORS headers to response
+2025-07-13 03:49:02,540 - INFO - 127.0.0.1 - - [13/Jul/2025 03:49:02] "GET /QRCODE/qrcode.png HTTP/1.1" 200 -
+2025-07-13 03:49:02,852 - ERROR - Failed to fetch cars: no such column: nome
+2025-07-13 03:49:02,852 - ERROR - Failed to fetch clients: no such column: name
+2025-07-13 03:49:02,853 - DEBUG - Added CORS headers to response
+2025-07-13 03:49:02,853 - DEBUG - Added CORS headers to response
+2025-07-13 03:49:02,853 - INFO - 127.0.0.1 - - [13/Jul/2025 03:49:02] "[35m[1mGET /api/cars HTTP/1.1[0m" 500 -
+2025-07-13 03:49:02,853 - INFO - 127.0.0.1 - - [13/Jul/2025 03:49:02] "[35m[1mGET /api/clients HTTP/1.1[0m" 500 -
+2025-07-13 03:49:12,355 - INFO -  * Detected change in 'C:\\Users\\PulseMarketing\\Documents\\ZailonChatBot\\Zailo-ChatBot\\main.py', reloading
+2025-07-13 03:49:12,404 - INFO -  * Restarting with stat
+2025-07-13 03:50:23,157 - INFO -  * Restarting with stat
+2025-07-13 03:50:23,468 - INFO - Database initialized successfully
+2025-07-13 03:50:23,485 - WARNING -  * Debugger is active!
+2025-07-13 03:50:23,488 - INFO -  * Debugger PIN: 124-471-006
+2025-07-13 03:53:18,649 - DEBUG - Handling CORS preflight request
+2025-07-13 03:53:18,651 - DEBUG - Added CORS headers to response
+2025-07-13 03:53:18,652 - INFO - 127.0.0.1 - - [13/Jul/2025 03:53:18] "OPTIONS /api/cars HTTP/1.1" 200 -
+2025-07-13 03:53:18,653 - DEBUG - Handling CORS preflight request
+2025-07-13 03:53:18,654 - DEBUG - Added CORS headers to response
+2025-07-13 03:53:18,654 - INFO - 127.0.0.1 - - [13/Jul/2025 03:53:18] "OPTIONS /api/clients HTTP/1.1" 200 -
+2025-07-13 03:53:18,903 - ERROR - Failed to fetch cars: no such column: nome
+2025-07-13 03:53:18,904 - DEBUG - Added CORS headers to response
+2025-07-13 03:53:18,904 - INFO - 127.0.0.1 - - [13/Jul/2025 03:53:18] "[35m[1mGET /api/cars HTTP/1.1[0m" 500 -
+2025-07-13 03:53:18,957 - ERROR - Failed to fetch clients: no such column: name
+2025-07-13 03:53:18,957 - DEBUG - Added CORS headers to response
+2025-07-13 03:53:18,958 - INFO - 127.0.0.1 - - [13/Jul/2025 03:53:18] "[35m[1mGET /api/clients HTTP/1.1[0m" 500 -
+2025-07-13 03:53:38,315 - ERROR - Failed to fetch cars: no such column: nome
+2025-07-13 03:53:38,315 - DEBUG - Added CORS headers to response
+2025-07-13 03:53:38,315 - ERROR - Failed to fetch clients: no such column: name
+2025-07-13 03:53:38,315 - INFO - 127.0.0.1 - - [13/Jul/2025 03:53:38] "[35m[1mGET /api/cars HTTP/1.1[0m" 500 -
+2025-07-13 03:53:38,316 - DEBUG - Added CORS headers to response
+2025-07-13 03:53:38,316 - INFO - 127.0.0.1 - - [13/Jul/2025 03:53:38] "[35m[1mGET /api/clients HTTP/1.1[0m" 500 -
+2025-07-13 03:58:03,810 - INFO -  * Detected change in 'C:\\Users\\PulseMarketing\\Documents\\ZailonChatBot\\Zailo-ChatBot\\main.py', reloading
+2025-07-13 03:58:03,895 - INFO -  * Restarting with stat
+2025-07-13 03:58:04,240 - INFO - Database initialized successfully
+2025-07-13 03:58:04,277 - WARNING -  * Debugger is active!
+2025-07-13 03:58:04,286 - INFO -  * Debugger PIN: 124-471-006
+2025-07-13 03:58:07,613 - ERROR - Failed to fetch cars: no such column: nome
+2025-07-13 03:58:07,614 - DEBUG - Added CORS headers to response
+2025-07-13 03:58:07,614 - INFO - 127.0.0.1 - - [13/Jul/2025 03:58:07] "[35m[1mGET /api/cars HTTP/1.1[0m" 500 -
+2025-07-13 03:58:07,646 - INFO - Fetched 6 clients from clientes.json
+2025-07-13 03:58:07,646 - DEBUG - Added CORS headers to response
+2025-07-13 03:58:07,646 - INFO - 127.0.0.1 - - [13/Jul/2025 03:58:07] "GET /api/clients HTTP/1.1" 200 -
+2025-07-13 03:58:15,602 - INFO -  * Detected change in 'C:\\Users\\PulseMarketing\\Documents\\ZailonChatBot\\Zailo-ChatBot\\main.py', reloading
+2025-07-13 03:58:15,643 - INFO -  * Restarting with stat
+2025-07-13 04:03:03,911 - INFO -  * Restarting with stat
+2025-07-13 04:03:04,206 - INFO - Database initialized successfully
+2025-07-13 04:03:04,221 - WARNING -  * Debugger is active!
+2025-07-13 04:03:04,225 - INFO -  * Debugger PIN: 124-471-006
+2025-07-13 04:05:07,037 - DEBUG - Handling CORS preflight request
+2025-07-13 04:05:07,039 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:07,040 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:07] "OPTIONS /api/cars HTTP/1.1" 200 -
+2025-07-13 04:05:07,040 - DEBUG - Handling CORS preflight request
+2025-07-13 04:05:07,042 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:07,042 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:07] "OPTIONS /api/clients HTTP/1.1" 200 -
+2025-07-13 04:05:07,301 - ERROR - Failed to fetch cars: no such column: nome
+2025-07-13 04:05:07,301 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:07,301 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:07] "[35m[1mGET /api/cars HTTP/1.1[0m" 500 -
+2025-07-13 04:05:07,348 - INFO - Fetched 6 clients from clientes.json
+2025-07-13 04:05:07,349 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:07,349 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:07] "GET /api/clients HTTP/1.1" 200 -
+2025-07-13 04:05:12,076 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:12,076 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:12] "OPTIONS /status HTTP/1.1" 200 -
+2025-07-13 04:05:12,094 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:12,094 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:12] "GET /status HTTP/1.1" 200 -
+2025-07-13 04:05:17,080 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:17,080 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:17] "GET /status HTTP/1.1" 200 -
+2025-07-13 04:05:22,369 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:22,371 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:22] "OPTIONS /status HTTP/1.1" 200 -
+2025-07-13 04:05:22,622 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:22,623 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:22] "GET /status HTTP/1.1" 200 -
+2025-07-13 04:05:27,080 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:27,080 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:27] "GET /status HTTP/1.1" 200 -
+2025-07-13 04:05:32,078 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:32,079 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:32] "OPTIONS /status HTTP/1.1" 200 -
+2025-07-13 04:05:32,388 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:32,389 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:32] "GET /status HTTP/1.1" 200 -
+2025-07-13 04:05:37,069 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:37,070 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:37] "GET /status HTTP/1.1" 200 -
+2025-07-13 04:05:42,389 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:42,389 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:42] "OPTIONS /status HTTP/1.1" 200 -
+2025-07-13 04:05:42,651 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:42,651 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:42] "GET /status HTTP/1.1" 200 -
+2025-07-13 04:05:47,078 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:47,079 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:47] "GET /status HTTP/1.1" 200 -
+2025-07-13 04:05:48,380 - ERROR - Failed to fetch cars: no such column: nome
+2025-07-13 04:05:48,380 - INFO - Fetched 6 clients from clientes.json
+2025-07-13 04:05:48,384 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:48,385 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:48,385 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:48] "[35m[1mGET /api/cars HTTP/1.1[0m" 500 -
+2025-07-13 04:05:48,386 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:48] "GET /api/clients HTTP/1.1" 200 -
+2025-07-13 04:05:52,079 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:52,079 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:52] "OPTIONS /status HTTP/1.1" 200 -
+2025-07-13 04:05:52,391 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:52,392 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:52] "GET /status HTTP/1.1" 200 -
+2025-07-13 04:05:57,070 - DEBUG - Added CORS headers to response
+2025-07-13 04:05:57,070 - INFO - 127.0.0.1 - - [13/Jul/2025 04:05:57] "GET /status HTTP/1.1" 200 -
+2025-07-13 04:06:02,390 - DEBUG - Added CORS headers to response
+2025-07-13 04:06:02,390 - INFO - 127.0.0.1 - - [13/Jul/2025 04:06:02] "OPTIONS /status HTTP/1.1" 200 -
+2025-07-13 04:06:02,655 - DEBUG - Added CORS headers to response
+2025-07-13 04:06:02,655 - INFO - 127.0.0.1 - - [13/Jul/2025 04:06:02] "GET /status HTTP/1.1" 200 -
+2025-07-13 04:06:23,488 - INFO -  * Detected change in 'C:\\Users\\PulseMarketing\\Documents\\ZailonChatBot\\Zailo-ChatBot\\main.py', reloading
+2025-07-13 04:06:23,562 - INFO -  * Restarting with stat
+2025-07-13 04:33:34,755 - INFO -  * Restarting with stat
+2025-07-13 04:34:09,416 - INFO -  * Restarting with stat
+2025-07-13 04:37:11,634 - INFO -  * Restarting with stat
+2025-07-13 04:37:13,186 - INFO -  * Restarting with stat
+2025-07-13 04:37:13,764 - INFO -  * Restarting with stat
+2025-07-13 04:37:26,318 - INFO -  * Restarting with stat
+2025-07-13 04:42:42,589 - INFO -  * Restarting with stat
+2025-07-13 04:45:23,006 - INFO -  * Restarting with stat

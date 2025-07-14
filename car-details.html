@@ -12,16 +12,27 @@
 
     <style>
         :root {
-            --cor-fundo-escuro: #121212;
-            --cor-fundo-card: #1E1E1E;
-            --cor-borda: #2c2c2c;
+            --cor-fundo-escuro: #0a0a0a;
+            --cor-fundo-card: #1c1c1c;
+            --cor-borda: #2f2f2f;
             --cor-destaque: #D4A017;
-            --cor-texto-principal: #E5E5E5;
-            --cor-texto-secundario: #a0a0a0;
+            --cor-texto-principal: #E0E0E0;
+            --cor-texto-secundario: #a8a8a8;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.25);
+            --shadow-heavy: rgba(0, 0, 0, 0.4);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Roboto', sans-serif;
             background-color: var(--cor-fundo-escuro);
@@ -29,6 +40,7 @@
             overflow-x: hidden;
             min-height: 100vh;
             padding: 20px;
+            line-height: 1.6;
         }
 
         .container {
@@ -36,43 +48,49 @@
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 50px;
+            gap: 40px;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 40px;
-            background-color: rgba(30, 30, 30, 0.8);
-            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            background-color: rgba(28, 28, 28, 0.9);
+            backdrop-filter: blur(8px);
             border-bottom: 1px solid var(--cor-borda);
             position: sticky;
-            top: 0;
+            top: 20px;
             z-index: 1000;
             border-radius: 12px;
+            box-shadow: 0 4px 15px var(--shadow-medium);
         }
 
         .logo {
-            font-size: 1.8em;
+            font-size: 1.9em;
             font-weight: 700;
             color: var(--cor-destaque);
             text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .logo:hover {
+            color: #FFD700;
         }
 
         .content {
             background: var(--cor-fundo-card);
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 0.5s ease;
+            box-shadow: 0 6px 20px var(--shadow-heavy);
+            animation: fadeIn 0.6s ease-out;
             position: relative;
         }
 
         .details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
             margin-bottom: 40px;
             position: relative;
             z-index: 20;
@@ -82,33 +100,34 @@
             background-color: var(--cor-fundo-card);
             padding: 20px;
             border-radius: 12px;
-            border-left: 4px solid var(--cor-destaque);
-            transition: all 0.3s ease;
+            border-left: 5px solid var(--cor-destaque);
+            transition: all 0.3s ease-in-out;
             height: auto;
             position: relative;
+            box-shadow: 0 2px 10px var(--shadow-light);
         }
 
         .detail-item:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px var(--shadow-medium);
         }
 
         .detail-item label {
             display: block;
-            font-size: 1.1em;
+            font-size: 1em;
             font-weight: 500;
             color: var(--cor-texto-secundario);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.8px;
         }
 
         .detail-item span {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: var(--cor-texto-principal);
-            padding: 8px 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
             display: block;
             word-break: break-word;
         }
@@ -121,15 +140,16 @@
             border-radius: 8px;
             font-size: 1.1em;
             color: var(--cor-texto-principal);
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.12);
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             z-index: 30;
+            appearance: none;
         }
 
         .edit-field:focus {
             border-color: var(--cor-destaque);
-            box-shadow: 0 0 8px rgba(212, 160, 23, 0.2);
+            box-shadow: 0 0 10px rgba(212, 160, 23, 0.3);
             outline: none;
         }
 
@@ -150,45 +170,60 @@
             z-index: 10;
         }
 
+        .image-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
         .car-images img {
             max-width: 200px;
+            height: 150px;
+            object-fit: cover;
             border-radius: 10px;
             border: 1px solid var(--cor-borda);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px var(--shadow-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
         }
 
         .car-images img:hover {
             transform: scale(1.05);
+            box-shadow: 0 6px 18px var(--shadow-medium);
         }
 
-        .car-images .remove-btn {
+        .remove-btn {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 8px;
+            right: 8px;
             background: var(--cor-destaque);
             color: #000;
             border: none;
             border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            font-size: 14px;
+            width: 28px;
+            height: 28px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
             display: none;
             z-index: 15;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .car-images img:hover + .remove-btn,
-        .car-images .remove-btn {
-            display: block;
+        .image-wrapper:hover .remove-btn {
+            display: flex;
         }
 
-        .car-images .remove-btn:hover {
+        .remove-btn:hover {
             background: #FFD700;
+            transform: scale(1.1);
         }
 
         .add-image-input {
-            margin-top: 20px;
+            margin-top: 30px;
             display: none;
             padding: 12px 25px;
             background: var(--cor-destaque);
@@ -197,24 +232,45 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-weight: 700;
+            text-align: center;
         }
 
         .add-image-input:hover {
-            transform: translateY(-5px) scale(1.05);
+            transform: translateY(-5px) scale(1.02);
             box-shadow: 0 10px 20px rgba(212, 160, 23, 0.2);
         }
 
         .preview-images {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
             margin-top: 20px;
+            justify-content: center;
+            padding: 10px;
+            border: 1px dashed var(--cor-borda);
+            border-radius: 10px;
+            min-height: 80px;
+            align-items: center;
+            display: none;
+        }
+        
+        .preview-images.active {
+            display: flex;
+        }
+
+        .preview-images .image-wrapper {
+            position: relative;
+            display: inline-block;
         }
 
         .preview-images img {
-            max-width: 150px;
-            border-radius: 10px;
+            max-width: 120px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 8px;
             border: 1px solid var(--cor-borda);
+            box-shadow: 0 2px 8px var(--shadow-light);
         }
 
         .actions {
@@ -223,7 +279,7 @@
             justify-content: center;
             gap: 20px;
             padding-top: 20px;
-            border-top: 1px solid rgba(212, 160, 23, 0.3);
+            border-top: 1px solid rgba(212, 160, 23, 0.2);
         }
 
         .btn {
@@ -234,17 +290,22 @@
             border-radius: 8px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s ease-in-out;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btn:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 10px 20px rgba(212, 160, 23, 0.2);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(212, 160, 23, 0.25);
+            background-color: #FFD700;
         }
 
         .btn:disabled {
             background: var(--cor-texto-secundario);
             cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .save-btn {
@@ -252,34 +313,90 @@
         }
 
         .loader {
-            width: calc(100% - 34px);
-            z-index: 9999;
+            width: 100%;
+            height: 100%;
             position: fixed;
-            top: 50%;
-            left: 17px;
-            transition: opacity 250ms ease;
+            top: 0;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
             opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
         .loader--show {
             opacity: 1;
+            visibility: visible;
         }
 
         .loader__spin {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            border: 5px solid rgba(255, 255, 255, 0.2);
+            border: 6px solid rgba(255, 255, 255, 0.2);
             border-top-color: var(--cor-destaque);
-            animation: loader-spin 1s infinite linear;
-            display: block;
-            margin: 0 auto;
+            animation: loader-spin 1s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         @keyframes loader-spin {
-            0% { transform: rotate(0); }
+            0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 20px;
+                top: 0;
+                border-radius: 0;
+            }
+
+            .container {
+                padding: 0 10px;
+                gap: 30px;
+            }
+
+            .content {
+                padding: 20px;
+                border-radius: 0;
+            }
+
+            .detail-item {
+                padding: 15px;
+            }
+
+            .detail-item label {
+                font-size: 0.9em;
+            }
+
+            .detail-item span, .edit-field {
+                font-size: 1em;
+                padding: 10px;
+            }
+
+            .car-images img {
+                max-width: 150px;
+                height: 120px;
+            }
+
+            .actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -288,20 +405,21 @@
         <div class="loader__spin"></div>
     </div>
     <div class="container">
-        <div class="header">
+        <header class="header">
             <a href="#" class="logo" onclick="window.history.back()">ZAILONSOFT</a>
-        </div>
-        <div class="content">
+        </header>
+        <main class="content">
             <div class="details" id="car-details"></div>
             <div class="car-images" id="car-images-detail"></div>
-            <input type="file" id="edit-car-images" multiple accept="image/*" class="add-image-input" onchange="previewImages()">
+            <label for="edit-car-images" class="btn add-image-input" id="add-image-label">Adicionar Imagens</label>
+            <input type="file" id="edit-car-images" multiple accept="image/*" style="display: none;" onchange="previewImages()">
             <div class="preview-images" id="preview-images"></div>
             <div class="actions">
-                <button class="btn" onclick="toggleEditMode()">Editar</button>
-                <button class="btn" onclick="closeDetails()">Fechar</button>
+                <button class="btn edit-btn" onclick="toggleEditMode()">Editar</button>
+                <button class="btn close-btn" onclick="closeDetails()">Fechar</button>
                 <button class="btn save-btn" onclick="saveCarChanges()">Salvar</button>
             </div>
-        </div>
+        </main>
     </div>
 
     <script>
@@ -321,12 +439,12 @@
             showLoader();
             try {
                 const response = await fetch('http://localhost:5000/api/cars');
-                if (!response.ok) throw new Error('Erro ao carregar carros');
+                if (!response.ok) throw new Error(`Erro ao carregar carros: ${response.statusText}`);
                 cars = await response.json();
                 showCarDetails(carId);
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
-                document.getElementById('car-details').innerHTML = '<p style="color: var(--cor-destaque); text-align: center;">Erro ao carregar detalhes.</p>';
+                document.getElementById('car-details').innerHTML = '<p style="color: var(--cor-destaque); text-align: center; padding: 20px;">Não foi possível carregar os detalhes do veículo. Por favor, tente novamente.</p>';
             } finally {
                 hideLoader();
             }
@@ -335,11 +453,13 @@
         window.onload = loadCars;
 
         function showCarDetails(carId) {
-            const car = cars.modelos.find(c => c.id === carId);
+            const car = cars.modelos.find(c => c.id === carId || (cars.modelos.indexOf(c) + 1).toString() === carId);
             if (!car) {
                 console.error('Carro não encontrado:', carId);
+                document.getElementById('car-details').innerHTML = '<p style="color: var(--cor-destaque); text-align: center; padding: 20px;">Veículo não encontrado.</p>';
                 return;
             }
+
             const details = document.getElementById('car-details');
             details.innerHTML = `
                 <div class="detail-item">
@@ -360,26 +480,29 @@
                 <div class="detail-item">
                     <label for="edit-car-description">Descrição</label>
                     <span id="car-description-detail">${car.descricao || 'Sem descrição'}</span>
-                    <textarea id="edit-car-description" class="edit-field" rows="8" style="width: 100%; min-height: 150px;"></textarea>
+                    <textarea id="edit-car-description" class="edit-field" rows="8"></textarea>
                 </div>
             `;
+            document.getElementById('edit-car-description').value = car.descricao || '';
+
             const imagesContainer = document.getElementById('car-images-detail');
             imagesContainer.innerHTML = '';
             if (car.imagens && car.imagens.length > 0) {
-                car.imagens.forEach((img, index) => {
+                car.imagens.forEach((imgSrc, index) => {
                     const imgWrapper = document.createElement('div');
-                    imgWrapper.style.position = 'relative';
+                    imgWrapper.className = 'image-wrapper';
                     imgWrapper.innerHTML = `
-                        <img src="${img}" alt="Imagem de ${car.nome}" onload="this.style.opacity='1'">
+                        <img src="http://localhost:5000/${imgSrc}" alt="Imagem de ${car.nome}">
                         <button class="remove-btn" onclick="removeImage('${car.id}', ${index})">X</button>
                     `;
                     imagesContainer.appendChild(imgWrapper);
                 });
             } else {
-                imagesContainer.innerHTML = '<p>Sem imagens disponíveis</p>';
+                imagesContainer.innerHTML = '<p style="text-align: center; color: var(--cor-texto-secundario);">Sem imagens disponíveis.</p>';
             }
-            document.getElementById('edit-car-description').value = car.descricao || '';
             document.getElementById('preview-images').innerHTML = '';
+            document.getElementById('preview-images').classList.remove('active');
+            document.getElementById('edit-car-images').value = '';
             toggleEditMode(false);
         }
 
@@ -387,14 +510,20 @@
             const files = document.getElementById('edit-car-images').files;
             const previewContainer = document.getElementById('preview-images');
             previewContainer.innerHTML = '';
+            if (files.length > 0) {
+                previewContainer.classList.add('active');
+            } else {
+                previewContainer.classList.remove('active');
+            }
+
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const imgWrapper = document.createElement('div');
-                    imgWrapper.style.position = 'relative';
+                    imgWrapper.className = 'image-wrapper';
                     imgWrapper.innerHTML = `
-                        <img src="${e.target.result}" alt="Pré-visualização" style="max-width: 150px; border-radius: 10px; border: 1px solid var(--cor-borda);">
+                        <img src="${e.target.result}" alt="Pré-visualização">
                         <button class="remove-btn" onclick="removePreviewImage(${i})">X</button>
                     `;
                     previewContainer.appendChild(imgWrapper);
@@ -413,28 +542,29 @@
             previewImages();
         }
 
-        function removeImage(carId, imageIndex) {
-            if (confirm('Tem certeza que deseja remover esta imagem?')) {
-                const car = cars.modelos.find(c => c.id === carId);
-                if (car && car.imagens && car.imagens[imageIndex]) {
-                    fetch(`http://localhost:5000/api/cars/${carId}/images/${imageIndex}`, {
+        async function removeImage(carId, imageIndex) {
+            if (confirm('Tem certeza que deseja remover esta imagem? Esta ação é irreversível.')) {
+                showLoader();
+                try {
+                    const response = await fetch(`http://localhost:5000/api/cars/${carId}/images/${imageIndex}`, {
                         method: 'DELETE'
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Erro HTTP: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(result => {
-                        car.imagens = result.imagens_restantes;
-                        showCarDetails(carId);
-                        alert('Imagem removida com sucesso!');
-                    })
-                    .catch(error => {
-                        console.error('Erro ao remover imagem:', error);
-                        alert(`Erro ao remover a imagem: ${error.message}. Verifique o console para mais detalhes.`);
                     });
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Erro ao remover imagem: ${errorText || response.statusText}`);
+                    }
+                    const result = await response.json();
+                    const car = cars.modelos.find(c => c.id === carId);
+                    if (car) {
+                        car.imagens = result.imagens_restantes || [];
+                    }
+                    showCarDetails(carId);
+                    alert('Imagem removida com sucesso!');
+                } catch (error) {
+                    console.error('Erro ao remover imagem:', error);
+                    alert(`Erro ao remover a imagem: ${error.message}. Verifique o console.`);
+                } finally {
+                    hideLoader();
                 }
             }
         }
@@ -442,25 +572,34 @@
         function toggleEditMode(edit = true) {
             const editFields = document.querySelectorAll('.edit-field');
             const saveBtn = document.querySelector('.save-btn');
-            const addImageInput = document.getElementById('edit-car-images');
+            const addImageLabel = document.getElementById('add-image-label');
             const spans = document.querySelectorAll('#car-details span');
+            const editBtn = document.querySelector('.edit-btn');
+            const removeImageButtons = document.querySelectorAll('#car-images-detail .remove-btn');
+            const previewContainer = document.getElementById('preview-images');
 
             if (edit) {
                 spans.forEach(span => span.style.display = 'none');
                 editFields.forEach(field => field.style.display = 'block');
                 saveBtn.style.display = 'inline-block';
-                addImageInput.style.display = 'block';
-                document.querySelectorAll('.remove-btn').forEach(btn => btn.style.display = 'block');
+                addImageLabel.style.display = 'block';
+                editBtn.textContent = 'Cancelar';
+                removeImageButtons.forEach(btn => btn.style.display = 'flex');
+                previewContainer.classList.add('active');
             } else {
                 spans.forEach(span => span.style.display = 'block');
                 editFields.forEach(field => field.style.display = 'none');
                 saveBtn.style.display = 'none';
-                addImageInput.style.display = 'none';
-                document.querySelectorAll('.remove-btn').forEach(btn => btn.style.display = 'none');
+                addImageLabel.style.display = 'none';
+                editBtn.textContent = 'Editar';
+                removeImageButtons.forEach(btn => btn.style.display = 'none');
+                document.getElementById('edit-car-images').value = '';
+                previewContainer.innerHTML = '';
+                previewContainer.classList.remove('active');
             }
         }
 
-        function saveCarChanges() {
+        async function saveCarChanges() {
             const carId = new URLSearchParams(window.location.search).get('id');
             const formData = new FormData();
             formData.append('name', document.getElementById('edit-car-name').value);
@@ -475,27 +614,24 @@
             }
 
             showLoader();
-            fetch(`http://localhost:5000/api/cars/${carId}`, {
-                method: 'PUT',
-                body: formData
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    return response.text().then(errorText => { throw new Error(errorText || 'Erro ao salvar alterações'); });
+            try {
+                const response = await fetch(`http://localhost:5000/api/cars/${carId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Erro ao salvar alterações');
                 }
-            })
-            .then(data => {
-                loadCars();
-                toggleEditMode(false);
+                await response.json();
                 alert('Alterações salvas com sucesso!');
-            })
-            .catch(error => {
+                await loadCars();
+            } catch (error) {
                 console.error('Erro ao salvar alterações:', error);
-                alert(`Erro ao salvar as alterações: ${error.message}. Verifique o console para mais informações.`);
-            })
-            .finally(hideLoader);
+                alert(`Erro ao salvar as alterações: ${error.message}. Verifique o console.`);
+            } finally {
+                hideLoader();
+            }
         }
 
         function closeDetails() {

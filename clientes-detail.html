@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, maximum-scale=1, height=device-height">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Detalhes do Cliente - ZailonSoft</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --cor-fundo-escuro: #0a0a0a;
+            --cor-fundo-card: #181818;
+            --cor-borda: #333333;
+            --cor-destaque: #D4A017;
+            --cor-destaque-secundaria: #FFD700;
+            --cor-texto-principal: #F0F0F0;
+            --cor-texto-secundario: #B0B0B0;
+            --shadow-light: rgba(0, 0, 0, 0.15);
+            --shadow-medium: rgba(0, 0, 0, 0.3);
+            --shadow-heavy: rgba(0, 0, 0, 0.5);
+            --gradient-button: linear-gradient(135deg, #D4A017, #FFD700);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(180deg, var(--cor-fundo-escuro), #1a1a1a);
+            color: var(--cor-texto-principal);
+            overflow-x: hidden;
+            min-height: 100vh;
+            padding: 24px;
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 32px;
+            background: linear-gradient(90deg, rgba(28, 28, 28, 0.95), rgba(40, 40, 40, 0.95));
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--cor-borda);
+            position: sticky;
+            top: 16px;
+            z-index: 1000;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px var(--shadow-medium);
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: var(--cor-destaque);
+            text-decoration: none;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .logo:hover {
+            color: var(--cor-destaque-secundaria);
+            transform: scale(1.05);
+        }
+
+        .back-btn {
+            background: var(--gradient-button);
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(212, 160, 23, 0.3);
+        }
+
+        .content {
+            background: var(--cor-fundo-card);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px var(--shadow-heavy);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .content-header {
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .content-header h2 {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: var(--cor-destaque);
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .detail-item {
+            background: linear-gradient(145deg, var(--cor-fundo-card), #222222);
+            padding: 24px;
+            border-radius: 12px;
+            border-left: 4px solid var(--cor-destaque);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px var(--shadow-light);
+        }
+
+        .detail-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px var(--shadow-medium);
+        }
+
+        .detail-item label {
+            font-size: 0.95em;
+            font-weight: 500;
+            color: var(--cor-texto-secundario);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-item span {
+            font-size: 1.05em;
+            color: var(--cor-texto-principal);
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            display: block;
+            word-break: break-word;
+        }
+
+        .edit-field {
+            display: none;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            font-size: 1.05em;
+            color: var(--cor-texto-principal);
+            background: var(--cor-fundo-card);
+            transition: all 0.3s ease;
+        }
+
+        .edit-field:focus {
+            border-color: var(--cor-destaque);
+            box-shadow: 0 0 12px rgba(212, 160, 23, 0.25);
+            outline: none;
+        }
+
+        .edit-field#edit-client-state {
+            appearance: auto;
+            cursor: pointer;
+            padding-right: 30px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23F0F0F0' viewBox='0 0 16 16'%3E%3Cpath d='M8 10.5L3.5 6l1.41-1.41L8 7.67l3.09-3.08L12.5 6 8 10.5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-color: var(--cor-fundo-card);
+            color: var(--cor-texto-principal);
+        }
+
+        .edit-field#edit-client-state:focus {
+            border-color: var(--cor-destaque);
+            box-shadow: 0 0 12px rgba(212, 160, 23, 0.25);
+            outline: none;
+        }
+
+        /* Estilizar opções do select, onde possível */
+        .edit-field#edit-client-state option {
+            background: var(--cor-fundo-escuro);
+            color: var(--cor-texto-principal);
+            padding: 10px;
+        }
+
+        .edit-field#edit-client-report {
+            min-height: 120px;
+            max-height: 240px;
+            resize: vertical;
+        }
+
+        .client-documents-section {
+            margin-top: 32px;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid var(--cor-borda);
+        }
+
+        .client-documents-section h3 {
+            font-size: 1.4em;
+            font-weight: 500;
+            color: var(--cor-destaque);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .client-documents {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .image-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .client-documents img {
+            max-width: 180px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid var(--cor-borda);
+            box-shadow: 0 4px 12px var(--shadow-light);
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+
+        .client-documents img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px var(--shadow-medium);
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--cor-destaque);
+            color: #000;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .image-wrapper:hover .remove-btn {
+            display: flex;
+        }
+
+        .remove-btn:hover {
+            background: var(--cor-destaque-secundaria);
+            transform: scale(1.15);
+        }
+
+        .add-document-input {
+            margin: 24px auto 0;
+            display: none;
+            padding: 12px 24px;
+            background: var(--gradient-button);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            max-width: 200px;
+        }
+
+        .add-document-input:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(212, 160, 23, 0.3);
+        }
+
+        .preview-documents {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+            justify-content: center;
+            padding: 12px;
+            border: 1px dashed var(--cor-borda);
+            border-radius: 10px;
+            min-height: 80px;
+            display: none;
+        }
+
+        .preview-documents.active {
+            display: flex;
+        }
+
+        .preview-documents img {
+            max-width: 100px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--cor-borda);
+            box-shadow: 0 2px 8px var(--shadow-light);
+        }
+
+        .actions {
+            margin-top: 32px;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(212, 160, 23, 0.15);
+        }
+
+        .btn {
+            background: var(--gradient-button);
+            color: #000;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(212, 160, 23, 0.3);
+            background: linear-gradient(135deg, #FFD700, #D4A017);
+        }
+
+        .btn:disabled {
+            background: var(--cor-texto-secundario);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .save-btn {
+            display: none;
+        }
+
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loader--show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loader__spin {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 8px solid rgba(255, 255, 255, 0.2);
+            border-top-color: var(--cor-destaque);
+            animation: loader-spin 1.2s infinite ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes loader-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 12px;
+                gap: 24px;
+            }
+
+            .header {
+                flex-direction: row;
+                gap: 12px;
+                padding: 12px 16px;
+                top: 0;
+                border-radius: 0;
+            }
+
+            .logo {
+                font-size: 1.5em;
+            }
+
+            .back-btn {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+
+            .content {
+                padding: 20px;
+                border-radius: 12px;
+            }
+
+            .content-header h2 {
+                font-size: 1.5em;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .detail-item {
+                padding: 16px;
+            }
+
+            .detail-item label {
+                font-size: 0.9em;
+            }
+
+            .detail-item span, .edit-field {
+                font-size: 1em;
+                padding: 10px;
+            }
+
+            .client-documents-section {
+                padding: 16px;
+            }
+
+            .client-documents img {
+                max-width: 140px;
+                height: 100px;
+            }
+
+            .actions {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 8px;
+            }
+
+            .header {
+                padding: 10px 12px;
+            }
+
+            .logo {
+                font-size: 1.3em;
+            }
+
+            .back-btn {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .content-header h2 {
+                font-size: 1.3em;
+            }
+
+            .detail-item {
+                padding: 12px;
+            }
+
+            .client-documents img {
+                max-width: 120px;
+                height: 80px;
+            }
+
+            .add-document-input {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader" id="loader">
+        <div class="loader__spin"></div>
+    </div>
+    <div class="container">
+        <header class="header">
+            <a href="#" class="logo">ZAILONSOFT</a>
+            <a href="#" class="back-btn" onclick="window.history.back()">Voltar</a>
+        </header>
+        <main class="content">
+            <div class="content-header">
+                <h2>Detalhes do Cliente</h2>
+            </div>
+            <div class="details" id="client-details"></div>
+            <div class="client-documents-section">
+                <h3>Documentos do Cliente</h3>
+                <div class="client-documents" id="client-documents"></div>
+                <label for="edit-client-documents" class="btn add-document-input" id="add-document-label">Adicionar Documentos</label>
+                <input type="file" id="edit-client-documents" multiple accept="image/*,.pdf" style="display: none;" onchange="previewDocuments()">
+                <div class="preview-documents" id="preview-documents"></div>
+            </div>
+            <div class="actions">
+                <button class="btn edit-btn" onclick="toggleEditMode()">Editar</button>
+                <button class="btn close-btn" onclick="closeDetails()">Fechar</button>
+                <button class="btn save-btn" onclick="saveClientChanges()">Salvar</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let chatId = new URLSearchParams(window.location.search).get('chatId');
+        let clientData = {};
+        const kanbanColumns = [
+            { id: 'lead_recebido', name: 'Leed Rescebido' },
+            { id: 'interessado', name: 'Interessado' },
+            { id: 'dados_captados', name: 'Dados captados' },
+            { id: 'fechado_venda_confirmada', name: 'Fechado (Venda Confirmada)' },
+            { id: 'lead_perdido', name: 'Leed Perdido' }
+        ];
+        const loader = document.getElementById('loader');
+
+        function showLoader() {
+            loader.classList.add('loader--show');
+        }
+
+        function hideLoader() {
+            loader.classList.remove('loader--show');
+        }
+
+        async function loadClient() {
+            showLoader();
+            try {
+                const response = await fetch(`http://localhost:5000/api/clients/${chatId}`);
+                if (!response.ok) throw new Error(`Erro ao carregar cliente: ${response.statusText}`);
+                clientData = await response.json();
+                showClientDetails();
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                document.getElementById('client-details').innerHTML = '<p style="color: var(--cor-destaque); text-align: center; padding: 20px;">Não foi possível carregar os detalhes do cliente. Por favor, tente novamente.</p>';
+            } finally {
+                hideLoader();
+            }
+        }
+
+        window.onload = loadClient;
+
+        function showClientDetails() {
+            if (!clientData) {
+                console.error('Cliente não encontrado:', chatId);
+                document.getElementById('client-details').innerHTML = '<p style="color: var(--cor-destaque); text-align: center; padding: 20px;">Cliente não encontrado.</p>';
+                return;
+            }
+
+            const details = document.getElementById('client-details');
+            details.innerHTML = `
+                <div class="detail-item">
+                    <label for="edit-client-name">Nome</label>
+                    <span id="client-name-detail">${clientData.name || clientData.interests?.name || 'Não informado'}</span>
+                    <input type="text" id="edit-client-name" class="edit-field" value="${clientData.name || clientData.interests?.name || ''}">
+                </div>
+                <div class="detail-item">
+                    <label for="edit-client-phone">Telefone</label>
+                    <span id="client-phone-detail">${clientData.phone || clientData.interests?.phone || 'Não informado'}</span>
+                    <input type="text" id="edit-client-phone" class="edit-field" value="${clientData.phone || clientData.interests?.phone || ''}">
+                </div>
+                <div class="detail-item">
+                    <label for="edit-client-cpf">CPF</label>
+                    <span id="client-cpf-detail">${clientData.interests?.cpf || clientData.cpf || 'Não informado'}</span>
+                    <input type="text" id="edit-client-cpf" class="edit-field" value="${clientData.interests?.cpf || clientData.cpf || ''}">
+                </div>
+                <div class="detail-item">
+                    <label for="edit-client-job">Ocupação</label>
+                    <span id="client-job-detail">${clientData.interests?.job || clientData.job || 'Não informado'}</span>
+                    <input type="text" id="edit-client-job" class="edit-field" value="${clientData.interests?.job || clientData.job || ''}">
+                </div>
+                <div class="detail-item">
+                    <label for="edit-client-state">Estado</label>
+                    <span id="client-state-detail">${kanbanColumns.find(col => col.id === clientData.state)?.name || 'Não informado'}</span>
+                    <select id="edit-client-state" class="edit-field">
+                        ${kanbanColumns.map(col => `<option value="${col.id}" ${col.id === clientData.state ? 'selected' : ''}>${col.name}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="detail-item">
+                    <label for="edit-client-report">Relatório</label>
+                    <span id="client-report-detail">${clientData.report || 'Sem relatório'}</span>
+                    <textarea id="edit-client-report" class="edit-field" rows="8">${clientData.report || ''}</textarea>
+                </div>
+            `;
+
+            const documentsContainer = document.getElementById('client-documents');
+            documentsContainer.innerHTML = '';
+            if (clientData.documents && clientData.documents.length > 0) {
+                clientData.documents.forEach((docSrc, index) => {
+                    const imgWrapper = document.createElement('div');
+                    imgWrapper.className = 'image-wrapper';
+                    imgWrapper.innerHTML = `
+                        <img src="http://localhost:5000/${docSrc}" alt="Documento do cliente">
+                        <button class="remove-btn" onclick="removeDocument('${chatId}', ${index})">X</button>
+                    `;
+                    documentsContainer.appendChild(imgWrapper);
+                });
+            } else {
+                documentsContainer.innerHTML = '<p style="text-align: center; color: var(--cor-texto-secundario);">Sem documentos disponíveis.</p>';
+            }
+            document.getElementById('preview-documents').innerHTML = '';
+            document.getElementById('preview-documents').classList.remove('active');
+            document.getElementById('edit-client-documents').value = '';
+            toggleEditMode(false);
+        }
+
+        function previewDocuments() {
+            const files = document.getElementById('edit-client-documents').files;
+            const previewContainer = document.getElementById('preview-documents');
+            previewContainer.innerHTML = '';
+            if (files.length > 0) {
+                previewContainer.classList.add('active');
+            } else {
+                previewContainer.classList.remove('active');
+            }
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgWrapper = document.createElement('div');
+                    imgWrapper.className = 'image-wrapper';
+                    imgWrapper.innerHTML = `
+                        <img src="${e.target.result}" alt="Pré-visualização">
+                        <button class="remove-btn" onclick="removePreviewDocument(${i})">X</button>
+                    `;
+                    previewContainer.appendChild(imgWrapper);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function removePreviewDocument(index) {
+            const input = document.getElementById('edit-client-documents');
+            const dataTransfer = new DataTransfer();
+            const files = Array.from(input.files);
+            files.splice(index, 1);
+            files.forEach(file => dataTransfer.items.add(file));
+            input.files = dataTransfer.files;
+            previewDocuments();
+        }
+
+        async function removeDocument(chatId, documentIndex) {
+            if (confirm('Tem certeza que deseja remover este documento? Esta ação é irreversível.')) {
+                showLoader();
+                try {
+                    const response = await fetch(`http://localhost:5000/api/clients/${chatId}/files/${documentIndex}`, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Erro ao remover documento: ${errorText || response.statusText}`);
+                    }
+                    const result = await response.json();
+                    clientData.documents = result.documents || [];
+                    showClientDetails();
+                    alert('Documento removido com sucesso!');
+                } catch (error) {
+                    console.error('Erro ao remover documento:', error);
+                    alert(`Erro ao remover o documento: ${error.message}. Verifique o console.`);
+                } finally {
+                    hideLoader();
+                }
+            }
+        }
+
+        function toggleEditMode(edit = true) {
+            const editFields = document.querySelectorAll('.edit-field');
+            const saveBtn = document.querySelector('.save-btn');
+            const addDocumentLabel = document.getElementById('add-document-label');
+            const spans = document.querySelectorAll('#client-details span');
+            const editBtn = document.querySelector('.edit-btn');
+            const removeDocumentButtons = document.querySelectorAll('#client-documents .remove-btn');
+            const previewContainer = document.getElementById('preview-documents');
+
+            if (edit) {
+                spans.forEach(span => span.style.display = 'none');
+                editFields.forEach(field => field.style.display = 'block');
+                saveBtn.style.display = 'inline-block';
+                addDocumentLabel.style.display = 'block';
+                editBtn.textContent = 'Cancelar';
+                removeDocumentButtons.forEach(btn => btn.style.display = 'flex');
+                previewContainer.classList.add('active');
+            } else {
+                spans.forEach(span => span.style.display = 'block');
+                editFields.forEach(field => field.style.display = 'none');
+                saveBtn.style.display = 'none';
+                addDocumentLabel.style.display = 'none';
+                editBtn.textContent = 'Editar';
+                removeDocumentButtons.forEach(btn => btn.style.display = 'none');
+                document.getElementById('edit-client-documents').value = '';
+                previewContainer.innerHTML = '';
+                previewContainer.classList.remove('active');
+            }
+        }
+
+        async function saveClientChanges() {
+            const formData = new FormData();
+            formData.append('name', document.getElementById('edit-client-name').value);
+            formData.append('phone', document.getElementById('edit-client-phone').value);
+            formData.append('cpf', document.getElementById('edit-client-cpf').value);
+            formData.append('job', document.getElementById('edit-client-job').value);
+            formData.append('state', document.getElementById('edit-client-state').value);
+            formData.append('report', document.getElementById('edit-client-report').value);
+            const files = document.getElementById('edit-client-documents').files;
+            if (files.length > 0) {
+                for (let file of files) {
+                    formData.append('documents', file);
+                }
+            }
+
+            showLoader();
+            try {
+                const response = await fetch(`http://localhost:5000/api/clients/${chatId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Erro ao salvar alterações');
+                }
+                clientData = await response.json();
+                alert('Alterações salvas com sucesso!');
+                showClientDetails();
+            } catch (error) {
+                console.error('Erro ao salvar alterações:', error);
+                alert(`Erro ao salvar as alterações: ${error.message}. Verifique o console.`);
+            } finally {
+                hideLoader();
+            }
+        }
+
+        function closeDetails() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

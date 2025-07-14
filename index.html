@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Variáveis de Cor para facilitar a manutenção do tema */
         :root {
             --cor-fundo-escuro: #121212;
             --cor-fundo-card: #1E1E1E;
@@ -20,7 +19,6 @@
             --cor-texto-secundario: #a0a0a0;
         }
 
-        /* Reset e Configurações Globais */
         * {
             margin: 0;
             padding: 0;
@@ -47,7 +45,6 @@
             gap: 20px;
         }
 
-        /* Cabeçalho e Navegação */
         .header {
             display: flex;
             justify-content: space-between;
@@ -95,7 +92,6 @@
             border-bottom-color: var(--cor-destaque);
         }
 
-        /* Seção Principal (Tabs) */
         .tab-content {
             display: none;
             background: var(--cor-fundo-card);
@@ -230,15 +226,14 @@
             transform: scale(1.1);
         }
 
-        /* Formulário de Cadastro */
-        #add-car-container {
+        #add-car-container, #client-register-container {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 60vh;
         }
 
-        #add-car-card {
+        #add-car-card, #client-register-card {
             display: none;
             flex-direction: column;
             gap: 15px;
@@ -252,17 +247,17 @@
             animation: slideUp 0.5s ease;
         }
 
-        #add-car-card.active {
+        #add-car-card.active, #client-register-card.active {
             display: flex;
         }
 
-        #add-car-card h3 {
+        #add-car-card h3, #client-register-card h3 {
             font-size: 1.5em;
             font-weight: 700;
             margin-bottom: 15px;
         }
 
-        input, textarea {
+        input, textarea, select {
             padding: 12px;
             border: 1px solid var(--cor-borda);
             border-radius: 6px;
@@ -278,7 +273,7 @@
             min-height: 120px;
         }
 
-        input:focus, textarea:focus {
+        input:focus, textarea:focus, select:focus {
             border-color: var(--cor-destaque);
             box-shadow: 0 0 8px rgba(212, 160, 23, 0.2);
             outline: none;
@@ -311,7 +306,6 @@
             transform: scale(1.2);
         }
 
-        /* Fotos Seção */
         .photo-upload {
             border: 2px dashed var(--cor-borda);
             padding: 15px;
@@ -406,7 +400,6 @@
             color: var(--cor-texto-secundario);
         }
 
-        /* QR Code */
         #qrcode-container {
             text-align: center;
             padding: 20px;
@@ -462,8 +455,7 @@
             cursor: not-allowed;
         }
 
-        /* Diálogos */
-        #client-dialog, #delete-dialog {
+        #client-dialog, #delete-dialog, #column-dialog {
             display: none;
             position: fixed;
             top: 50%;
@@ -481,23 +473,114 @@
             z-index: 1001;
         }
 
-        #client-dialog h3, #delete-dialog h3 {
+        #client-dialog h3, #delete-dialog h3, #column-dialog h3 {
             font-size: 1.5em;
             font-weight: 700;
             margin-bottom: 15px;
         }
 
-        #client-dialog p, #delete-dialog p {
+        #client-dialog p, #delete-dialog p, #column-dialog p {
             margin: 10px 0;
             font-size: 0.95em;
             color: var(--cor-texto-secundario);
         }
 
-        /* Animações */
+        .kanban-board {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .kanban-column {
+            flex: 0 0 280px;
+            background: var(--cor-fundo-card);
+            border: 1px solid var(--cor-borda);
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 400px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .kanban-column.dragover {
+            border-color: var(--cor-destaque);
+            background: rgba(212, 160, 23, 0.1);
+        }
+
+        .kanban-column h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+            color: var(--cor-destaque);
+        }
+
+        .kanban-column .column-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .kanban-column .column-actions button {
+            background: transparent;
+            border: 1px solid var(--cor-destaque);
+            color: var(--cor-destaque);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .kanban-column .column-actions button:hover {
+            background: var(--cor-destaque);
+            color: #000;
+        }
+
+        .client-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--cor-borda);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: move;
+            transition: all 0.3s ease;
+        }
+
+        .client-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--cor-destaque);
+            box-shadow: 0 4px 12px rgba(212, 160, 23, 0.2);
+        }
+
+        .client-card p {
+            font-size: 0.9em;
+            color: var(--cor-texto-secundario);
+            margin: 5px 0;
+        }
+
+        .client-card .details-button {
+            margin-top: 10px;
+        }
+
+        .column-management {
+            background: var(--cor-fundo-card);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .column-management input {
+            flex-grow: 1;
+        }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* Media Queries para Responsividade */
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -555,63 +638,18 @@
                 font-size: 12px;
             }
 
-            #add-car-card {
-                padding: 15px;
-                max-width: 100%;
+            .kanban-column {
+                flex: 0 0 250px;
             }
 
-            #add-car-card h3 {
-                font-size: 1.2em;
-            }
-
-            input, textarea {
+            input, textarea, select {
                 padding: 10px;
                 font-size: 0.9em;
-            }
-
-            textarea {
-                min-height: 100px;
             }
 
             .btn {
                 padding: 8px 15px;
                 font-size: 0.85em;
-            }
-
-            .photo-preview img {
-                max-width: 60px;
-                max-height: 60px;
-            }
-
-            .add-more-photo {
-                width: 60px;
-                height: 60px;
-            }
-
-            .add-more-photo span {
-                font-size: 1.2em;
-            }
-
-            #qrcode-container {
-                padding: 15px;
-                min-height: 200px;
-            }
-
-            #qrcode-container img {
-                max-width: 150px;
-            }
-
-            #client-dialog, #delete-dialog {
-                padding: 15px;
-                max-width: 350px;
-            }
-
-            #client-dialog h3, #delete-dialog h3 {
-                font-size: 1.2em;
-            }
-
-            #client-dialog p, #delete-dialog p {
-                font-size: 0.9em;
             }
         }
 
@@ -665,15 +703,11 @@
                 min-height: 32px;
             }
 
-            #add-car-card {
-                padding: 10px;
+            .kanban-column {
+                flex: 0 0 200px;
             }
 
-            #add-car-card h3 {
-                font-size: 1em;
-            }
-
-            input, textarea {
+            input, textarea, select {
                 padding: 8px;
                 font-size: 0.85em;
             }
@@ -682,44 +716,9 @@
                 padding: 6px 12px;
                 font-size: 0.8em;
             }
-
-            .photo-preview img {
-                max-width: 50px;
-                max-height: 50px;
-            }
-
-            .add-more-photo {
-                width: 50px;
-                height: 50px;
-            }
-
-            .add-more-photo span {
-                font-size: 1em;
-            }
-
-            #qrcode-container {
-                padding: 10px;
-                min-height: 150px;
-            }
-
-            #qrcode-container img {
-                max-width: 120px;
-            }
-
-            #client-dialog, #delete-dialog {
-                padding: 10px;
-                max-width: 300px;
-            }
-
-            #client-dialog h3, #delete-dialog h3 {
-                font-size: 1em;
-            }
-
-            #client-dialog p, #delete-dialog p {
-                font-size: 0.85em;
-            }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -728,8 +727,9 @@
             <nav class="nav">
                 <a href="#" onclick="showTab('catalog')" class="active">Catálogo</a>
                 <a href="#" onclick="showTab('crm')">CRM</a>
+                <a href="#" onclick="showTab('client-register')">Cadastro de Clientes</a>
                 <a href="#" onclick="showTab('qrcode')">Conexão WhatsApp</a>
-                <a href="#" onclick="showTab('add-car')">Cadastro</a>
+                <a href="#" onclick="showTab('add-car')">Cadastro de Veículos</a>
             </nav>
         </div>
 
@@ -740,7 +740,31 @@
 
         <div id="crm" class="tab-content">
             <h2>Gerenciar Clientes</h2>
-            <div class="card-grid" id="client-list"></div>
+            <div class="kanban-board" id="kanban-board"></div>
+        </div>
+
+        <div id="client-register" class="tab-content">
+            <h2>Cadastro de Clientes</h2>
+            <div id="client-register-container">
+                <div id="client-register-card" class="active">
+                    <h3 id="client-step-title">Etapa 1: Nome do Cliente</h3>
+                    <input type="hidden" id="clientChatId">
+                    <input type="text" id="client-input" placeholder="Digite o nome do cliente" required>
+                    <div class="step-buttons">
+                        <button class="btn" id="client-prev-btn" style="display: none;" onclick="prevClientStep()">Voltar</button>
+                        <button class="btn" id="client-next-btn" onclick="nextClientStep()">Próximo</button>
+                    </div>
+                    <div class="progress-dots">
+                        <div class="progress-dot active"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="qrcode" class="tab-content">
@@ -764,7 +788,7 @@
                         <button class="btn" id="next-btn" onclick="nextStep()">Próximo</button>
                     </div>
                     <div class="progress-dots">
-                        <div class="progress-dot"></div>
+                        <div class="progress-dot active"></div>
                         <div class="progress-dot"></div>
                         <div class="progress-dot"></div>
                         <div class="progress-dot"></div>
@@ -792,7 +816,7 @@
             <p><strong>RG:</strong> <span id="client-finance-rg"></span></p>
             <p><strong>Comprovante de Renda:</strong> <span id="client-finance-income"></span></p>
             <p><strong>Comprovante de Residência:</strong> <span id="client-finance-residence"></span></p>
-            <p><strong>Emprego:</strong> <span id="client-finance-job"></span></p>
+            <p><strong>Ocupação:</strong> <span id="client-finance-job"></span></p>
             <h4>Visita</h4>
             <p><strong>Dia:</strong> <span id="client-visit-day"></span></p>
             <p><strong>Horário:</strong> <span id="client-visit-time"></span></p>
@@ -819,20 +843,53 @@
                 <button class="btn" onclick="closeDeleteDialog()">Cancelar</button>
             </div>
         </div>
+
+        <div id="column-dialog">
+            <h3>Editar Coluna</h3>
+            <input type="hidden" id="column-id">
+            <input type="text" id="column-name" placeholder="Nome da coluna">
+            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
+                <button class="btn" onclick="saveColumn()">Salvar</button>
+                <button class="btn" onclick="closeColumnDialog()">Cancelar</button>
+            </div>
+        </div>
     </div>
 
     <script>
         let cars = {};
         let currentStep = 1;
         let carData = { files: [] };
+        let clientStep = 1;
+        let clientData = { incomeProof: [], rg: [] };
         let carToDelete = null;
+        let checkStatusInterval;
+        let kanbanColumns = [
+            { id: 'lead_recebido', name: 'Lead Recebido' },
+            { id: 'interessado', name: 'Interessado' },
+            { id: 'dados_captados', name: 'Dados Captados' },
+            { id: 'fechado', name: 'Fechado (Venda Confirmada)' },
+            { id: 'lead_perdido', name: 'Lead Perdido' }
+        ];
+        let drake = null;
+
+        // Função para adicionar event listeners não-passivos
+        function addNonPassiveEventListeners() {
+            const events = ['dragstart', 'drag', 'dragend', 'dragenter', 'dragover', 'dragleave', 'drop'];
+            events.forEach(event => {
+                document.addEventListener(event, (e) => {
+                    if (e.target.closest('.kanban-column') || e.target.closest('.client-card')) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+            });
+        }
 
         async function loadCars() {
             try {
                 const response = await fetch('http://localhost:5000/api/cars');
-                if (!response.ok) throw new Error('Erro ao carregar carros');
+                if (!response.ok) throw new Error(`Erro ao carregar carros: ${response.statusText}`);
                 const data = await response.json();
-                cars = data; // Atribui diretamente o objeto retornado
+                cars = data;
                 renderCars();
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
@@ -840,7 +897,564 @@
             }
         }
 
-        window.onload = loadCars;
+        async function loadKanbanColumns() {
+            try {
+                const response = await fetch('http://localhost:5000/api/kanban-columns');
+                if (!response.ok) throw new Error(`Erro ao carregar colunas: ${response.statusText}`);
+                kanbanColumns = await response.json();
+                renderKanbanBoard();
+                await loadClients();
+            } catch (error) {
+                console.error('Erro ao carregar colunas:', error);
+                renderKanbanBoard();
+                await loadClients();
+            }
+        }
+
+        async function editKanbanColumn(columnId) {
+            const column = kanbanColumns.find(col => col.id === columnId);
+            if (!column) return;
+            document.getElementById('column-id').value = columnId;
+            document.getElementById('column-name').value = column.name;
+            document.getElementById('column-dialog').style.display = 'block';
+        }
+
+        async function saveColumn() {
+            const columnId = document.getElementById('column-id').value;
+            const name = document.getElementById('column-name').value.trim();
+            if (!name) {
+                alert('Por favor, insira um nome para a coluna.');
+                return;
+            }
+            try {
+                const response = await fetch(`http://localhost:5000/api/kanban-columns/${columnId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+                if (!response.ok) throw new Error('Erro ao editar coluna');
+                const updatedColumn = await response.json();
+                const index = kanbanColumns.findIndex(col => col.id === columnId);
+                kanbanColumns[index] = updatedColumn;
+                closeColumnDialog();
+                renderKanbanBoard();
+                await loadClients();
+            } catch (error) {
+                console.error('Erro ao editar coluna:', error);
+                alert(`Erro ao editar coluna: ${error.message}`);
+            }
+        }
+
+        async function deleteKanbanColumn(columnId) {
+            if (['lead_recebido', 'fechado'].includes(columnId)) {
+                alert('Não é possível excluir as colunas "Lead Recebido" ou "Fechado (Venda Confirmada)".');
+                return;
+            }
+            if (confirm('Tem certeza que deseja excluir esta coluna? Os clientes serão movidos para "Lead Recebido".')) {
+                try {
+                    const response = await fetch(`http://localhost:5000/api/kanban-columns/${columnId}`, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) throw new Error('Erro ao excluir coluna');
+                    kanbanColumns = kanbanColumns.filter(col => col.id !== columnId);
+                    renderKanbanBoard();
+                    await loadClients();
+                } catch (error) {
+                    console.error('Erro ao excluir coluna:', error);
+                    alert(`Erro ao excluir coluna: ${error.message}`);
+                }
+            }
+        }
+
+        function closeColumnDialog() {
+            document.getElementById('column-dialog').style.display = 'none';
+            document.getElementById('column-id').value = '';
+            document.getElementById('column-name').value = '';
+        }
+
+        function renderKanbanBoard() {
+            const board = document.getElementById('kanban-board');
+            board.innerHTML = '';
+            kanbanColumns.forEach(column => {
+                const colElement = document.createElement('div');
+                colElement.className = 'kanban-column';
+                colElement.id = column.id;
+                colElement.innerHTML = `
+                    <h3>${column.name}</h3>
+                    <div class="column-actions">
+                        ${column.id !== 'lead_recebido' && column.id !== 'fechado' ? 
+                            `<button onclick="editKanbanColumn('${column.id}')">Editar</button>
+                             <button onclick="deleteKanbanColumn('${column.id}')">Excluir</button>` : ''}
+                    </div>
+                `;
+                board.appendChild(colElement);
+            });
+        }
+
+        async function ensureClientExists(chatId) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/clients/${chatId}`);
+                if (!response.ok) {
+                    const clientData = {
+                        chat_id: chatId,
+                        name: `Cliente ${chatId}`,
+                        phone: '',
+                        cpf: '',
+                        job: '',
+                        message: '',
+                        response: '',
+                        interests: {
+                            name: `Cliente ${chatId}`,
+                            phone: '',
+                            job: '',
+                            cpf: ''
+                        },
+                        state: 'lead_recebido',
+                        report: 'Cliente criado automaticamente'
+                    };
+                    const createResponse = await fetch('http://localhost:5000/api/clients', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(clientData)
+                    });
+                    if (!createResponse.ok) {
+                        const errorText = await createResponse.text();
+                        throw new Error(`Erro ao criar cliente ${chatId}: ${errorText}`);
+                    }
+                    return true;
+                }
+                return true;
+            } catch (error) {
+                console.error(`Erro ao verificar/criar cliente ${chatId}:`, error);
+                return false;
+            }
+        }
+
+        async function loadClients() {
+            try {
+                const response = await fetch('http://localhost:5000/api/clients');
+                if (!response.ok) throw new Error(`Erro ao carregar clientes: ${response.statusText}`);
+                const data = await response.json();
+                const clients = data.clients || data || [];
+
+                const columns = {};
+                kanbanColumns.forEach(col => {
+                    columns[col.id] = document.getElementById(col.id);
+                });
+
+                const missingColumns = Object.keys(columns).filter(key => !columns[key]);
+                if (missingColumns.length > 0) {
+                    console.error('Colunas do Kanban não encontradas:', missingColumns);
+                    document.getElementById('kanban-board').innerHTML = '<p style="color: #EF4444; text-align: center; font-weight: 500;">Erro: colunas do Kanban não encontradas.</p>';
+                    return;
+                }
+
+                Object.values(columns).forEach(col => {
+                    const header = col.querySelector('h3');
+                    const actions = col.querySelector('.column-actions') || document.createElement('div');
+                    actions.className = 'column-actions';
+                    col.innerHTML = '';
+                    col.appendChild(header);
+                    col.appendChild(actions);
+                });
+
+                if (!Array.isArray(clients)) {
+                    console.error('Dados de clientes inválidos:', clients);
+                    document.getElementById('kanban-board').innerHTML = '<p style="color: #EF4444; text-align: center; font-weight: 500;">Erro ao carregar clientes: formato de dados inválido.</p>';
+                    return;
+                }
+
+                clients.forEach(client => {
+                    const clientState = client.state && columns[client.state] ? client.state : 'lead_recebido';
+                    const card = document.createElement('div');
+                    card.className = 'client-card';
+                    card.dataset.chatId = client.chat_id;
+                    card.innerHTML = `
+                        <p><strong>Nome:</strong> ${client.name || client.interests?.name || 'Desconhecido'}</p>
+                        <p><strong>Telefone:</strong> ${client.phone || client.interests?.phone || 'N/A'}</p>
+                        <p><strong>CPF:</strong> ${client.interests?.cpf || client.cpf || 'N/A'}</p>
+                        <p><strong>Ocupação:</strong> ${client.interests?.job || client.job || 'N/A'}</p>
+                        <button class="details-button" onclick="editClient('${client.chat_id}')">Editar</button>
+                    `;
+                    if (columns[clientState]) {
+                        columns[clientState].appendChild(card);
+                    } else {
+                        console.warn(`Estado inválido para o cliente ${client.chat_id}: ${clientState}`);
+                        columns['lead_recebido'].appendChild(card);
+                    }
+                });
+
+                Object.values(columns).forEach(col => {
+                    col.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        col.classList.add('dragover');
+                    }, { passive: false });
+                    col.addEventListener('dragleave', () => {
+                        col.classList.remove('dragover');
+                    }, { passive: false });
+                    col.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        col.classList.remove('dragover');
+                    }, { passive: false });
+                });
+
+                addNonPassiveEventListeners();
+
+                if (drake) drake.destroy();
+                drake = dragula(kanbanColumns.map(col => document.getElementById(col.id)), {
+                    accepts: function (el, target, source, sibling) {
+                        return target !== source;
+                    },
+                    invalid: function (el, handle) {
+                        return el.classList.contains('details-button') || el.classList.contains('column-actions') || el.closest('.column-actions');
+                    }
+                }).on('drop', async (el, target, source, sibling) => {
+                    if (!target) {
+                        console.warn('Target da drop não encontrado');
+                        return;
+                    }
+                    const chatId = el.dataset.chatId;
+                    const newState = target.id;
+                    try {
+                        const clientExists = await ensureClientExists(chatId);
+                        if (!clientExists) {
+                            throw new Error(`Não foi possível garantir a existência do cliente ${chatId}`);
+                        }
+                        const response = await fetch(`http://localhost:5000/api/clients/${chatId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ state: newState })
+                        });
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`Erro ao atualizar estado: ${errorText || response.statusText}`);
+                        }
+                        await loadClients();
+                    } catch (error) {
+                        console.error('Erro ao atualizar estado do cliente:', error);
+                        alert(`Erro ao atualizar estado do cliente ${chatId}: ${error.message}. Verifique o console.`);
+                        source.appendChild(el);
+                    }
+                });
+
+                if (window.location.hostname === 'localhost') {
+                    const originalConsoleWarn = console.warn;
+                    console.warn = function (...args) {
+                        if (args[0].includes('Unable to preventDefault inside passive event listener')) {
+                            return;
+                        }
+                        originalConsoleWarn.apply(console, args);
+                    };
+                }
+            } catch (error) {
+                console.error('Erro ao carregar clientes:', error);
+                document.getElementById('kanban-board').innerHTML = '<p style="color: #EF4444; text-align: center; font-weight: 500;">Erro ao carregar clientes. Verifique o servidor.</p>';
+            }
+        }
+
+        async function saveClient() {
+            const chatId = clientData.chatId || 'web_' + Date.now();
+            const clientPayload = {
+                chat_id: chatId,
+                message: '',
+                response: '',
+                interests: {
+                    name: clientData.name || '',
+                    phone: clientData.phone || '',
+                    job: clientData.job || '',
+                    cpf: clientData.cpf || ''
+                },
+                state: clientData.state || 'lead_recebido',
+                report: 'Cliente adicionado/editado via CRM',
+                name: clientData.name || ''
+            };
+
+            try {
+                const method = clientData.chatId ? 'PUT' : 'POST';
+                const url = clientData.chatId
+                    ? `http://localhost:5000/api/clients/${chatId}`
+                    : 'http://localhost:5000/api/clients';
+                const clientResponse = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(clientPayload)
+                });
+                if (!clientResponse.ok) {
+                    const errorText = await clientResponse.text();
+                    throw new Error(`Erro ao salvar cliente: ${errorText || clientResponse.statusText}`);
+                }
+
+                if (clientData.incomeProof.length > 0 || clientData.rg.length > 0) {
+                    const fileFormData = new FormData();
+                    for (let file of clientData.incomeProof) {
+                        fileFormData.append('incomeProof', file);
+                    }
+                    for (let file of clientData.rg) {
+                        fileFormData.append('rg', file);
+                    }
+                    const fileResponse = await fetch(`http://localhost:5000/api/clients/${chatId}/files`, {
+                        method: 'POST',
+                        body: fileFormData
+                    });
+                    if (!fileResponse.ok) {
+                        const errorText = await fileResponse.text();
+                        throw new Error(`Erro ao enviar arquivos: ${errorText || fileResponse.statusText}`);
+                    }
+                }
+
+                clientData = { incomeProof: [], rg: [] };
+                clientStep = 1;
+                updateClientStepContent();
+                await loadClients();
+                showTab('crm');
+            } catch (error) {
+                console.error('Erro ao salvar cliente:', error);
+                alert(`Erro ao salvar cliente: ${error.message}. Verifique o console.`);
+            }
+        }
+
+        async function editClient(chatId) {
+            try {
+                const response = await fetch(`http://localhost:5000/api/clients/${chatId}`);
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Erro ao carregar cliente: ${errorText || response.statusText}`);
+                }
+                window.location.href = `clientes-detail.html?chatId=${chatId}`;
+            } catch (error) {
+                console.error('Erro ao carregar cliente:', error);
+                alert(`Erro ao carregar cliente: ${error.message}. Verifique o console.`);
+            }
+        }
+
+        function nextClientStep() {
+            const input = document.getElementById('client-input');
+            if (clientStep < 6 && input && input.value !== undefined && !input.value.trim()) {
+                input.style.borderColor = '#EF4444';
+                return;
+            }
+            if (clientStep === 5 && clientData.incomeProof.length === 0 && clientData.rg.length === 0 && !clientData.documents?.length) {
+                alert('Por favor, selecione pelo menos um documento.');
+                return;
+            }
+            input.style.borderColor = '#E5E7EB';
+
+            if (clientStep === 1) clientData.name = input.value;
+            else if (clientStep === 2) clientData.phone = input.value;
+            else if (clientStep === 3) clientData.cpf = input.value;
+            else if (clientStep === 4) clientData.job = input.value;
+            else if (clientStep === 6) clientData.state = input.value;
+
+            clientStep++;
+            updateClientStepContent();
+        }
+
+        function prevClientStep() {
+            if (clientStep > 1) {
+                clientStep--;
+                updateClientStepContent();
+            }
+        }
+
+        function updateClientStepContent() {
+            const card = document.getElementById('client-register-card');
+            const title = document.getElementById('client-step-title');
+            let input = document.getElementById('client-input');
+            const prevBtn = document.getElementById('client-prev-btn');
+            const nextBtn = document.getElementById('client-next-btn');
+
+            if (!input) {
+                input = card.querySelector('input, select, .photo-upload');
+            }
+
+            const steps = [
+                { title: 'Etapa 1: Nome do Cliente', type: 'text', placeholder: 'Digite o nome do cliente', value: clientData.name },
+                { title: 'Etapa 2: Telefone', type: 'text', placeholder: 'Digite o número de telefone', value: clientData.phone },
+                { title: 'Etapa 3: CPF', type: 'text', placeholder: 'Digite o CPF (apenas números)', value: clientData.cpf },
+                { title: 'Etapa 4: Ocupação', type: 'text', placeholder: 'Digite a ocupação', value: clientData.job },
+                { title: 'Etapa 5: Documentos', type: 'documents', accept: 'image/*,.pdf', multiple: true },
+                { title: 'Etapa 6: Estado', type: 'select', options: kanbanColumns.map(col => ({ value: col.value, label: col.name })), value: clientData.state },
+                { title: 'Etapa 7: Revisar Dados', type: 'review' }
+            ];
+
+            title.textContent = steps[clientStep - 1].title;
+            if (steps[clientStep - 1].type === 'select') {
+                input.outerHTML = `
+                    <select id="client-input" required>
+                        ${steps[clientStep - 1].options.map(opt => `<option value="${opt.value}" ${opt.value === steps[clientStep - 1].value ? 'selected' : ''}>${opt.label}</option>`).join('')}
+                    </select>
+                `;
+            } else if (steps[clientStep - 1].type === 'documents') {
+                input.outerHTML = `
+                    <div id="client-input">
+                        <div class="photo-upload">
+                            <input type="file" id="clientIncomeProof" accept="${steps[clientStep - 1].accept}" multiple>
+                            <label for="clientIncomeProof">Comprovante de Renda</label>
+                            <div class="photo-preview" id="incomeProofPreview"></div>
+                        </div>
+                        <div class="photo-upload">
+                            <input type="file" id="clientRg" accept="${steps[clientStep - 1].accept}" multiple>
+                            <label for="clientRg">RG</label>
+                            <div class="photo-preview" id="rgPreview"></div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('clientIncomeProof').addEventListener('change', (e) => handleClientFileSelect(e, 'incomeProofPreview', 'incomeProof'));
+                document.getElementById('clientRg').addEventListener('change', (e) => handleClientFileSelect(e, 'rgPreview', 'rg'));
+                document.querySelectorAll('#client-input .photo-upload').forEach(upload => {
+                    upload.addEventListener('dragover', handleClientDragOver, { passive: false });
+                    upload.addEventListener('drop', (e) => handleClientDrop(e, upload.querySelector('.photo-preview').id, upload.querySelector('input').id.includes('IncomeProof') ? 'incomeProof' : 'rg'), { passive: false });
+                });
+                updateClientDocumentPreview();
+            } else if (steps[clientStep - 1].type === 'review') {
+                input.outerHTML = `
+                    <div style="text-align: left;">
+                        <p><strong>Nome:</strong> ${clientData.name || 'Não informado'}</p>
+                        <p><strong>Telefone:</strong> ${clientData.phone || 'Não informado'}</p>
+                        <p><strong>CPF:</strong> ${clientData.cpf || 'Não informado'}</p>
+                        <p><strong>Ocupação:</strong> ${clientData.job || 'Não informado'}</p>
+                        <p><strong>Documentos:</strong> ${clientData.incomeProof.length + clientData.rg.length + (clientData.documents?.length || 0)} documento(s)</p>
+                        <p><strong>Estado:</strong> ${kanbanColumns.find(col => col.id === clientData.state)?.name || 'Lead Recebido'}</p>
+                    </div>
+                `;
+                nextBtn.outerHTML = `
+                    <button class="btn" id="client-next-btn" onclick="saveClient()">Finalizar</button>
+                    <button class="btn" id="client-new-btn" onclick="addNewClient()">Adicionar Novo Cliente</button>
+                `;
+            } else {
+                input.outerHTML = `<input type="${steps[clientStep - 1].type}" id="client-input" placeholder="${steps[clientStep - 1].placeholder}" value="${steps[clientStep - 1].value || ''}" required>`;
+            }
+
+            prevBtn.style.display = clientStep > 1 ? 'inline-block' : 'none';
+            nextBtn.textContent = clientStep === 7 ? 'Finalizar' : 'Próximo';
+            nextBtn.onclick = clientStep === 7 ? saveClient : nextClientStep;
+
+            updateClientProgressDots();
+        }
+
+        function handleClientFileSelect(event, previewId, type) {
+            const files = event.target.files || event.dataTransfer.files;
+            clientData[type] = [...clientData[type], ...Array.from(files)];
+            updateClientDocumentPreview();
+        }
+
+        function handleClientDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('dragover');
+        }
+
+        function handleClientDrop(event, previewId, type) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('dragover');
+            clientData[type] = [...clientData[type], ...Array.from(event.dataTransfer.files)];
+            updateClientDocumentPreview();
+        }
+
+        function updateClientDocumentPreview() {
+            const incomeProofPreview = document.getElementById('incomeProofPreview');
+            const rgPreview = document.getElementById('rgPreview');
+            incomeProofPreview.innerHTML = '';
+            rgPreview.innerHTML = '';
+
+            clientData.incomeProof.forEach((file, index) => {
+                const container = document.createElement('div');
+                container.style.position = 'relative';
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.style.maxWidth = '80px';
+                img.style.maxHeight = '80px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '6px';
+                img.style.border = '1px solid var(--cor-borda)';
+                img.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-photo';
+                removeBtn.textContent = '×';
+                removeBtn.onclick = () => {
+                    clientData.incomeProof.splice(index, 1);
+                    updateClientDocumentPreview();
+                };
+                container.appendChild(img);
+                container.appendChild(removeBtn);
+                incomeProofPreview.appendChild(container);
+            });
+
+            clientData.rg.forEach((file, index) => {
+                const container = document.createElement('div');
+                container.style.position = 'relative';
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.style.maxWidth = '80px';
+                img.style.maxHeight = '80px';
+                img.style.objectFit = 'cover';
+                img.style.borderRadius = '6px';
+                img.style.border = '1px solid var(--cor-borda)';
+                img.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'remove-photo';
+                removeBtn.textContent = '×';
+                removeBtn.onclick = () => {
+                    clientData.rg.splice(index, 1);
+                    updateClientDocumentPreview();
+                };
+                container.appendChild(img);
+                container.appendChild(removeBtn);
+                rgPreview.appendChild(container);
+            });
+
+            if (clientData.documents?.length) {
+                clientData.documents.forEach(doc => {
+                    const isIncomeProof = doc.includes('income_');
+                    const preview = isIncomeProof ? incomeProofPreview : rgPreview;
+                    const link = document.createElement('p');
+                    link.innerHTML = `<a href="http://localhost:5000/${doc}" target="_blank">${isIncomeProof ? 'Comprovante de Renda' : 'RG'}</a>`;
+                    preview.appendChild(link);
+                });
+            }
+        }
+
+        function addNewClient() {
+            saveClient().then(() => {
+                clientData = { incomeProof: [], rg: [] };
+                clientStep = 1;
+                const card = document.getElementById('client-register-card');
+                card.innerHTML = `
+                    <h3 id="client-step-title">Etapa 1: Nome do Cliente</h3>
+                    <input type="hidden" id="clientChatId">
+                    <input type="text" id="client-input" placeholder="Digite o nome do cliente" required>
+                    <div class="step-buttons">
+                        <button class="btn" id="client-prev-btn" style="display: none;" onclick="prevClientStep()">Voltar</button>
+                        <button class="btn" id="client-next-btn" onclick="nextClientStep()">Próximo</button>
+                    </div>
+                    <div class="progress-dots">
+                        <div class="progress-dot active"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                        <div class="progress-dot"></div>
+                    </div>
+                `;
+                updateClientProgressDots();
+            });
+        }
+
+        function updateClientProgressDots() {
+            const dots = document.querySelectorAll('#client-register-card .progress-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index < clientStep);
+            });
+        }
+
+        window.onload = () => {
+            loadCars();
+            if (document.getElementById('crm').classList.contains('active')) {
+                loadKanbanColumns();
+            }
+            document.getElementById('car-input')?.addEventListener('dragover', handleDragOver, { passive: false });
+            document.getElementById('car-input')?.addEventListener('drop', handleDrop, { passive: false });
+        };
 
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -851,6 +1465,14 @@
                 currentStep = 1;
                 carData = { files: [] };
                 updateStepContent();
+            }
+            if (tabId === 'client-register') {
+                clientStep = 1;
+                clientData = { incomeProof: [], rg: [] };
+                updateClientStepContent();
+            }
+            if (tabId === 'crm') {
+                loadKanbanColumns();
             }
         }
 
@@ -909,7 +1531,7 @@
                 input.outerHTML = `<textarea id="car-input" placeholder="${steps[currentStep - 1].placeholder}" rows="4" required></textarea>`;
             } else if (steps[currentStep - 1].type === 'photo-upload') {
                 input.outerHTML = `
-                    <div class="photo-upload" id="car-input" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
+                    <div class="photo-upload" id="car-input">
                         <input type="file" id="file-input" accept="${steps[currentStep - 1].accept}" multiple>
                         <label for="file-input">Escolher Fotos</label>
                         <div class="photo-preview" id="photo-preview"></div>
@@ -918,6 +1540,9 @@
                         </div>
                     </div>
                 `;
+                const photoUpload = document.getElementById('car-input');
+                photoUpload.addEventListener('dragover', handleDragOver, { passive: false });
+                photoUpload.addEventListener('drop', handleDrop, { passive: false });
                 document.getElementById('file-input').addEventListener('change', handleFileSelect);
                 updatePhotoPreview();
             } else if (steps[currentStep - 1].type === 'review') {
@@ -972,7 +1597,7 @@
                 showTab('catalog');
             } catch (error) {
                 console.error('Erro ao salvar carro:', error);
-                alert(`Erro ao cadastrar o veículo. Detalhes: ${error.message}. Verifique o console para mais informações.`);
+                alert(`Erro ao cadastrar o veículo: ${error.message}. Verifique o console.`);
             } finally {
                 carData = { files: [] };
             }
@@ -1017,7 +1642,7 @@
                         <button class="btn" id="next-btn" onclick="nextStep()">Próximo</button>
                     </div>
                     <div class="progress-dots">
-                        <div class="progress-dot"></div>
+                        <div class="progress-dot active"></div>
                         <div class="progress-dot"></div>
                         <div class="progress-dot"></div>
                         <div class="progress-dot"></div>
@@ -1029,7 +1654,7 @@
             })
             .catch(error => {
                 console.error('Erro ao salvar carro:', error);
-                alert(`Erro ao cadastrar o veículo. Detalhes: ${error.message}. Verifique o console para mais informações.`);
+                alert(`Erro ao cadastrar o veículo: ${error.message}. Verifique o console.`);
             });
         }
 
@@ -1041,7 +1666,7 @@
                 return;
             }
             cars.modelos.forEach((car, index) => {
-                const carId = car.id || (index + 1).toString(); // Usa o ID ou index como fallback
+                const carId = car.id || (index + 1).toString();
                 const card = document.createElement('div');
                 card.className = 'vehicle-card';
                 let imageSrc = car.imagens && car.imagens.length > 0 ? `http://localhost:5000/${car.imagens[0]}` : 'https://via.placeholder.com/350x280?text=Sem+Imagem';
@@ -1077,11 +1702,13 @@
                             car.imagens.splice(imageIndex, 1);
                             showCarDetails(carId);
                         } else {
-                            throw new Error('Erro ao remover imagem');
+                            return response.text().then(errorText => {
+                                throw new Error(errorText || 'Erro ao remover imagem');
+                            });
                         }
                     }).catch(error => {
                         console.error('Erro ao remover imagem:', error);
-                        alert('Erro ao remover a imagem. Verifique o console.');
+                        alert(`Erro ao remover imagem: ${error.message}. Verifique o console.`);
                     });
                 }
             }
@@ -1104,77 +1731,21 @@
                 })
                 .then(response => {
                     if (!response.ok) {
-                        return response.text().then(errorText => { throw new Error(errorText || 'Erro ao deletar o veículo'); });
+                        return response.text().then(errorText => {
+                            throw new Error(errorText || 'Erro ao deletar veículo');
+                        });
                     }
-                    return loadCars();
+                    return response.json();
                 })
                 .then(() => {
+                    loadCars();
                     closeDeleteDialog();
-                    alert('Veículo deletado com sucesso!');
                 })
                 .catch(error => {
-                    console.error('Erro ao deletar carro:', error);
-                    alert(`Erro ao deletar o veículo. Detalhes: ${error.message}. Verifique o console ou configure o CORS no backend.`);
+                    console.error('Erro ao deletar veículo:', error);
+                    alert(`Erro ao deletar veículo: ${error.message}. Verifique o console.`);
                 });
             }
-        }
-
-        function toggleEditMode(edit = true) {
-            const dialog = document.getElementById('car-dialog');
-            const editFields = dialog.querySelectorAll('.edit-field');
-            const saveBtn = dialog.querySelector('.save-btn');
-            const addImageInput = document.getElementById('edit-car-images');
-
-            if (edit) {
-                document.querySelectorAll('#car-dialog span').forEach(span => span.style.display = 'none');
-                editFields.forEach(field => field.style.display = 'inline-block');
-                saveBtn.style.display = 'inline-block';
-                addImageInput.style.display = 'block';
-                document.querySelectorAll('.remove-btn').forEach(btn => btn.style.display = 'block');
-            } else {
-                document.querySelectorAll('#car-dialog span').forEach(span => span.style.display = 'inline');
-                editFields.forEach(field => field.style.display = 'none');
-                saveBtn.style.display = 'none';
-                addImageInput.style.display = 'none';
-                document.querySelectorAll('.remove-btn').forEach(btn => btn.style.display = 'none');
-            }
-        }
-
-        function saveCarChanges() {
-            const carId = document.getElementById('car-dialog').dataset.carId;
-            const formData = new FormData();
-            formData.append('name', document.getElementById('edit-car-name').value);
-            formData.append('year', document.getElementById('edit-car-year').value);
-            formData.append('price', document.getElementById('edit-car-price').value);
-            formData.append('description', document.getElementById('edit-car-description').value);
-            const files = document.getElementById('edit-car-images').files;
-            if (files.length > 0) {
-                for (let file of files) {
-                    formData.append('images', file);
-                }
-            }
-
-            fetch(`http://localhost:5000/api/cars/${carId}`, {
-                method: 'PUT',
-                body: formData
-            }).then(response => {
-                if (response.ok) {
-                    loadCars();
-                    toggleEditMode(false);
-                    alert('Alterações salvas com sucesso!');
-                    showCarDetails(carId);
-                } else {
-                    return response.text().then(errorText => { throw new Error(errorText || 'Erro ao salvar alterações'); });
-                }
-            }).catch(error => {
-                console.error('Erro ao salvar alterações:', error);
-                alert(`Erro ao salvar as alterações. Detalhes: ${error.message}. Verifique o console para mais informações.`);
-            });
-        }
-
-        function closeCarDialog() {
-            document.getElementById('car-dialog').style.display = 'none';
-            toggleEditMode(false);
         }
 
         function closeDialog() {
@@ -1182,53 +1753,27 @@
         }
 
         function refreshQR() {
-            const qrImg = document.getElementById('qrcode-img');
-            const noQrMsg = document.getElementById('no-qrcode-msg');
-            qrImg.src = `http://localhost:5000/QRCODE/qrcode.png?t=${new Date().getTime()}`;
-            qrImg.style.display = 'block';
-            noQrMsg.style.display = 'none';
-            qrImg.style.margin = '0 auto';
-            document.getElementById('connection-status').textContent = 'Escaneie o QR Code com o WhatsApp para conectar...';
-            if (checkStatusInterval) clearInterval(checkStatusInterval);
-            checkStatusInterval = setInterval(checkStatus, 5000);
-        }
-
-        function checkStatus() {
-            fetch('http://localhost:5000/status')
-                .then(r => {
-                    if (!r.ok) throw new Error('Erro ao verificar status');
-                    return r.json();
-                })
-                .then(data => {
-                    if (data.isReady) {
-                        document.getElementById('connection-status').textContent = 'Bot conectado ao WhatsApp com sucesso!';
-                        document.getElementById('qrcode-img').style.display = 'none';
-                        document.getElementById('no-qrcode-msg').style.display = 'block';
-                        document.getElementById('no-qrcode-msg').textContent = 'Bot já está conectado!';
-                        clearInterval(checkStatusInterval);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro ao verificar status:', error);
-                    document.getElementById('connection-status').textContent = 'Erro ao verificar conexão. Tente novamente.';
-                });
+            document.getElementById('qrcode-img').src = `http://localhost:5000/QRCODE/qrcode.png?t=${new Date().getTime()}`;
+            document.getElementById('qrcode-img').style.display = 'block';
+            document.getElementById('no-qrcode-msg').style.display = 'none';
         }
 
         function handleFileSelect(event) {
             const files = event.target.files || event.dataTransfer.files;
-            carData.files = [...carData.files, ...Array.from(files).filter(file => file.type.startsWith('image/'))];
+            carData.files = [...carData.files, ...Array.from(files)];
             updatePhotoPreview();
         }
 
         function handleDragOver(event) {
             event.preventDefault();
-            document.getElementById('car-input').classList.add('dragover');
+            event.currentTarget.classList.add('dragover');
         }
 
         function handleDrop(event) {
             event.preventDefault();
-            document.getElementById('car-input').classList.remove('dragover');
-            handleFileSelect(event);
+            event.currentTarget.classList.remove('dragover');
+            carData.files = [...carData.files, ...Array.from(event.dataTransfer.files)];
+            updatePhotoPreview();
         }
 
         function updatePhotoPreview() {
@@ -1239,42 +1784,33 @@
                 container.style.position = 'relative';
                 const img = document.createElement('img');
                 img.src = URL.createObjectURL(file);
-                img.style.maxWidth = '100px';
-                img.style.maxHeight = '100px';
+                img.style.maxWidth = '80px';
+                img.style.maxHeight = '80px';
                 img.style.objectFit = 'cover';
-                img.style.borderRadius = '8px';
+                img.style.borderRadius = '6px';
                 img.style.border = '1px solid var(--cor-borda)';
                 img.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.1)';
                 const removeBtn = document.createElement('button');
                 removeBtn.className = 'remove-photo';
                 removeBtn.textContent = '×';
-                removeBtn.onclick = () => removePhoto(index);
+                removeBtn.onclick = () => {
+                    carData.files.splice(index, 1);
+                    updatePhotoPreview();
+                };
                 container.appendChild(img);
                 container.appendChild(removeBtn);
                 preview.appendChild(container);
             });
-            const addMore = document.querySelector('.add-more-photo');
-            if (addMore) preview.appendChild(addMore);
-        }
-
-        function removePhoto(index) {
-            carData.files.splice(index, 1);
-            updatePhotoPreview();
         }
 
         function addMorePhotos() {
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'image/*';
-            fileInput.multiple = true;
-            fileInput.onchange = handleFileSelect;
-            fileInput.click();
+            document.getElementById('file-input').click();
         }
 
         function updateProgressDots() {
-            const dots = document.querySelectorAll('.progress-dot');
+            const dots = document.querySelectorAll('#add-car-card .progress-dot');
             dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index < currentStep - 1);
+                dot.classList.toggle('active', index < currentStep);
             });
         }
     </script>
