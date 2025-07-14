@@ -414,7 +414,7 @@
         }
 
         #qrcode-container img {
-            max-width: 200px;
+            max-width: 50vw;
             border-radius: 6px;
             border: 1px solid var(--cor-borda);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -443,6 +443,7 @@
             font-weight: 700;
             transition: all 0.3s ease;
             font-size: 0.9em;
+            margin-top: 20px;
         }
 
         .btn:hover {
@@ -772,8 +773,8 @@
             <div id="qrcode-container">
                 <img id="qrcode-img" src="http://localhost:5000/QRCODE/qrcode.png" alt="QR Code para Conexão WhatsApp" onerror="this.style.display='none'; document.getElementById('no-qrcode-msg').style.display='block';">
                 <div id="no-qrcode-msg" class="no-qrcode" style="display: none;">O servidor está aguardando a geração do QR Code.</div>
+                <button class="btn" onclick="refreshQR()">Gerar QR para Conexão</button>
             </div>
-            <button class="btn" onclick="refreshQR()">Gerar QR para Conexão</button>
             <p id="connection-status" style="margin-top: 10px; color: var(--cor-texto-secundario);"></p>
         </div>
 
