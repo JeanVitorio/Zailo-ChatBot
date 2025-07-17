@@ -12,6 +12,6 @@
     "whatsapp-web.js": "^1.31.0"
   },
   "scripts": {
-    "start": "node chatbotWeiss.js"
+    "start": "node chatbotZailo.js"
   }
 }
