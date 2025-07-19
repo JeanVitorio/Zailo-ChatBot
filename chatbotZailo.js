@@ -10,26 +10,6 @@ function getTimestamp() {
   return new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
 }
 
-// Função para formatar preço
-function formatPrice(price) {
-  // Remove "R$" e quaisquer caracteres não numéricos, exceto ponto e vírgula
-  const cleanPrice = typeof price === 'string'
-    ? price.replace(/[^\d,.]/g, '').replace(',', '.')
-    : price.toString();
-  const numberPrice = parseFloat(cleanPrice);
-  return numberPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-
-// Carregar lista de carros do arquivo carros.json
-let cars = { modelos: [] };
-const carsFile = path.join(__dirname, 'carros.json');
-try {
-  cars = JSON.parse(fs.readFileSync(carsFile, 'utf-8'));
-  console.log(`[${getTimestamp()}] ✅ Lista de carros carregada de carros.json:`, cars.modelos.length, 'carros encontrados.');
-} catch (error) {
-  console.error(`[${getTimestamp()}] Erro ao carregar carros.json:`, error.message);
-}
-
 // Log indicando que o fallback baseado em regex será usado
 console.log(`[${getTimestamp()}] Usando detecção de intenções baseada em regex (sem Transformers.js).`);
 
@@ -141,13 +121,15 @@ client.on('message', async msg => {
     if (normalizedText.match(/(oi|olá|salve|bom dia|boa tarde|boa noite|e aí|irmão|beleza|fala aí|opa|hey)/) && state.step === 'inicial') {
       console.log(`[${getTimestamp()}] Detectou saudação, enviando resposta...`);
       try {
+        const response = await axios.get('http://localhost:5000/api/cars', { timeout: 5000 });
+        const cars = response.data;
         const carList = cars.modelos && cars.modelos.length > 0
-          ? cars.modelos.map(c => `- ${c.nome} (${c.ano || 'sem ano'}) - ${formatPrice(c.preco)} - ${c.descricao.replace(/\r\n/g, ', ')}`).join('\n')
+          ? cars.modelos.map(c => `- ${c.nome} (${c.ano || 'sem ano'})`).join('\n')
           : 'Nenhum carro no estoque!';
-        await client.sendMessage(chatId, `Salve, irmão! 👊 Eu sou a Zailon, teu parceiro virtual. Temos esses carros no estoque:\n${carList}\nQuer comprar, financiar, trocar ou só dar uma olhada?`);
+        await client.sendMessage(chatId, `Salve, irmão! 👊 Eu sou a Zailon, teu parceiro virtual. Temos esses carros no estoque:\n${carList}\nQuer comprar, financiar, vender ou só dar uma olhada?`);
       } catch (error) {
-        console.error(`[${getTimestamp()}] Erro ao processar lista de carros:`, error.message);
-        await client.sendMessage(chatId, `Salve, irmão! 👊 Eu sou a Zailon, teu parceiro virtual. Quer comprar, financiar, trocar ou só dar uma olhada?`);
+        console.error(`[${getTimestamp()}] Erro na API de carros:`, error.message);
+        await client.sendMessage(chatId, `Salve, irmão! 👊 Eu sou a Zailon, teu parceiro virtual. Quer comprar, financiar, vender ou só dar uma olhada?`);
       }
       state.step = 'aguardando_intencao';
       state.clientData = { name: chatId.split('@')[0], phone: chatId, state: 'inicial', interests: {}, documents: {}, report: 'Conversa iniciada' };
@@ -166,45 +148,38 @@ client.on('message', async msg => {
 
     if ((botResponse.includes('comprar') || botResponse.includes('à vista')) && state.step === 'aguardando_intencao') {
       try {
+        const response = await axios.get('http://localhost:5000/api/cars', { timeout: 5000 });
+        const cars = response.data;
         const carList = cars.modelos && cars.modelos.length > 0
-          ? cars.modelos.map(c => `${c.nome} (${c.ano || 'sem ano'}) - ${formatPrice(c.preco)} - ${c.descricao.replace(/\r\n/g, ', ')}`).join('\n')
+          ? cars.modelos.map(c => `${c.nome} (${c.ano || 'sem ano'})`).join(', ')
           : 'Nenhum carro disponível no momento.';
-        await client.sendMessage(chatId, `Beleza, irmão! Temos:\n${carList}\nQual te interessa? 🚗`);
+        await client.sendMessage(chatId, `Beleza, irmão! Temos: ${carList}. Qual te interessa? 🚗`);
         state.step = 'aguardando_carro';
         state.clientData.interest = 'compra à vista';
         await axios.put(`http://localhost:5000/api/clients/${state.clientData.id}`, { interests: state.clientData, state: state.step }, { timeout: 5000 });
       } catch (error) {
-        console.error(`[${getTimestamp()}] Erro ao processar lista de carros:`, error.message);
+        console.error(`[${getTimestamp()}] Erro ao buscar carros:`, error.message);
         await client.sendMessage(chatId, 'Deu ruim ao listar os carros, irmão! Tenta de novo. 😓');
       }
     } else if (botResponse.includes('financiar') && state.step === 'aguardando_intencao') {
       try {
+        const response = await axios.get('http://localhost:5000/api/cars', { timeout: 5000 });
+        const cars = response.data;
         const carList = cars.modelos && cars.modelos.length > 0
-          ? cars.modelos.map(c => `${c.nome} (${c.ano || 'sem ano'}) - ${formatPrice(c.preco)} - ${c.descricao.replace(/\r\n/g, ', ')}`).join('\n')
+          ? cars.modelos.map(c => `${c.nome} (${c.ano || 'sem ano'})`).join(', ')
           : 'Nenhum carro disponível no momento.';
-        await client.sendMessage(chatId, `Massa, vamos financiar? Temos:\n${carList}\nQual tu quer? 💸`);
+        await client.sendMessage(chatId, `Massa, vamos financiar? Temos: ${carList}. Qual tu quer? 💸`);
         state.step = 'aguardando_carro';
         state.clientData.interest = 'financiamento';
         await axios.put(`http://localhost:5000/api/clients/${state.clientData.id}`, { interests: state.clientData, state: state.step }, { timeout: 5000 });
       } catch (error) {
-        console.error(`[${getTimestamp()}] Erro ao processar lista de carros:`, error.message);
-        await client.sendMessage(chatId, 'Deu ruim ao listar os carros, irmão! Tenta de novo. 😓');
-      }
-    } else if (botResponse.includes('trocar') && state.step === 'aguardando_intencao') {
-      try {
-        const carList = cars.modelos && cars.modelos.length > 0
-          ? cars.modelos.map(c => `${c.nome} (${c.ano || 'sem ano'}) - ${formatPrice(c.preco)} - ${c.descricao.replace(/\r\n/g, ', ')}`).join('\n')
-          : 'Nenhum carro disponível no momento.';
-        await client.sendMessage(chatId, `Beleza, quer trocar? Temos:\n${carList}\nQual carro tu quer? E me conta sobre o teu carro: modelo, ano e estado (ex.: "Gol 2018, bom estado"). 🚙`);
-        state.step = 'aguardando_troca_detalhes';
-        state.clientData.interest = 'troca';
-        await axios.put(`http://localhost:5000/api/clients/${state.clientData.id}`, { interests: state.clientData, state: state.step }, { timeout: 5000 });
-      } catch (error) {
-        console.error(`[${getTimestamp()}] Erro ao processar lista de carros:`, error.message);
+        console.error(`[${getTimestamp()}] Erro ao buscar carros:`, error.message);
         await client.sendMessage(chatId, 'Deu ruim ao listar os carros, irmão! Tenta de novo. 😓');
       }
     } else if (state.step === 'aguardando_carro') {
       try {
+        const response = await axios.get('http://localhost:5000/api/cars', { timeout: 5000 });
+        const cars = response.data;
         const carMatch = cars.modelos?.find(c => normalizeText(c.nome).includes(normalizedText));
         if (carMatch) {
           state.lastCar = carMatch;
@@ -217,26 +192,8 @@ client.on('message', async msg => {
           await client.sendMessage(chatId, 'Não achei esse carro, irmão! Tenta outro nome da lista. 😅');
         }
       } catch (error) {
-        console.error(`[${getTimestamp()}] Erro ao processar carro selecionado:`, error.message);
-        await client.sendMessage(chatId, 'Deu ruim ao buscar o carro, irmão! Tenta de novo. 😓');
-      }
-    } else if (state.step === 'aguardando_troca_detalhes') {
-      try {
-        const carMatch = cars.modelos?.find(c => normalizeText(c.nome).includes(normalizedText.split(' ')[0]));
-        if (carMatch) {
-          state.lastCar = carMatch;
-          state.clientData.carInterested = carMatch.nome;
-          state.clientData.tradeCar = { details: originalText };
-          state.step = 'aguardando_confirmacao';
-          await client.sendMessage(chatId, `Entendi, tu quer o ${carMatch.nome} e tá oferecendo: "${originalText}". Confirma a proposta de troca? (sim/não) 🤝`);
-          state.clientData.state = state.step;
-          await axios.put(`http://localhost:5000/api/clients/${state.clientData.id}`, { interests: state.clientData, tradeCar: state.clientData.tradeCar, state: state.step }, { timeout: 5000 });
-        } else {
-          await client.sendMessage(chatId, 'Não achei o carro que tu quer na lista, irmão! Tenta outro nome e me fala do teu carro de novo (modelo, ano, estado). 😅');
-        }
-      } catch (error) {
-        console.error(`[${getTimestamp()}] Erro ao processar detalhes da troca:`, error.message);
-        await client.sendMessage(chatId, 'Deu ruim ao processar a troca, irmão! Tenta de novo. 😓');
+        console.error(`[${getTimestamp()}] Erro ao buscar carros:`, error.message);
+        await client.sendMessage(chatId, 'Deu ruim ao buscar os carros, irmão! Tenta de novo. 😓');
       }
     } else if (state.step === 'aguardando_documentos') {
       if (/^\d{11}$/.test(normalizedText) && !state.clientData.documents?.cpf) {
@@ -288,11 +245,9 @@ client.on('message', async msg => {
       if (normalizedText.includes('sim')) {
         state.step = 'finalizado';
         state.clientData.state = state.step;
-        state.clientData.report = state.clientData.interest === 'troca'
-          ? `Proposta de troca do ${state.clientData.carInterested} pelo carro do cliente (${state.clientData.tradeCar.details}). Dados: ${JSON.stringify(state.clientData)}`
-          : `${state.clientData.interest === 'financiamento' ? 'Financiamento simulado' : 'Compra confirmada'} do ${state.clientData.carInterested}. Dados: ${JSON.stringify(state.clientData)}`;
+        state.clientData.report = `${state.clientData.interest === 'financiamento' ? 'Financiamento simulado' : 'Compra confirmada'} do ${state.clientData.carInterested}. Dados: ${JSON.stringify(state.clientData)}`;
         await axios.post('http://localhost:5000/api/clients', state.clientData, { timeout: 5000 });
-        await client.sendMessage(chatId, `${state.clientData.interest === 'troca' ? 'Proposta de troca registrada' : state.clientData.interest === 'financiamento' ? 'Financiamento simulado' : 'Compra fechada'}, irmão! Te liga o vendedor em breve! 🚗`);
+        await client.sendMessage(chatId, `${state.clientData.interest === 'financiamento' ? 'Financiamento simulado' : 'Compra fechada'}, irmão! Te liga o vendedor em breve! 🚗`);
         clientStates.delete(chatId);
       } else if (normalizedText.includes('não')) {
         await client.sendMessage(chatId, 'Beleza, irmão! Se mudar de ideia, é só chamar! 😎');
@@ -333,8 +288,6 @@ async function getBotpressResponse(chatId, message) {
       return 'Beleza, irmão! Quer comprar um carro à vista? Me diz qual modelo te interessa! 🚗';
     } else if (normalizedText.includes('financiar') || normalizedText.includes('financiamento') || normalizedText.includes('parcelar') || normalizedText.includes('financiamento de carro') || normalizedText.includes('financiar carro')) {
       return 'Massa, vamos financiar? Qual carro tu quer? 💸';
-    } else if (normalizedText.includes('troca') || normalizedText.includes('trocar') || normalizedText.includes('permuta') || normalizedText.includes('quero trocar') || normalizedText.includes('troca de carro')) {
-      return 'Beleza, quer trocar um carro? Me diz qual carro tu quer do estoque e me conta sobre o teu (modelo, ano, estado)! 🤝';
     } else if (normalizedText.includes('vender') || normalizedText.includes('venda') || normalizedText.includes('meu carro') || normalizedText.includes('vender carro')) {
       return 'Quer vender teu carro? Me conta mais sobre ele (modelo, ano, estado)! 🚘';
     } else if (normalizedText.includes('olhada') || normalizedText.includes('estoque') || normalizedText.includes('ver carros') || normalizedText.includes('quais carros') || normalizedText.includes('catálogo')) {
@@ -342,7 +295,7 @@ async function getBotpressResponse(chatId, message) {
     } else if (normalizedText.includes('ajuda') || normalizedText.includes('suporte') || normalizedText.includes('como funciona') || normalizedText.includes('o que você faz')) {
       return 'Beleza, irmão! Como posso te ajudar hoje? 😎';
     }
-    return 'Não entendi, irmão! 😅 Pode repetir ou dizer o que quer (comprar, financiar, trocar, vender)?';
+    return 'Não entendi, irmão! 😅 Pode repetir ou dizer o que quer (comprar, financiar, vender)?';
   } catch (error) {
     console.error(`[${getTimestamp()}] Erro ao processar intenção:`, error.message);
     return 'Deu ruim, irmão! Tenta de novo! 😓';
