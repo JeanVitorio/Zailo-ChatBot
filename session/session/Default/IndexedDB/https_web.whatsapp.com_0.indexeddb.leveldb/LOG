@@ -1,0 +1,36 @@
+2025/08/30-18:45:16.267 3878 Reusing MANIFEST C:\Users\PulseMarketing\Documents\ZailonChatBot\Zailo-ChatBot\session\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/08/30-18:45:16.268 3878 Recovering log #184
+2025/08/30-18:45:16.496 3878 Reusing old log C:\Users\PulseMarketing\Documents\ZailonChatBot\Zailo-ChatBot\session\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000184.log 
+2025/08/30-18:45:17.794 46ec Level-0 table #195: started
+2025/08/30-18:45:17.818 46ec Level-0 table #195: 1083899 bytes OK
+2025/08/30-18:45:17.821 46ec Delete type=0 #184
+2025/08/30-18:45:17.821 46ec Manual compaction at level-0 from '\x00$\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00%\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/08/30-18:45:19.019 1c24 Compacting 1@1 + 6@2 files
+2025/08/30-18:45:19.086 1c24 Generated table #196@1: 41403 keys, 2198403 bytes
+2025/08/30-18:45:19.122 1c24 Generated table #197@1: 2613 keys, 2173254 bytes
+2025/08/30-18:45:19.186 1c24 Generated table #198@1: 24670 keys, 2177807 bytes
+2025/08/30-18:45:19.265 1c24 Generated table #199@1: 80532 keys, 2222155 bytes
+2025/08/30-18:45:19.391 1c24 Generated table #200@1: 116251 keys, 2270374 bytes
+2025/08/30-18:45:19.420 1c24 Generated table #201@1: 33236 keys, 652010 bytes
+2025/08/30-18:45:19.421 1c24 Compacted 1@1 + 6@2 files => 11694003 bytes
+2025/08/30-18:45:19.423 1c24 compacted to: files[ 0 0 6 0 0 0 0 ]
+2025/08/30-18:45:19.423 1c24 Delete type=2 #187
+2025/08/30-18:45:19.423 1c24 Delete type=2 #188
+2025/08/30-18:45:19.423 1c24 Delete type=2 #189
+2025/08/30-18:45:19.423 1c24 Delete type=2 #190
+2025/08/30-18:45:19.423 1c24 Delete type=2 #191
+2025/08/30-18:45:19.423 1c24 Delete type=2 #192
+2025/08/30-18:45:19.423 1c24 Delete type=2 #195
+2025/08/30-18:50:20.338 1c24 Level-0 table #203: started
+2025/08/30-18:50:20.345 1c24 Level-0 table #203: 154554 bytes OK
+2025/08/30-18:50:20.348 1c24 Delete type=0 #194
+2025/08/30-18:50:20.348 37ec Manual compaction at level-0 from '\x00%\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00&\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/08/30-18:50:20.781 36ac Compacting 1@1 + 6@2 files
+2025/08/30-18:50:20.908 36ac Generated table #204@1: 42047 keys, 2199414 bytes
+2025/08/30-18:50:20.942 36ac Generated table #205@1: 2618 keys, 2175082 bytes
+2025/08/30-18:50:21.004 36ac Generated table #206@1: 24672 keys, 2177931 bytes
+2025/08/30-18:50:21.146 36ac Generated table #207@1: 80532 keys, 2222155 bytes
+2025/08/30-18:50:21.310 36ac Generated table #208@1: 116251 keys, 2270374 bytes
+2025/08/30-18:50:21.392 36ac Generated table #209@1: 33236 keys, 652009 bytes
+2025/08/30-18:50:21.392 36ac Compacted 1@1 + 6@2 files => 11696965 bytes
+2025/08/30-18:50:21.395 36ac compacted to: files[ 0 0 6 0 0 0 0 ]

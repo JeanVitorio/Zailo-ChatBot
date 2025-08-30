@@ -8,635 +8,700 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --cor-fundo-escuro: #0a0a0a;
-            --cor-fundo-card: #1c1c1c;
-            --cor-borda: #2f2f2f;
-            --cor-destaque: #D4A017;
-            --cor-texto-principal: #E0E0E0;
-            --cor-texto-secundario: #a8a8a8;
-            --shadow-light: rgba(0, 0, 0, 0.1);
-            --shadow-medium: rgba(0, 0, 0, 0.25);
-            --shadow-heavy: rgba(0, 0, 0, 0.4);
+            --cor-fundo-escuro: #060918;
+            --cor-fundo-card: #0F1326;
+            --cor-borda: #1D233F;
+            --cor-destaque: #00F5FF;
+            --cor-destaque-hover: #00D5E0;
+            --cor-texto-principal: #E2E8F0;
+            --cor-texto-secundario: #94A3B8;
+            --cor-success: #22C55E;
+            --cor-danger: #EF4444;
+            --cor-gradiente-principal: linear-gradient(145deg, #060918 0%, #0C122D 100%);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         html {
             scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--cor-fundo-escuro);
+            font-family: 'Poppins', sans-serif;
+            background: var(--cor-gradiente-principal);
             color: var(--cor-texto-principal);
-            overflow-x: hidden;
             min-height: 100vh;
-            padding: 20px;
+            padding: 2.5rem;
             line-height: 1.6;
         }
+        
+        body:not(.editing) .edit-field { display: none !important; }
+        body.editing .display-field { display: none !important; }
+        
+        body:not(.editing) .save-btn, 
+        body:not(.editing) .cancel-btn, 
+        body:not(.editing) .delete-btn { 
+            display: none !important; 
+        }
+        
+        body.editing .edit-btn, 
+        body.editing .back-btn { 
+            display: none !important; 
+        }
 
+        body.editing .add-image-container { display: block; }
+        body.editing .remove-btn-thumbnail { display: flex; }
+        body.editing .image-thumbnails img { cursor: default; }
+        
         .container {
             max-width: 1400px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 40px;
+            gap: 2rem;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 30px;
-            background-color: rgba(28, 28, 28, 0.9);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid var(--cor-borda);
-            position: sticky;
-            top: 20px;
-            z-index: 1000;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px var(--shadow-medium);
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .header-title {
+            flex-grow: 1; /* Permite que o título ocupe o espaço disponível */
         }
 
-        .logo {
-            font-size: 1.9em;
+        #car-name-title, #edit-car-name {
+            font-size: 2.5rem;
             font-weight: 700;
-            color: var(--cor-destaque);
-            text-decoration: none;
-            transition: color 0.3s ease;
+            line-height: 1.2;
+            color: var(--cor-texto-principal);
         }
 
-        .logo:hover {
-            color: #FFD700;
+        #edit-car-name {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--cor-destaque);
+            border-radius: 0;
+            padding: 0;
         }
 
-        .content {
-            background: var(--cor-fundo-card);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px var(--shadow-heavy);
-            animation: fadeIn 0.6s ease-out;
-            position: relative;
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            flex-shrink: 0; /* Impede que os botões quebrem a linha facilmente */
         }
-
-        .details {
+        
+        .main-content {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            background-color: var(--cor-fundo-card);
+            border: 1px solid var(--cor-borda);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .image-gallery {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .main-image-wrapper {
             position: relative;
-            z-index: 20;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            border: 1px solid var(--cor-borda);
+        }
+        
+        #main-car-image {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16/10;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.4s ease, opacity 0.4s;
+            opacity: 0;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(6, 9, 24, 0.7);
+            color: var(--cor-destaque);
+            border: 1px solid var(--cor-borda);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 10;
+            opacity: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-image-wrapper:hover .nav-btn {
+            opacity: 1;
+        }
+        .nav-btn:hover {
+            background-color: var(--cor-destaque);
+            color: var(--cor-fundo-escuro);
+        }
+        #prev-image-btn { left: 1rem; }
+        #next-image-btn { right: 1rem; }
+
+        .image-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+        }
+        
+        .image-thumbnail-wrapper {
+            position: relative;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .image-thumbnails img {
+            width: 100%;
+            height: 75px;
+            object-fit: cover;
+            border: 2px solid transparent;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+        }
+        
+        .image-thumbnails img:hover, .image-thumbnails img.active {
+            border-color: var(--cor-destaque);
+            transform: scale(1.05);
+        }
+
+        .car-details-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
         }
 
         .detail-item {
-            background-color: var(--cor-fundo-card);
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 5px solid var(--cor-destaque);
-            transition: all 0.3s ease-in-out;
-            height: auto;
-            position: relative;
-            box-shadow: 0 2px 10px var(--shadow-light);
-        }
-
-        .detail-item:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 30px var(--shadow-medium);
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
         }
 
         .detail-item label {
-            display: block;
-            font-size: 1em;
-            font-weight: 500;
+            font-size: 0.9em;
             color: var(--cor-texto-secundario);
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
+            font-weight: 500;
         }
-
+        
         .detail-item span {
             font-size: 1.1em;
             color: var(--cor-texto-principal);
-            padding: 10px 15px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
-            display: block;
-            word-break: break-word;
+            font-weight: 400;
         }
-
+        
         .edit-field {
-            display: none;
             width: 100%;
-            padding: 12px;
+            padding: 0.75rem 1rem;
             border: 1px solid var(--cor-borda);
-            border-radius: 8px;
-            font-size: 1.1em;
+            border-radius: 0.5rem;
+            background: var(--cor-fundo-escuro);
+            font-family: 'Poppins', sans-serif;
             color: var(--cor-texto-principal);
-            background: rgba(255, 255, 255, 0.12);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            z-index: 30;
-            appearance: none;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
         }
 
         .edit-field:focus {
             border-color: var(--cor-destaque);
-            box-shadow: 0 0 10px rgba(212, 160, 23, 0.3);
+            box-shadow: 0 0 10px rgba(0, 245, 255, 0.4);
             outline: none;
         }
-
-        .edit-field#edit-car-description {
-            min-height: 150px;
-            max-height: 300px;
-            overflow-y: auto;
+        
+        #edit-car-description {
+            min-height: 120px;
             resize: vertical;
         }
-
-        .car-images {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 40px;
-            position: relative;
-            z-index: 10;
-        }
-
-        .image-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
-        .car-images img {
-            max-width: 200px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 1px solid var(--cor-borda);
-            box-shadow: 0 4px 12px var(--shadow-light);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            opacity: 0;
-            animation: fadeIn 0.5s forwards;
-        }
-
-        .car-images img:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 18px var(--shadow-medium);
-        }
-
-        .remove-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: var(--cor-destaque);
-            color: #000;
-            border: none;
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            display: none;
-            z-index: 15;
-            transition: all 0.2s ease-in-out;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .image-wrapper:hover .remove-btn {
-            display: flex;
-        }
-
-        .remove-btn:hover {
-            background: #FFD700;
-            transform: scale(1.1);
-        }
-
-        .add-image-input {
-            margin-top: 30px;
-            display: none;
-            padding: 12px 25px;
-            background: var(--cor-destaque);
-            color: #000;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .add-image-input:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 20px rgba(212, 160, 23, 0.2);
-        }
-
+        
+        .add-image-container { display: none; }
+        #edit-car-images { width: 100%; }
         .preview-images {
             display: flex;
+            gap: 1rem;
             flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 20px;
-            justify-content: center;
-            padding: 10px;
-            border: 1px dashed var(--cor-borda);
-            border-radius: 10px;
-            min-height: 80px;
-            align-items: center;
-            display: none;
+            margin-top: 1rem;
         }
-        
-        .preview-images.active {
-            display: flex;
-        }
-
-        .preview-images .image-wrapper {
-            position: relative;
-            display: inline-block;
-        }
-
-        .preview-images img {
-            max-width: 120px;
-            height: 90px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid var(--cor-borda);
-            box-shadow: 0 2px 8px var(--shadow-light);
-        }
+        .preview-images img { width: 80px; height: 80px; object-fit: cover; border-radius: 0.5rem; }
 
         .actions {
-            margin-top: 30px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(212, 160, 23, 0.2);
+            display: none; /* Bloco de ações antigo removido */
         }
 
         .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
             background-color: var(--cor-destaque);
-            color: #000;
-            padding: 12px 25px;
+            color: var(--cor-fundo-escuro);
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 8px;
-            font-weight: 700;
+            border-radius: 0.75rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease-in-out;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            box-shadow: 0 4px 10px rgba(0, 245, 255, 0.3);
+            text-decoration: none;
         }
-
+        
         .btn:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 20px rgba(212, 160, 23, 0.25);
-            background-color: #FFD700;
+            background-color: var(--cor-destaque-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 245, 255, 0.4);
         }
 
-        .btn:disabled {
-            background: var(--cor-texto-secundario);
-            cursor: not-allowed;
-            transform: none;
+        .btn--secondary {
+            background-color: transparent;
+            color: var(--cor-destaque);
+            border: 2px solid var(--cor-destaque);
             box-shadow: none;
         }
-
-        .save-btn {
-            display: none;
+        .btn--secondary:hover {
+            background-color: var(--cor-destaque);
+            color: var(--cor-fundo-escuro);
+            box-shadow: 0 5px 15px rgba(0, 245, 255, 0.4);
         }
+        
+        .btn--danger {
+            background-color: transparent;
+            color: var(--cor-danger);
+            border: 2px solid var(--cor-danger);
+            box-shadow: none;
+        }
+        .btn--danger:hover {
+            background-color: var(--cor-danger);
+            color: var(--cor-texto-principal);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .remove-btn-thumbnail {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--cor-danger);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            z-index: 5;
+            transition: all 0.2s ease;
+        }
+        .remove-btn-thumbnail:hover { transform: scale(1.1); }
 
         .loader {
-            width: 100%;
-            height: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
+            width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0;
+            background-color: rgba(6, 9, 24, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; opacity: 0; visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
-
-        .loader--show {
-            opacity: 1;
-            visibility: visible;
-        }
-
+        .loader--show { opacity: 1; visibility: visible; }
         .loader__spin {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 6px solid rgba(255, 255, 255, 0.2);
+            width: 50px; height: 50px; border-radius: 50%;
+            border: 5px solid var(--cor-borda);
             border-top-color: var(--cor-destaque);
-            animation: loader-spin 1s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            animation: loader-spin 1s infinite linear;
         }
+        @keyframes loader-spin { 100% { transform: rotate(360deg); } }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .custom-alert-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(6, 9, 24, 0.8); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease;
         }
-
-        @keyframes loader-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .custom-alert-modal.show { opacity: 1; visibility: visible; }
+        .custom-alert-content {
+            background: var(--cor-fundo-card);
+            padding: 2.5rem; border-radius: 1.5rem;
+            border: 1px solid var(--cor-destaque);
+            width: 90%; max-width: 450px;
+            text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transform: scale(0.95); transition: transform 0.3s ease;
         }
+        .custom-alert-modal.show .custom-alert-content { transform: scale(1); }
+        .custom-alert-content h4 { font-size: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem;}
+        .custom-alert-content p { color: var(--cor-texto-secundario); margin-bottom: 2rem; }
+        .custom-alert-content.success h4 { color: var(--cor-success); }
+        .custom-alert-content.error h4 { color: var(--cor-danger); }
+        .custom-alert-content.warning h4 { color: var(--cor-destaque); }
 
+        @media (min-width: 1024px) {
+            .main-content {
+                grid-template-columns: 5fr 4fr;
+                align-items: start;
+            }
+            .car-details-section {
+                height: 100%;
+            }
+        }
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px 20px;
-                top: 0;
-                border-radius: 0;
-            }
-
-            .container {
-                padding: 0 10px;
-                gap: 30px;
-            }
-
-            .content {
-                padding: 20px;
-                border-radius: 0;
-            }
-
-            .detail-item {
-                padding: 15px;
-            }
-
-            .detail-item label {
-                font-size: 0.9em;
-            }
-
-            .detail-item span, .edit-field {
-                font-size: 1em;
-                padding: 10px;
-            }
-
-            .car-images img {
-                max-width: 150px;
-                height: 120px;
-            }
-
-            .actions {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .btn {
-                width: 100%;
-            }
+            body { padding: 1.5rem; }
+            .header { flex-direction: column; text-align: center; align-items: stretch;}
+            .header-actions { justify-content: center;}
+            .main-content { padding: 1.5rem; }
+            .btn { width: 100%; margin-top: 0.5rem; }
         }
     </style>
 </head>
-<body>
+<body class="">
     <div class="loader" id="loader">
         <div class="loader__spin"></div>
     </div>
+
+    <div id="custom-alert-modal" class="custom-alert-modal">
+        <div id="custom-alert-content" class="custom-alert-content">
+            <h4 id="custom-alert-title"></h4>
+            <p id="custom-alert-message"></p>
+            <button id="custom-alert-button" class="btn">OK</button>
+        </div>
+    </div>
+
     <div class="container">
         <header class="header">
-            <a href="#" class="logo" onclick="window.history.back()">ZAILONSOFT</a>
-        </header>
-        <main class="content">
-            <div class="details" id="car-details"></div>
-            <div class="car-images" id="car-images-detail"></div>
-            <label for="edit-car-images" class="btn add-image-input" id="add-image-label">Adicionar Imagens</label>
-            <input type="file" id="edit-car-images" multiple accept="image/*" style="display: none;" onchange="previewImages()">
-            <div class="preview-images" id="preview-images"></div>
-            <div class="actions">
-                <button class="btn edit-btn" onclick="toggleEditMode()">Editar</button>
-                <button class="btn close-btn" onclick="closeDetails()">Fechar</button>
-                <button class="btn save-btn" onclick="saveCarChanges()">Salvar</button>
+            <div class="header-title">
+                <h1 id="car-name-title" class="display-field"></h1>
+                <input type="text" id="edit-car-name" class="edit-field" placeholder="Nome do Veículo">
             </div>
+            
+            <div class="header-actions">
+                <a href="index.html" class="btn btn--secondary back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Voltar</span>
+                </a>
+                <button class="btn edit-btn" onclick="toggleEditMode()">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="btn save-btn" onclick="saveCarChanges()">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+                <button class="btn btn--secondary cancel-btn" onclick="toggleEditMode()">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn--danger delete-btn" onclick="deleteCar()">
+                    <i class="fas fa-trash"></i> Excluir
+                </button>
+            </div>
+        </header>
+        
+        <main class="main-content">
+            <div class="image-gallery">
+                <div class="main-image-wrapper">
+                    <img id="main-car-image" src="" alt="Imagem principal do veículo">
+                    <button id="prev-image-btn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button id="next-image-btn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="image-thumbnails" id="image-thumbnails"></div>
+            </div>
+
+            <div class="car-details-section">
+                <div class="details-grid">
+                    <div class="detail-item">
+                        <label>Preço</label>
+                        <span id="car-price-detail" class="display-field"></span>
+                        <input type="text" id="edit-car-price" class="edit-field" placeholder="Ex: R$ 45.900" inputmode="decimal">
+                    </div>
+                    <div class="detail-item">
+                        <label>Ano</label>
+                        <span id="car-year-detail" class="display-field"></span>
+                        <input type="text" id="edit-car-year" class="edit-field" placeholder="Ex: 2020" maxlength="4">
+                    </div>
+                    <div class="detail-item" style="grid-column: 1 / -1;">
+                        <label>Descrição</label>
+                        <span id="car-description-detail" class="display-field"></span>
+                        <textarea id="edit-car-description" class="edit-field" placeholder="Descrição detalhada do veículo..."></textarea>
+                    </div>
+                    <div class="detail-item add-image-container" style="grid-column: 1 / -1;">
+                        <label>Adicionar Novas Imagens</label>
+                        <input type="file" id="edit-car-images" class="edit-field" multiple accept="image/*" onchange="previewImages()">
+                        <div class="preview-images" id="preview-images"></div>
+                    </div>
+                </div>
+                </div>
         </main>
     </div>
 
     <script>
+        // --- INÍCIO DAS FUNÇÕES DE FORMATAÇÃO ---
+        function toBRL(value) {
+            if (value === null || value === undefined || value === '') return "Não informado";
+            const num = parseCurrency(value);
+            return num.toLocaleString("pt-BR", {
+                style: "currency",
+                currency: "BRL",
+            });
+        }
+        function formatCurrencyInput(input) {
+            let value = input.value.replace(/\D/g, "");
+            if (value === "") {
+                input.value = "";
+                return;
+            }
+            const numValue = parseInt(value, 10) / 100;
+            input.value = numValue.toLocaleString("pt-BR", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+        function parseCurrency(value) {
+            if (typeof value === 'number') return value;
+            if (!value) return 0;
+            const numberString = String(value).replace(/[^0-9,]/g, "").replace(".", "").replace(",", ".");
+            return parseFloat(numberString) || 0;
+        }
+        // --- FIM DAS FUNÇÕES DE FORMATAÇÃO ---
+
         let carId = new URLSearchParams(window.location.search).get('id');
-        let cars = {};
+        let carsData = {};
+        let currentImageIndex = 0;
+        let selectedFiles = [];
         const loader = document.getElementById('loader');
 
-        function showLoader() {
-            loader.classList.add('loader--show');
-        }
+        function showLoader() { loader.classList.add('loader--show'); }
+        function hideLoader() { loader.classList.remove('loader--show'); }
 
-        function hideLoader() {
-            loader.classList.remove('loader--show');
-        }
-
-        async function loadCars() {
+        async function loadCarDetails() {
             showLoader();
             try {
                 const response = await fetch('http://localhost:5000/api/cars');
-                if (!response.ok) throw new Error(`Erro ao carregar carros: ${response.statusText}`);
-                cars = await response.json();
+                if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+                carsData = await response.json();
                 showCarDetails(carId);
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
-                document.getElementById('car-details').innerHTML = '<p style="color: var(--cor-destaque); text-align: center; padding: 20px;">Não foi possível carregar os detalhes do veículo. Por favor, tente novamente.</p>';
+                showCustomAlert('Erro!', 'Não foi possível carregar os detalhes do veículo.', 'error');
             } finally {
                 hideLoader();
             }
         }
 
-        window.onload = loadCars;
-
-        function showCarDetails(carId) {
-            const car = cars.modelos.find(c => c.id === carId || (cars.modelos.indexOf(c) + 1).toString() === carId);
+        function showCarDetails(id) {
+            const car = carsData.modelos.find(c => c.id === id);
             if (!car) {
-                console.error('Carro não encontrado:', carId);
-                document.getElementById('car-details').innerHTML = '<p style="color: var(--cor-destaque); text-align: center; padding: 20px;">Veículo não encontrado.</p>';
+                showCustomAlert('Erro!', 'Veículo não encontrado.', 'error');
                 return;
             }
-
-            const details = document.getElementById('car-details');
-            details.innerHTML = `
-                <div class="detail-item">
-                    <label for="edit-car-name">Nome</label>
-                    <span id="car-name-detail">${car.nome || 'Não informado'}</span>
-                    <input type="text" id="edit-car-name" class="edit-field" value="${car.nome || ''}">
-                </div>
-                <div class="detail-item">
-                    <label for="edit-car-year">Ano</label>
-                    <span id="car-year-detail">${car.ano || 'Não informado'}</span>
-                    <input type="number" id="edit-car-year" class="edit-field" value="${car.ano || ''}">
-                </div>
-                <div class="detail-item">
-                    <label for="edit-car-price">Preço</label>
-                    <span id="car-price-detail">${car.preco || 'Não informado'}</span>
-                    <input type="text" id="edit-car-price" class="edit-field" value="${car.preco || ''}">
-                </div>
-                <div class="detail-item">
-                    <label for="edit-car-description">Descrição</label>
-                    <span id="car-description-detail">${car.descricao || 'Sem descrição'}</span>
-                    <textarea id="edit-car-description" class="edit-field" rows="8"></textarea>
-                </div>
-            `;
+            
+            document.getElementById('car-name-title').textContent = car.nome || 'Sem Nome';
+            document.getElementById('edit-car-name').value = car.nome || '';
+            
+            document.getElementById('car-price-detail').textContent = toBRL(car.preco);
+            document.getElementById('edit-car-price').value = toBRL(car.preco).replace(/R\$\s?/, '');
+            
+            document.getElementById('car-year-detail').textContent = car.ano || 'Não informado';
+            document.getElementById('edit-car-year').value = car.ano || '';
+            document.getElementById('car-description-detail').textContent = car.descricao || 'Sem descrição';
             document.getElementById('edit-car-description').value = car.descricao || '';
+            
+            setupImageGallery(car.imagens);
+            document.body.classList.remove('editing');
+        }
 
-            const imagesContainer = document.getElementById('car-images-detail');
-            imagesContainer.innerHTML = '';
-            if (car.imagens && car.imagens.length > 0) {
-                car.imagens.forEach((imgSrc, index) => {
-                    const imgWrapper = document.createElement('div');
-                    imgWrapper.className = 'image-wrapper';
-                    imgWrapper.innerHTML = `
-                        <img src="http://localhost:5000/${imgSrc}" alt="Imagem de ${car.nome}">
-                        <button class="remove-btn" onclick="removeImage('${car.id}', ${index})">X</button>
-                    `;
-                    imagesContainer.appendChild(imgWrapper);
+        function setupImageGallery(images) {
+            const mainImage = document.getElementById('main-car-image');
+            const thumbnailsContainer = document.getElementById('image-thumbnails');
+            thumbnailsContainer.innerHTML = '';
+            
+            if (images && images.length > 0) {
+                mainImage.src = `http://localhost:5000/${images[0]}`;
+                mainImage.onload = () => mainImage.style.opacity = '1';
+
+                images.forEach((imgSrc, index) => {
+                    const thumbnailWrapper = document.createElement('div');
+                    thumbnailWrapper.className = 'image-thumbnail-wrapper';
+                    
+                    const thumbnailImage = document.createElement('img');
+                    thumbnailImage.src = `http://localhost:5000/${imgSrc}`;
+                    thumbnailImage.alt = `Miniatura ${index + 1}`;
+                    thumbnailImage.onclick = () => !document.body.classList.contains('editing') && showImage(index);
+                    if (index === 0) thumbnailImage.classList.add('active');
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn-thumbnail';
+                    removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                    removeBtn.onclick = (e) => { e.stopPropagation(); removeImage(carId, index); };
+
+                    thumbnailWrapper.append(thumbnailImage, removeBtn);
+                    thumbnailsContainer.appendChild(thumbnailWrapper);
                 });
+
+                document.getElementById('prev-image-btn').onclick = () => navigateImage(-1);
+                document.getElementById('next-image-btn').onclick = () => navigateImage(1);
             } else {
-                imagesContainer.innerHTML = '<p style="text-align: center; color: var(--cor-texto-secundario);">Sem imagens disponíveis.</p>';
-            }
-            document.getElementById('preview-images').innerHTML = '';
-            document.getElementById('preview-images').classList.remove('active');
-            document.getElementById('edit-car-images').value = '';
-            toggleEditMode(false);
-        }
-
-        function previewImages() {
-            const files = document.getElementById('edit-car-images').files;
-            const previewContainer = document.getElementById('preview-images');
-            previewContainer.innerHTML = '';
-            if (files.length > 0) {
-                previewContainer.classList.add('active');
-            } else {
-                previewContainer.classList.remove('active');
-            }
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const imgWrapper = document.createElement('div');
-                    imgWrapper.className = 'image-wrapper';
-                    imgWrapper.innerHTML = `
-                        <img src="${e.target.result}" alt="Pré-visualização">
-                        <button class="remove-btn" onclick="removePreviewImage(${i})">X</button>
-                    `;
-                    previewContainer.appendChild(imgWrapper);
-                };
-                reader.readAsDataURL(file);
+                mainImage.src = 'https://via.placeholder.com/800x500?text=Sem+Imagem';
+                mainImage.style.opacity = '1';
+                thumbnailsContainer.innerHTML = '<p style="color: var(--cor-texto-secundario);">Nenhuma imagem.</p>';
             }
         }
-
-        function removePreviewImage(index) {
-            const input = document.getElementById('edit-car-images');
-            const dataTransfer = new DataTransfer();
-            const files = Array.from(input.files);
-            files.splice(index, 1);
-            files.forEach(file => dataTransfer.items.add(file));
-            input.files = dataTransfer.files;
-            previewImages();
+        
+        function showImage(index) {
+            const car = carsData.modelos.find(c => c.id === carId);
+            if (!car || !car.imagens) return;
+            document.getElementById('main-car-image').src = `http://localhost:5000/${car.imagens[index]}`;
+            document.querySelectorAll('#image-thumbnails img').forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
+            currentImageIndex = index;
         }
 
-        async function removeImage(carId, imageIndex) {
-            if (confirm('Tem certeza que deseja remover esta imagem? Esta ação é irreversível.')) {
-                showLoader();
-                try {
-                    const response = await fetch(`http://localhost:5000/api/cars/${carId}/images/${imageIndex}`, {
-                        method: 'DELETE'
-                    });
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`Erro ao remover imagem: ${errorText || response.statusText}`);
-                    }
-                    const result = await response.json();
-                    const car = cars.modelos.find(c => c.id === carId);
-                    if (car) {
-                        car.imagens = result.imagens_restantes || [];
-                    }
-                    showCarDetails(carId);
-                    alert('Imagem removida com sucesso!');
-                } catch (error) {
-                    console.error('Erro ao remover imagem:', error);
-                    alert(`Erro ao remover a imagem: ${error.message}. Verifique o console.`);
-                } finally {
-                    hideLoader();
-                }
-            }
+        function navigateImage(direction) {
+            const car = carsData.modelos.find(c => c.id === carId);
+            if (!car || !car.imagens || car.imagens.length === 0) return;
+            let newIndex = (currentImageIndex + direction + car.imagens.length) % car.imagens.length;
+            showImage(newIndex);
         }
 
-        function toggleEditMode(edit = true) {
-            const editFields = document.querySelectorAll('.edit-field');
-            const saveBtn = document.querySelector('.save-btn');
-            const addImageLabel = document.getElementById('add-image-label');
-            const spans = document.querySelectorAll('#car-details span');
-            const editBtn = document.querySelector('.edit-btn');
-            const removeImageButtons = document.querySelectorAll('#car-images-detail .remove-btn');
-            const previewContainer = document.getElementById('preview-images');
-
-            if (edit) {
-                spans.forEach(span => span.style.display = 'none');
-                editFields.forEach(field => field.style.display = 'block');
-                saveBtn.style.display = 'inline-block';
-                addImageLabel.style.display = 'block';
-                editBtn.textContent = 'Cancelar';
-                removeImageButtons.forEach(btn => btn.style.display = 'flex');
-                previewContainer.classList.add('active');
-            } else {
-                spans.forEach(span => span.style.display = 'block');
-                editFields.forEach(field => field.style.display = 'none');
-                saveBtn.style.display = 'none';
-                addImageLabel.style.display = 'none';
-                editBtn.textContent = 'Editar';
-                removeImageButtons.forEach(btn => btn.style.display = 'none');
-                document.getElementById('edit-car-images').value = '';
-                previewContainer.innerHTML = '';
-                previewContainer.classList.remove('active');
+        function toggleEditMode() {
+            document.body.classList.toggle('editing');
+            if (!document.body.classList.contains('editing')) {
+                loadCarDetails(); // Recarrega os dados originais ao cancelar
             }
         }
 
         async function saveCarChanges() {
-            const carId = new URLSearchParams(window.location.search).get('id');
             const formData = new FormData();
             formData.append('name', document.getElementById('edit-car-name').value);
             formData.append('year', document.getElementById('edit-car-year').value);
-            formData.append('price', document.getElementById('edit-car-price').value);
+            formData.append('price', parseCurrency(document.getElementById('edit-car-price').value));
             formData.append('description', document.getElementById('edit-car-description').value);
-            const files = document.getElementById('edit-car-images').files;
-            if (files.length > 0) {
-                for (let file of files) {
-                    formData.append('images', file);
-                }
-            }
+            
+            selectedFiles.forEach(file => formData.append('images', file));
 
             showLoader();
             try {
-                const response = await fetch(`http://localhost:5000/api/cars/${carId}`, {
-                    method: 'PUT',
-                    body: formData
-                });
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(errorText || 'Erro ao salvar alterações');
-                }
-                await response.json();
-                alert('Alterações salvas com sucesso!');
-                await loadCars();
+                const response = await fetch(`http://localhost:5000/api/cars/${carId}`, { method: 'PUT', body: formData });
+                if (!response.ok) throw new Error(await response.text() || 'Erro desconhecido');
+                showCustomAlert('Sucesso!', 'Alterações salvas com sucesso!', 'success');
+                selectedFiles = []; // Limpa os arquivos selecionados após o envio
+                document.getElementById('preview-images').innerHTML = ''; // Limpa a pré-visualização
+                loadCarDetails();
             } catch (error) {
-                console.error('Erro ao salvar alterações:', error);
-                alert(`Erro ao salvar as alterações: ${error.message}. Verifique o console.`);
+                showCustomAlert('Erro!', `Não foi possível salvar: ${error.message}`, 'error');
+            } finally {
+                hideLoader();
+            }
+        }
+        
+        async function removeImage(id, imageIndex) {
+            if (!confirm('Tem certeza que deseja remover esta imagem?')) return;
+            showLoader();
+            try {
+                const response = await fetch(`http://localhost:5000/api/cars/${id}/images/${imageIndex}`, { method: 'DELETE' });
+                if (!response.ok) throw new Error(await response.text());
+                showCustomAlert('Sucesso!', 'Imagem removida.', 'success');
+                loadCarDetails();
+            } catch (error) {
+                showCustomAlert('Erro!', `Não foi possível remover a imagem: ${error.message}`, 'error');
             } finally {
                 hideLoader();
             }
         }
 
-        function closeDetails() {
-            window.history.back();
+        async function deleteCar() {
+            if (!confirm('TEM CERTEZA ABSOLUTA? Esta ação é irreversível e excluirá o veículo permanentemente.')) return;
+            showLoader();
+            try {
+                const response = await fetch(`http://localhost:5000/api/cars/${carId}`, { method: 'DELETE' });
+                if (!response.ok) throw new Error(await response.text());
+                alert('Veículo excluído com sucesso!'); // Usar alert padrão para redirecionamento
+                window.location.href = 'index.html';
+            } catch (error) {
+                showCustomAlert('Erro!', `Não foi possível excluir o veículo: ${error.message}`, 'error');
+            } finally {
+                hideLoader();
+            }
         }
+        
+        function previewImages() {
+            const files = document.getElementById('edit-car-images').files;
+            const previewContainer = document.getElementById('preview-images');
+            previewContainer.innerHTML = '';
+            selectedFiles = Array.from(files);
+            
+            selectedFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        function showCustomAlert(title, message, type = 'info') {
+            const modal = document.getElementById('custom-alert-modal');
+            const titleEl = document.getElementById('custom-alert-title');
+            const messageEl = document.getElementById('custom-alert-message');
+            const contentEl = document.getElementById('custom-alert-content');
+            
+            contentEl.className = 'custom-alert-content'; // Reset classes
+            contentEl.classList.add(type);
+            
+            let icon = '';
+            if (type === 'success') icon = '<i class="fas fa-check-circle"></i>';
+            if (type === 'error') icon = '<i class="fas fa-exclamation-circle"></i>';
+            if (type === 'warning') icon = '<i class="fas fa-exclamation-triangle"></i>';
+            
+            titleEl.innerHTML = `${icon} ${title}`;
+            messageEl.textContent = message;
+            
+            modal.classList.add('show');
+            document.getElementById('custom-alert-button').onclick = () => modal.classList.remove('show');
+        }
+
+        window.onload = () => {
+            loadCarDetails();
+            document.getElementById('edit-car-price').addEventListener('input', (e) => formatCurrencyInput(e.target));
+            document.getElementById('edit-car-year').addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+            });
+        };
     </script>
 </body>
 </html>

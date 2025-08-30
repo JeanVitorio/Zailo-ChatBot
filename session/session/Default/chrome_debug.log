@@ -1,0 +1,20 @@
+[0830/184516.257:INFO:CONSOLE(115)] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v4/y9/r/WjYlXbGB1AK.js (115)
+[0830/184516.393:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Feature xr-spatial-tracking's parameters are ignored.", source:  (0)
+[0830/184516.393:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Origin trial controlled feature not enabled: 'attribution-reporting'.", source:  (0)
+[0830/184516.393:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'compute-pressure'.", source:  (0)
+[0830/184516.395:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Origin trial controlled feature not enabled: 'interest-cohort'.", source:  (0)
+[0830/184516.395:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'private-state-token-issuance'.", source:  (0)
+[0830/184516.395:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Origin trial controlled feature not enabled: 'shared-storage'.", source:  (0)
+[0830/184516.395:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'shared-storage-select-url'.", source:  (0)
+[0830/184516.395:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'private-state-token-redemption'.", source:  (0)
+[0830/184516.395:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'unload'.", source:  (0)
+[0830/184516.395:INFO:CONSOLE(0)] "Error with Permissions-Policy header: Unrecognized feature: 'window-management'.", source:  (0)
+[0830/184516.395:INFO:CONSOLE(0)] "Document-Policy HTTP header: Unrecognized document policy feature name include-js-call-stacks-in-crash-reports.", source: https://web.whatsapp.com/ (0)
+[0830/184521.312:INFO:CONSOLE(77)] "ErrorUtils caught an error:
+
+Converting to a string will drop content data. Hash="undefined" Translation="{user_name} saiu" Content="{"key":null,"ref":null,"props":{"contact":{"id":"559492934892@c.us","name":"Thalisson","shortName":"Thalisson","pushname":"thalyt126","type":"in","labels":[],"isContactSyncCompleted":1,"disappearingModeDuration":0,"disappearingModeSettingTimestamp":1" (type=object,Object)
+
+Subsequent non-fatal errors won't be logged; see https://fburl.com/debugjs. [object Object]", source: https://static.whatsapp.net/rsrc.php/v4/yj/r/d7JxpQJeMD7.js (77)
+[0830/185020.246:INFO:CONSOLE(903)] "Failed to parse video contentType: video/mp4; codecs=avc1.42000a", source: https://static.whatsapp.net/rsrc.php/v4iZYx4/yy/l/pt_BR-j/xVn_qBNaIaZ.js (903)
+[0830/185020.247:INFO:CONSOLE(903)] "Failed to parse video contentType: video/mp4; codecs=hev1.1.6.L93.B0", source: https://static.whatsapp.net/rsrc.php/v4iZYx4/yy/l/pt_BR-j/xVn_qBNaIaZ.js (903)
+[0830/185021.048:INFO:CONSOLE(115)] "Event handler of 'x-storagemutated-1' event must be added on the initial evaluation of worker script.", source: https://static.whatsapp.net/rsrc.php/v4/y9/r/WjYlXbGB1AK.js (115)

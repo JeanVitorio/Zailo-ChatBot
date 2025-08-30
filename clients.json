@@ -1,54 +1,143 @@
 {
     "clients": [
         {
-            "chat_id": "client_001",
-            "name": "João Silva",
-            "phone": "+5511987654321",
-            "cpf": "12345678901",
-            "job": "Engenheiro",
-            "documents": [
-                "documents/client_001/income_1234567890.jpg",
-                "documents/client_001/rg_0987654321.pdf"
-            ],
-            "state": "inicial",
-            "report": "Cliente interessado em SUV, aguardando proposta."
+            "chat_id": "554691370461@c.us",
+            "name": "Jean Vitorio",
+            "phone": "554691370461",
+            "cpf": "",
+            "job": "",
+            "state": "Novo Lead",
+            "documents": [],
+            "report": "Cliente iniciou contato via bot.",
+            "payment_method": "troca",
+            "deal_type": null,
+            "rg_number": "",
+            "incomeProof": "",
+            "rg_photo": "",
+            "visit_details": {},
+            "bot_data": {
+                "financing_details": {},
+                "history": [],
+                "interested_vehicles": [
+                    {
+                        "ano": "2023",
+                        "descricao": "BMW 320i SPORT GP | 2024 | 8.500KM\r\n\r\nTeto Solar\r\nSistema de som Harman Kardon\r\nCinza Skyscraper\r\nInerna Cognac\r\nGarantia de fábrica\r\nSem retoques\r\nManual e chave reserva\r\n\r\n\r\nchama fio",
+                        "id": "1fd2f64a-9357-40c8-89ba-c968268c19c9",
+                        "imagens": [
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_1_82253034599943cbae9e5dbbd47154c7.webp",
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_3_8b369eba295b4117859a0ea8a45d74d8.webp",
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_4_10d0eb0475d043999ecb4f9946a7fb55.webp"
+                        ],
+                        "nome": "BMW 320i SPORT GP",
+                        "preco": "235000"
+                    },
+                    {
+                        "ano": "2021",
+                        "descricao": "Categoria\r\nCarros, Vans E Utilitários\r\nModelo\r\nPorsche 4s (elétrico)\r\nMarca\r\nPorsche\r\nTipo de veículo\r\nSedã\r\nAno\r\n2021\r\nQuilometragem\r\n9120\r\nPotência do motor\r\n4.0 Ou Mais\r\nCombustível\r\nElétrico\r\nCâmbio\r\nAutomático\r\nDireção\r\nElétrica\r\nCor\r\nCinza\r\nPortas\r\n4 Portas\r\nPossui Kit GNV\r\nNão\r\nTipo de direção\r\nElétrica\r\n",
+                        "id": "626f1fab-980e-475b-8328-95bc37eae10e",
+                        "imagens": [
+                            "cars/626f1fab-980e-475b-8328-95bc37eae10e/image_1_92e3f5b361d1409dbcadb499f031ff48.jpg",
+                            "cars/626f1fab-980e-475b-8328-95bc37eae10e/image_2_b562f54699954359a8a9a4809a7bed01.jpg"
+                        ],
+                        "nome": "Porsche Taycan 4S Cinza Espacial",
+                        "preco": "1500000"
+                    }
+                ],
+                "previousState": "finalizado_troca",
+                "state": "leed_recebido",
+                "temp_car": null,
+                "trade_in_car": {}
+            }
         },
         {
-            "chat_id": "client_002",
-            "name": "Maria Oliveira",
-            "phone": "+5511976543210",
-            "cpf": "98765432109",
-            "job": "Advogada",
+            "chat_id": "554699003742@c.us",
+            "name": "Evelyn caroline valkarenghi",
+            "phone": "554699003742",
+            "cpf": "11111121111",
+            "job": "nao tenho emprego",
+            "state": "Novo Lead",
             "documents": [
-                "documents/client_002/rg_1122334455.pdf"
+                "documents/554699003742@c.us/income_a59656a5b7d34db5b31d6640e8b9e583.jpeg",
+                "documents/554699003742@c.us/rg_5a6fc9adc7874f78b523b8e400edadae.jpeg",
+                "documents/554699003742@c.us/income_c2972565c43440c981ec2520ab9901b1.jpeg",
+                "documents/554699003742@c.us/rg_a959fbbf48454694b03a8a76db42d799.jpeg"
             ],
-            "state": "aguardando_documentos",
-            "report": "Aguardando comprovante de renda."
-        },
-        {
-            "chat_id": "client_003",
-            "name": "Pedro Santos",
-            "phone": "+5511965432109",
-            "cpf": "45678912345",
-            "job": "Professor",
-            "documents": [
-                "documents/client_003/income_6677889900.jpg"
-            ],
-            "state": "aguardando_arquivos",
-            "report": "Faltando RG para prosseguir."
-        },
-        {
-            "chat_id": "client_004",
-            "name": "Ana Costa",
-            "phone": "+5511954321098",
-            "cpf": "32165498701",
-            "job": "Médica",
-            "documents": [
-                "documents/client_004/income_3344556677.pdf",
-                "documents/client_004/rg_5566778899.pdf"
-            ],
-            "state": "finalizado",
-            "report": "Atendimento concluído, veículo entregue."
+            "report": "Cliente iniciou contato via bot.",
+            "payment_method": "financiamento",
+            "deal_type": null,
+            "rg_number": "11",
+            "incomeProof": "documents/554699003742@c.us/income_c2972565c43440c981ec2520ab9901b1.jpeg",
+            "rg_photo": "documents/554699003742@c.us/rg_a959fbbf48454694b03a8a76db42d799.jpeg",
+            "visit_details": {},
+            "bot_data": {
+                "financing_details": {},
+                "history": [],
+                "interested_vehicles": [
+                    {
+                        "ano": "2023",
+                        "descricao": "BMW 320i SPORT GP | 2024 | 8.500KM\r\n\r\nTeto Solar\r\nSistema de som Harman Kardon\r\nCinza Skyscraper\r\nInerna Cognac\r\nGarantia de fábrica\r\nSem retoques\r\nManual e chave reserva\r\n\r\n\r\nchama fio",
+                        "id": "1fd2f64a-9357-40c8-89ba-c968268c19c9",
+                        "imagens": [
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_1_82253034599943cbae9e5dbbd47154c7.webp",
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_3_8b369eba295b4117859a0ea8a45d74d8.webp",
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_4_10d0eb0475d043999ecb4f9946a7fb55.webp"
+                        ],
+                        "nome": "BMW 320i SPORT GP",
+                        "preco": "235000"
+                    },
+                    {
+                        "ano": "2021",
+                        "descricao": "Categoria\r\nCarros, Vans E Utilitários\r\nModelo\r\nPorsche 4s (elétrico)\r\nMarca\r\nPorsche\r\nTipo de veículo\r\nSedã\r\nAno\r\n2021\r\nQuilometragem\r\n9120\r\nPotência do motor\r\n4.0 Ou Mais\r\nCombustível\r\nElétrico\r\nCâmbio\r\nAutomático\r\nDireção\r\nElétrica\r\nCor\r\nCinza\r\nPortas\r\n4 Portas\r\nPossui Kit GNV\r\nNão\r\nTipo de direção\r\nElétrica\r\n",
+                        "id": "626f1fab-980e-475b-8328-95bc37eae10e",
+                        "imagens": [
+                            "cars/626f1fab-980e-475b-8328-95bc37eae10e/image_1_92e3f5b361d1409dbcadb499f031ff48.jpg",
+                            "cars/626f1fab-980e-475b-8328-95bc37eae10e/image_2_b562f54699954359a8a9a4809a7bed01.jpg"
+                        ],
+                        "nome": "Porsche Taycan 4S Cinza Espacial",
+                        "preco": "1500000"
+                    },
+                    {
+                        "ano": "2023",
+                        "descricao": "BMW 320i SPORT GP | 2024 | 8.500KM\r\n\r\nTeto Solar\r\nSistema de som Harman Kardon\r\nCinza Skyscraper\r\nInerna Cognac\r\nGarantia de fábrica\r\nSem retoques\r\nManual e chave reserva\r\n\r\n\r\nchama fio",
+                        "id": "1fd2f64a-9357-40c8-89ba-c968268c19c9",
+                        "imagens": [
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_1_82253034599943cbae9e5dbbd47154c7.webp",
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_3_8b369eba295b4117859a0ea8a45d74d8.webp",
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_4_10d0eb0475d043999ecb4f9946a7fb55.webp"
+                        ],
+                        "nome": "BMW 320i SPORT GP",
+                        "preco": "235000"
+                    },
+                    {
+                        "ano": "2023",
+                        "descricao": "BMW 320i SPORT GP | 2024 | 8.500KM\r\n\r\nTeto Solar\r\nSistema de som Harman Kardon\r\nCinza Skyscraper\r\nInerna Cognac\r\nGarantia de fábrica\r\nSem retoques\r\nManual e chave reserva\r\n\r\n\r\nchama fio",
+                        "id": "1fd2f64a-9357-40c8-89ba-c968268c19c9",
+                        "imagens": [
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_1_82253034599943cbae9e5dbbd47154c7.webp",
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_3_8b369eba295b4117859a0ea8a45d74d8.webp",
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_4_10d0eb0475d043999ecb4f9946a7fb55.webp"
+                        ],
+                        "nome": "BMW 320i SPORT GP",
+                        "preco": "235000"
+                    },
+                    {
+                        "ano": "2023",
+                        "descricao": "BMW 320i SPORT GP | 2024 | 8.500KM\r\n\r\nTeto Solar\r\nSistema de som Harman Kardon\r\nCinza Skyscraper\r\nInerna Cognac\r\nGarantia de fábrica\r\nSem retoques\r\nManual e chave reserva\r\n\r\n\r\nchama fio",
+                        "id": "1fd2f64a-9357-40c8-89ba-c968268c19c9",
+                        "imagens": [
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_1_82253034599943cbae9e5dbbd47154c7.webp",
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_3_8b369eba295b4117859a0ea8a45d74d8.webp",
+                            "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_4_10d0eb0475d043999ecb4f9946a7fb55.webp"
+                        ],
+                        "nome": "BMW 320i SPORT GP",
+                        "preco": "235000"
+                    }
+                ],
+                "previousState": "leed_recebido",
+                "state": "aguardando_interesse",
+                "temp_car": null,
+                "trade_in_car": {}
+            }
         }
     ]
 }

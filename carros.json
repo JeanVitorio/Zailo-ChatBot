@@ -3,8 +3,8 @@
         {
             "id": "bd3015c4-58ce-407c-bb0e-085f4897721b",
             "nome": "LAMBORGHINI HURACÁN",
-            "ano": "2021",
-            "preco": "4.200.000",
+            "ano": "2022",
+            "preco": "200000",
             "descricao": "Airbag\r\nAlarme\r\nAr quente\r\nComputador de bordo\r\nControle de tração\r\nAr condicionado\r\nFreio ABS\r\nRetrovisores elétricos\r\nRodas de liga leve\r\nSensor de chuva\r\nSensor de estacionamento\r\nRetrovisor fotocrômico\r\nTravas elétricas\r\nVidros elétricos\r\nVolante com regulagem de altura\r\nBancos em couro",
             "imagens": [
                 "cars\\bd3015c4-58ce-407c-bb0e-085f4897721b\\image_1.jpg",
@@ -19,10 +19,10 @@
         },
         {
             "id": "1fd2f64a-9357-40c8-89ba-c968268c19c9",
-            "nome": "Bmw 320i 2024 2.0 16v turbo",
-            "ano": "2024",
-            "preco": "R$ 289.900",
-            "descricao": "BMW 320i SPORT GP | 2024 | 8.500KM\r\n\r\nTeto Solar\r\nSistema de som Harman Kardon\r\nCinza Skyscraper\r\nInerna Cognac\r\nGarantia de fábrica\r\nSem retoques\r\nManual e chave reserva",
+            "nome": "BMW 320i SPORT GP",
+            "ano": "2023",
+            "preco": "235000",
+            "descricao": "BMW 320i SPORT GP | 2024 | 8.500KM\r\n\r\nTeto Solar\r\nSistema de som Harman Kardon\r\nCinza Skyscraper\r\nInerna Cognac\r\nGarantia de fábrica\r\nSem retoques\r\nManual e chave reserva\r\n\r\n\r\nchama fio",
             "imagens": [
                 "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_1_82253034599943cbae9e5dbbd47154c7.webp",
                 "cars/1fd2f64a-9357-40c8-89ba-c968268c19c9/image_3_8b369eba295b4117859a0ea8a45d74d8.webp",
@@ -33,7 +33,7 @@
             "id": "ea2dbee7-e00c-4359-9085-cdbd71f13117",
             "nome": "FORD MUSTANG SHELB",
             "ano": "2010",
-            "preco": "R$ 485.000",
+            "preco": "300000",
             "descricao": "Categoria\r\nCarros, Vans E Utilitários\r\nModelo\r\nFord Gt V8\r\nMarca\r\nFord\r\nAno\r\n2010\r\nQuilometragem\r\n36000\r\nPotência do motor\r\n4.0 Ou Mais\r\nCombustível\r\nGasolina\r\nCâmbio\r\nManual\r\nDireção\r\nMecânica\r\nCor\r\nPreto\r\nPortas\r\n2 Portas\r\nFinal de placa\r\n0\r\nPossui Kit GNV\r\nNão\r\nTipo de direção\r\nMecânica",
             "imagens": [
                 "cars/ea2dbee7-e00c-4359-9085-cdbd71f13117/image_1_bc4c109102b540ab99dc451fee90092b.webp",
@@ -46,19 +46,12 @@
             "id": "626f1fab-980e-475b-8328-95bc37eae10e",
             "nome": "Porsche Taycan 4S Cinza Espacial",
             "ano": "2021",
-            "preco": "R$ 489.000",
+            "preco": "1500000",
             "descricao": "Categoria\r\nCarros, Vans E Utilitários\r\nModelo\r\nPorsche 4s (elétrico)\r\nMarca\r\nPorsche\r\nTipo de veículo\r\nSedã\r\nAno\r\n2021\r\nQuilometragem\r\n9120\r\nPotência do motor\r\n4.0 Ou Mais\r\nCombustível\r\nElétrico\r\nCâmbio\r\nAutomático\r\nDireção\r\nElétrica\r\nCor\r\nCinza\r\nPortas\r\n4 Portas\r\nPossui Kit GNV\r\nNão\r\nTipo de direção\r\nElétrica\r\n",
             "imagens": [
                 "cars/626f1fab-980e-475b-8328-95bc37eae10e/image_1_92e3f5b361d1409dbcadb499f031ff48.jpg",
                 "cars/626f1fab-980e-475b-8328-95bc37eae10e/image_2_b562f54699954359a8a9a4809a7bed01.jpg"
             ]
-        }
-    ],
-    "numeros_para_contato": [
-        {
-            "nome": "Jean Vitorio",
-            "Email": "jeanvitoriosantosoliveira@gmail.com",
-            "numero": "5546991370461"
         }
     ]
 }

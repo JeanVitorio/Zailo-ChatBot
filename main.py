@@ -3,7 +3,7 @@ import os
 import json
 import uuid
 import shutil
-from bancodedados import Database
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -29,7 +29,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 CAR_DIR = os.path.join(BASE_DIR, 'cars')
 DOC_DIR = os.path.join(BASE_DIR, 'documents')
 CARROS_JSON = os.path.join(BASE_DIR, 'carros.json')
-CLIENTES_JSON = os.path.join(BASE_DIR, 'clientes.json')
+CLIENTES_JSON = os.path.join(BASE_DIR, 'clients.json')
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 QRCODE_DIR = os.path.join(BASE_DIR, 'QRCODE')
 
@@ -37,89 +37,54 @@ QRCODE_DIR = os.path.join(BASE_DIR, 'QRCODE')
 for directory in [CAR_DIR, DOC_DIR, TEMPLATES_DIR, QRCODE_DIR]:
     os.makedirs(directory, exist_ok=True)
 
-# Inicializar banco de dados
-db = Database()
-
 # Funções para carregar e salvar JSON
 def load_carros():
     if os.path.exists(CARROS_JSON):
         try:
             with open(CARROS_JSON, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                data = json.load(f)
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Carros carregados com sucesso: {len(data.get('modelos', []))} modelos")
+                return data
         except Exception as e:
-            print(f"Erro ao carregar carros.json: {e}")
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao carregar carros.json: {e}")
             return {"modelos": [], "numeros_para_contato": []}
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] carros.json não encontrado, retornando dados vazios")
     return {"modelos": [], "numeros_para_contato": []}
 
 def save_carros(data):
     try:
         with open(CARROS_JSON, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] carros.json salvo com sucesso")
     except Exception as e:
-        print(f"Erro ao salvar carros.json: {e}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao salvar carros.json: {e}")
         raise
 
 def load_clientes():
     if os.path.exists(CLIENTES_JSON):
         try:
             with open(CLIENTES_JSON, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                data = json.load(f)
+                print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Clientes carregados com sucesso: {len(data.get('clients', []))} clientes")
+                return data
         except Exception as e:
-            print(f"Erro ao carregar clientes.json: {e}")
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao carregar clientes.json: {e}")
             return {"clients": []}
+    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] clientes.json não encontrado, retornando dados vazios")
     return {"clients": []}
 
 def save_clientes(data):
     try:
         with open(CLIENTES_JSON, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] clientes.json salvo com sucesso")
     except Exception as e:
-        print(f"Erro ao salvar clientes.json: {e}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao salvar clientes.json: {e}")
         raise
 
+# Carregar dados na inicialização
 carros_data = load_carros()
 clientes_data = load_clientes()
-
-# Sincronizar cliente do clientes.json com o banco de dados
-def sync_client_to_db(chat_id):
-    try:
-        client_data = next((c for c in clientes_data['clients'] if c['chat_id'] == chat_id), None)
-        if client_data and not db.get_client(chat_id):
-            interests = {
-                "name": client_data.get('name', ''),
-                "phone": client_data.get('phone', ''),
-                "job": client_data.get('job', ''),
-                "documents": {
-                    "cpf": client_data.get('cpf', ''),
-                    "incomeProof": client_data.get('incomeProof', []),
-                    "rg": client_data.get('rg', [])
-                }
-            }
-            documents = []
-            if client_data.get('incomeProof'):
-                documents.append(client_data['incomeProof'])
-            if client_data.get('rg'):
-                documents.append(client_data['rg'])
-            success = db.add_client(
-                chat_id=chat_id,
-                message=client_data.get('message', ''),
-                response=client_data.get('response', ''),
-                interests=interests,
-                state=client_data.get('state', 'inicial'),
-                report=client_data.get('report', 'Cliente sincronizado do clientes.json'),
-                documents=documents,
-                name=client_data.get('name', ''),
-                phone=client_data.get('phone', ''),
-                cpf=client_data.get('cpf', ''),
-                job=client_data.get('job', '')
-            )
-            if not success:
-                print(f"Erro ao sincronizar cliente {chat_id} com o banco de dados")
-            return success
-        return False
-    except Exception as e:
-        print(f"Erro ao sincronizar cliente {chat_id}: {str(e)}")
-        return False
 
 # Rotas da API
 @app.route('/', methods=['GET'])
@@ -127,7 +92,7 @@ def serve_index():
     try:
         return send_file(os.path.join(TEMPLATES_DIR, 'index.html'))
     except Exception as e:
-        print(f"Erro ao servir index.html: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao servir index.html: {str(e)}")
         return jsonify({"error": "Erro ao carregar página inicial"}), 500
 
 @app.route('/api/cars', methods=['GET'])
@@ -135,7 +100,7 @@ def get_cars():
     try:
         return jsonify(carros_data), 200
     except Exception as e:
-        print(f"Erro ao obter carros: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao obter carros: {str(e)}")
         return jsonify({"error": f"Erro ao carregar dados de carros: {str(e)}"}), 500
 
 @app.route('/api/cars', methods=['POST'])
@@ -171,24 +136,15 @@ def add_car():
                             file.save(filepath)
                             new_car['imagens'].append(f"cars/{car_id}/{filename}")
                         except Exception as e:
-                            print(f"Erro ao salvar imagem {filename}: {e}")
+                            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao salvar imagem {filename}: {e}")
                             continue
         
         carros_data['modelos'].append(new_car)
         save_carros(carros_data)
         
-        # Adicionar ao banco de dados
-        db.add_car(
-            name=name,
-            year=car_data.get('year', ''),
-            description=car_data.get('description', ''),
-            price=car_data.get('price', 'R$ 0'),
-            images=new_car['imagens']
-        )
-        
         return jsonify(new_car), 201
     except Exception as e:
-        print(f"Erro ao adicionar carro: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao adicionar carro: {str(e)}")
         return jsonify({"error": f"Erro ao adicionar carro: {str(e)}"}), 500
 
 @app.route('/api/cars/<car_id>', methods=['PUT'])
@@ -220,18 +176,9 @@ def update_car(car_id):
         
         save_carros(carros_data)
         
-        # Atualizar no banco de dados
-        db.add_car(
-            name=car['nome'],
-            year=car['ano'],
-            description=car['descricao'],
-            price=car['preco'],
-            images=car['imagens']
-        )
-        
         return jsonify(car), 200
     except Exception as e:
-        print(f"Erro ao atualizar carro {car_id}: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao atualizar carro {car_id}: {str(e)}")
         return jsonify({"error": f"Erro ao atualizar carro: {str(e)}"}), 500
 
 @app.route('/api/cars/<car_id>', methods=['DELETE'])
@@ -247,12 +194,9 @@ def delete_car(car_id):
             shutil.rmtree(car_dir)
         save_carros(carros_data)
         
-        # Deletar do banco de dados
-        db.delete_car(car_id)
-        
         return jsonify({"message": "Carro removido com sucesso"}), 200
     except Exception as e:
-        print(f"Erro ao deletar carro {car_id}: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao deletar carro {car_id}: {str(e)}")
         return jsonify({"error": f"Erro ao deletar carro: {str(e)}"}), 500
 
 @app.route('/api/cars/<car_id>/images/<int:image_index>', methods=['DELETE'])
@@ -271,26 +215,18 @@ def delete_car_image(car_id, image_index):
             os.remove(full_path)
         save_carros(carros_data)
         
-        # Atualizar no banco de dados
-        db.add_car(
-            name=car['nome'],
-            year=car['ano'],
-            description=car['descricao'],
-            price=car['preco'],
-            images=car['imagens']
-        )
-        
         return jsonify({"message": "Imagem removida com sucesso", "imagens_restantes": car['imagens']}), 200
     except Exception as e:
-        print(f"Erro ao deletar imagem do carro {car_id}: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao deletar imagem do carro {car_id}: {str(e)}")
         return jsonify({"error": f"Erro ao deletar imagem: {str(e)}"}), 500
 
 @app.route('/api/clients', methods=['GET'])
 def get_clients():
     try:
-        return jsonify(db.get_clientes_data()), 200
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Retornando clientes: {len(clientes_data.get('clients', []))} clientes")
+        return jsonify(clientes_data), 200
     except Exception as e:
-        print(f"Erro ao obter clientes: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao obter clientes: {str(e)}")
         return jsonify({"error": f"Erro ao carregar dados de clientes: {str(e)}"}), 500
 
 @app.route('/api/clients', methods=['POST'])
@@ -316,26 +252,36 @@ def add_client():
             except json.JSONDecodeError as e:
                 return jsonify({"error": f"Erro ao parsear documents: {str(e)}"}), 400
         
+        visit_details = client_data.get('visit_details', {})
+        if isinstance(visit_details, str):
+            try:
+                visit_details = json.loads(visit_details)
+            except json.JSONDecodeError as e:
+                return jsonify({"error": f"Erro ao parsear visit_details: {str(e)}"}), 400
+        
+        bot_data = client_data.get('bot_data', {})
+        if isinstance(bot_data, str):
+            try:
+                bot_data = json.loads(bot_data)
+            except json.JSONDecodeError as e:
+                return jsonify({"error": f"Erro ao parsear bot_data: {str(e)}"}), 400
+        
         phone = client_data.get('phone', interests.get('phone', ''))
         cpf = client_data.get('cpf', interests.get('documents', {}).get('cpf', ''))
         job = client_data.get('job', interests.get('job', ''))
+        payment_method = client_data.get('payment_method', None)
+        rg_number = client_data.get('rg_number', '')
+        incomeProof = client_data.get('incomeProof', '')
+        rg_photo = client_data.get('rg_photo', '')
         
-        success = db.add_client(
-            chat_id=chat_id,
-            message=client_data.get('message', ''),
-            response=client_data.get('response', ''),
-            interests=interests,
-            state=client_data.get('state', 'inicial'),
-            report=client_data.get('report', 'Cliente adicionado manualmente'),
-            documents=documents,
-            name=name,
-            phone=phone,
-            cpf=cpf,
-            job=job
-        )
-        if not success:
-            return jsonify({"error": "Erro ao adicionar cliente no banco de dados"}), 500
-        
+        # --- CORREÇÃO APLICADA AQUI ---
+        # Captura o tipo de negociação do payload
+        deal_type = client_data.get('deal_type')
+        # Garante que ele também seja salvo dentro de bot_data para consistência
+        if deal_type:
+            bot_data['deal_type'] = deal_type
+        # --- FIM DA CORREÇÃO ---
+
         # Lidar com upload de arquivos
         client_dir = os.path.join(DOC_DIR, chat_id)
         os.makedirs(client_dir, exist_ok=True)
@@ -347,85 +293,85 @@ def add_client():
                     filepath = os.path.join(client_dir, filename)
                     file.save(filepath)
                     documents.append(f"documents/{chat_id}/{filename}")
+                    incomeProof = f"documents/{chat_id}/{filename}"
         
-        if 'rg' in request.files:
-            files = request.files.getlist('rg')
+        if 'rg_photo' in request.files:
+            files = request.files.getlist('rg_photo')
             for file in files:
                 if file and file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.pdf')):
                     filename = f"rg_{uuid.uuid4().hex}.{file.filename.split('.')[-1]}"
                     filepath = os.path.join(client_dir, filename)
                     file.save(filepath)
                     documents.append(f"documents/{chat_id}/{filename}")
+                    rg_photo = f"documents/{chat_id}/{filename}"
         
-        if documents:
-            success = db.update_client(
-                chat_id=chat_id,
-                message=client_data.get('message', ''),
-                response=client_data.get('response', ''),
-                interests=interests,
-                state=client_data.get('state', 'inicial'),
-                report=client_data.get('report', 'Cliente atualizado com documentos'),
-                documents=documents,
-                name=name,
-                phone=phone,
-                cpf=cpf,
-                job=job
-            )
-            if not success:
-                return jsonify({"error": "Erro ao atualizar documentos no banco de dados"}), 500
-        
-        # Atualizar clientes.json
-        client_data_json = {
+        # Criar novo cliente
+        new_client = {
             'chat_id': chat_id,
             'name': name,
             'phone': phone,
             'cpf': cpf,
             'job': job,
-            'message': client_data.get('message', ''),
-            'response': client_data.get('response', ''),
-            'interests': interests,
             'state': client_data.get('state', 'inicial'),
+            'documents': documents,
             'report': client_data.get('report', 'Cliente adicionado manualmente'),
-            'documents': documents
+            'payment_method': payment_method,
+            'deal_type': deal_type,
+            'rg_number': rg_number,
+            'incomeProof': incomeProof,
+            'rg_photo': rg_photo,
+            'visit_details': visit_details,
+            'bot_data': bot_data
         }
-        clientes_data['clients'].append(client_data_json)
+        
+        clientes_data['clients'].append(new_client)
         save_clientes(clientes_data)
         
-        return jsonify(client_data_json), 201
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Cliente adicionado: {chat_id}")
+        return jsonify(new_client), 201
     except Exception as e:
-        print(f"Erro ao adicionar cliente: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao adicionar cliente: {str(e)}")
         return jsonify({"error": f"Erro ao adicionar cliente: {str(e)}"}), 500
 
 @app.route('/api/clients/<chat_id>', methods=['GET'])
 def get_client(chat_id):
     try:
-        # Tentar sincronizar cliente do clientes.json com o banco de dados
-        sync_client_to_db(chat_id)
-        client = db.get_client(chat_id)
+        client = next((c for c in clientes_data['clients'] if c['chat_id'] == chat_id), None)
         if not client:
             return jsonify({"error": "Cliente não encontrado"}), 404
         return jsonify(client), 200
     except Exception as e:
-        print(f"Erro ao obter cliente {chat_id}: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao obter cliente {chat_id}: {str(e)}")
         return jsonify({"error": f"Erro ao obter cliente: {str(e)}"}), 500
 
 @app.route('/api/clients/<chat_id>', methods=['PUT'])
 def update_client(chat_id):
     try:
-        # Verificar se o cliente existe no clientes.json e sincronizar com o banco de dados
-        sync_client_to_db(chat_id)
-        
         client_data = request.get_json(silent=True) or request.form.to_dict()
-        interests = client_data.get('interests', {})
+        client = next((c for c in clientes_data['clients'] if c['chat_id'] == chat_id), None)
+        if not client:
+            return jsonify({"error": "Cliente não encontrado"}), 404
+        
+        interests = client_data.get('interests', client.get('interests', {}))
         if isinstance(interests, str):
             try:
                 interests = json.loads(interests)
             except json.JSONDecodeError as e:
                 return jsonify({"error": f"Erro ao parsear interests: {str(e)}"}), 400
         
-        client = db.get_client(chat_id)
-        if not client:
-            return jsonify({"error": "Cliente não encontrado"}), 404
+        visit_details = client_data.get('visit_details', client.get('visit_details', {}))
+        if isinstance(visit_details, str):
+            try:
+                visit_details = json.loads(visit_details)
+            except json.JSONDecodeError as e:
+                return jsonify({"error": f"Erro ao parsear visit_details: {str(e)}"}), 400
+        
+        bot_data = client_data.get('bot_data', client.get('bot_data', {}))
+        if isinstance(bot_data, str):
+            try:
+                bot_data = json.loads(bot_data)
+            except json.JSONDecodeError as e:
+                return jsonify({"error": f"Erro ao parsear bot_data: {str(e)}"}), 400
         
         documents = client.get('documents', [])
         if 'documents' in client_data:
@@ -442,6 +388,10 @@ def update_client(chat_id):
         cpf = client_data.get('cpf', interests.get('documents', {}).get('cpf', client.get('cpf', '')))
         job = client_data.get('job', interests.get('job', client.get('job', '')))
         state = client_data.get('state', client.get('state', 'inicial'))
+        payment_method = client_data.get('payment_method', client.get('payment_method', None))
+        rg_number = client_data.get('rg_number', client.get('rg_number', ''))
+        incomeProof = client_data.get('incomeProof', client.get('incomeProof', ''))
+        rg_photo = client_data.get('rg_photo', client.get('rg_photo', ''))
         
         # Lidar com upload de arquivos
         client_dir = os.path.join(DOC_DIR, chat_id)
@@ -454,73 +404,113 @@ def update_client(chat_id):
                     filepath = os.path.join(client_dir, filename)
                     file.save(filepath)
                     documents.append(f"documents/{chat_id}/{filename}")
+                    incomeProof = f"documents/{chat_id}/{filename}"
         
-        if 'rg' in request.files:
-            files = request.files.getlist('rg')
+        if 'rg_photo' in request.files:
+            files = request.files.getlist('rg_photo')
             for file in files:
                 if file and file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.pdf')):
                     filename = f"rg_{uuid.uuid4().hex}.{file.filename.split('.')[-1]}"
                     filepath = os.path.join(client_dir, filename)
                     file.save(filepath)
                     documents.append(f"documents/{chat_id}/{filename}")
+                    rg_photo = f"documents/{chat_id}/{filename}"
         
-        success = db.update_client(
-            chat_id=chat_id,
-            message=client_data.get('message', client.get('message', '')),
-            response=client_data.get('response', client.get('response', '')),
-            interests=interests or client.get('interests', {}),
-            state=state,
-            report=client_data.get('report', client.get('report', '')),
-            documents=documents,
-            name=name,
-            phone=phone,
-            cpf=cpf,
-            job=job
-        )
-        if not success:
-            return jsonify({"error": "Erro ao atualizar cliente no banco de dados"}), 500
-        
-        # Atualizar clientes.json
-        client_data_json = next((c for c in clientes_data['clients'] if c['chat_id'] == chat_id), None)
-        if client_data_json:
-            client_data_json.update({
-                'name': name,
-                'phone': phone,
-                'cpf': cpf,
-                'job': job,
-                'message': client_data.get('message', client.get('message', '')),
-                'response': client_data.get('response', client.get('response', '')),
-                'interests': interests or client.get('interests', {}),
-                'state': state,
-                'report': client_data.get('report', client.get('report', '')),
-                'documents': documents
-            })
-        else:
-            new_client = {
-                'chat_id': chat_id,
-                'name': name,
-                'phone': phone,
-                'cpf': cpf,
-                'job': job,
-                'message': client_data.get('message', ''),
-                'response': client_data.get('response', ''),
-                'interests': interests,
-                'state': state,
-                'report': client_data.get('report', ''),
-                'documents': documents
-            }
-            clientes_data['clients'].append(new_client)
+        # Atualizar cliente no clients.json
+        client.update({
+            'name': name,
+            'phone': phone,
+            'cpf': cpf,
+            'job': job,
+            'state': state,
+            'report': client_data.get('report', client.get('report', '')),
+            'documents': documents,
+            'payment_method': payment_method,
+            'rg_number': rg_number,
+            'incomeProof': incomeProof,
+            'rg_photo': rg_photo,
+            'visit_details': visit_details,
+            'bot_data': bot_data
+        })
         save_clientes(clientes_data)
         
-        return jsonify(client_data_json or new_client), 200
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Cliente atualizado: {chat_id}")
+        return jsonify(client), 200
     except Exception as e:
-        print(f"Erro ao atualizar cliente {chat_id}: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao atualizar cliente {chat_id}: {str(e)}")
         return jsonify({"error": f"Erro ao atualizar cliente: {str(e)}"}), 500
+
+@app.route('/api/clients/<chat_id>', methods=['DELETE'])
+def delete_client(chat_id):
+    try:
+        client = next((c for c in clientes_data['clients'] if c['chat_id'] == chat_id), None)
+        if not client:
+            return jsonify({"error": "Cliente não encontrado"}), 404
+        
+        clientes_data['clients'] = [c for c in clientes_data['clients'] if c['chat_id'] != chat_id]
+        client_dir = os.path.join(DOC_DIR, chat_id)
+        if os.path.exists(client_dir):
+            shutil.rmtree(client_dir)
+        save_clientes(clientes_data)
+        
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Cliente deletado: {chat_id}")
+        return jsonify({"message": "Cliente removido com sucesso"}), 200
+    except Exception as e:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao deletar cliente {chat_id}: {str(e)}")
+        return jsonify({"error": f"Erro ao deletar cliente: {str(e)}"}), 500
 
 @app.route('/api/clients/<chat_id>/files', methods=['POST'])
 def upload_client_files(chat_id):
     try:
-        client = db.get_client(chat_id)
+        client = next((c for c in clientes_data['clients'] if c['chat_id'] == chat_id), None)
+        if not client:
+            return jsonify({"error": "Cliente não encontrado"}), 404
+        
+        client_dir = os.path.join(DOC_DIR, chat_id)
+        os.makedirs(client_dir, exist_ok=True)
+        
+        # Garante que as listas e objetos existam
+        if 'documents' not in client or not isinstance(client.get('documents'), list):
+            client['documents'] = []
+        if 'bot_data' not in client:
+            client['bot_data'] = {}
+        if 'trade_in_car' not in client['bot_data']:
+            client['bot_data']['trade_in_car'] = {}
+        if 'photos' not in client['bot_data']['trade_in_car'] or not isinstance(client['bot_data']['trade_in_car'].get('photos'), list):
+            client['bot_data']['trade_in_car']['photos'] = []
+
+        # Processa documentos genéricos do cliente
+        if 'documents' in request.files:
+            files = request.files.getlist('documents')
+            for file in files:
+                if file and file.filename:
+                    filename = f"doc_{uuid.uuid4().hex}.{file.filename.split('.')[-1]}"
+                    filepath = os.path.join(client_dir, filename)
+                    file.save(filepath)
+                    client['documents'].append(f"documents/{chat_id}/{filename}")
+
+        # Processa fotos do veículo de troca
+        if 'trade_in_photos' in request.files:
+            files = request.files.getlist('trade_in_photos')
+            for file in files:
+                if file and file.filename:
+                    filename = f"trade_{uuid.uuid4().hex}.{file.filename.split('.')[-1]}"
+                    filepath = os.path.join(client_dir, filename)
+                    file.save(filepath)
+                    client['bot_data']['trade_in_car']['photos'].append(f"documents/{chat_id}/{filename}")
+        
+        save_clientes(clientes_data)
+        
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Arquivos enviados para o cliente: {chat_id}")
+        return jsonify({"message": "Arquivos enviados com sucesso", "client": client}), 200
+    except Exception as e:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao enviar arquivos para o cliente {chat_id}: {str(e)}")
+        return jsonify({"error": f"Erro ao enviar arquivos: {str(e)}"}), 500
+
+@app.route('/api/clients/<chat_id>/documents', methods=['POST'])
+def upload_client_documents(chat_id):
+    try:
+        client = next((c for c in clientes_data['clients'] if c['chat_id'] == chat_id), None)
         if not client:
             return jsonify({"error": "Cliente não encontrado"}), 404
         
@@ -528,57 +518,63 @@ def upload_client_files(chat_id):
         os.makedirs(client_dir, exist_ok=True)
         documents = client.get('documents', [])
         
-        if 'incomeProof' in request.files:
-            files = request.files.getlist('incomeProof')
+        if 'documents' in request.files:
+            files = request.files.getlist('documents')
             for file in files:
                 if file and file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.pdf')):
-                    filename = f"income_{uuid.uuid4().hex}.{file.filename.split('.')[-1]}"
+                    filename = f"doc_{uuid.uuid4().hex}.{file.filename.split('.')[-1]}"
                     filepath = os.path.join(client_dir, filename)
                     file.save(filepath)
                     documents.append(f"documents/{chat_id}/{filename}")
         
-        if 'rg' in request.files:
-            files = request.files.getlist('rg')
-            for file in files:
-                if file and file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.pdf')):
-                    filename = f"rg_{uuid.uuid4().hex}.{file.filename.split('.')[-1]}"
-                    filepath = os.path.join(client_dir, filename)
-                    file.save(filepath)
-                    documents.append(f"documents/{chat_id}/{filename}")
+        client['documents'] = documents
+        save_clientes(clientes_data)
         
-        success = db.update_client(
-            chat_id=chat_id,
-            message=client.get('message', ''),
-            response=client.get('response', ''),
-            interests=client.get('interests', {}),
-            state=client.get('state', 'inicial'),
-            report=client.get('report', 'Arquivos adicionados'),
-            documents=documents,
-            name=client.get('name', ''),
-            phone=client.get('phone', ''),
-            cpf=client.get('cpf', ''),
-            job=client.get('job', '')
-        )
-        if not success:
-            return jsonify({"error": "Erro ao atualizar documentos no banco de dados"}), 500
-        
-        # Atualizar clientes.json
-        client_data_json = next((c for c in clientes_data['clients'] if c['chat_id'] == chat_id), None)
-        if client_data_json:
-            client_data_json['documents'] = documents
-            save_clientes(clientes_data)
-        
-        return jsonify({"message": "Arquivos enviados com sucesso", "documents": documents}), 200
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Documentos adicionados para cliente: {chat_id}")
+        return jsonify({"message": "Documentos adicionados com sucesso", "documents": documents}), 200
     except Exception as e:
-        print(f"Erro ao enviar arquivos para cliente {chat_id}: {str(e)}")
-        return jsonify({"error": f"Erro ao enviar arquivos: {str(e)}"}), 500
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao adicionar documentos para cliente {chat_id}: {str(e)}")
+        return jsonify({"error": f"Erro ao adicionar documentos: {str(e)}"}), 500
+
+@app.route('/api/clients/<chat_id>/documents', methods=['DELETE'])
+def delete_client_documents(chat_id):
+    try:
+        client = next((c for c in clientes_data['clients'] if c['chat_id'] == chat_id), None)
+        if not client:
+            return jsonify({"error": "Cliente não encontrado"}), 404
+        
+        data = request.get_json()
+        doc_paths = data.get('docPaths', [])
+        if not isinstance(doc_paths, list):
+            return jsonify({"error": "docPaths deve ser uma lista"}), 400
+        
+        documents = client.get('documents', [])
+        for path in doc_paths:
+            if path in documents:
+                documents.remove(path)
+            full_path = os.path.join(BASE_DIR, path)
+            if os.path.exists(full_path):
+                os.remove(full_path)
+            if path == client.get('incomeProof'):
+                client['incomeProof'] = ''
+            if path == client.get('rg_photo'):
+                client['rg_photo'] = ''
+        
+        client['documents'] = documents
+        save_clientes(clientes_data)
+        
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Documentos deletados para cliente: {chat_id}")
+        return jsonify({"message": "Documentos removidos com sucesso"}), 200
+    except Exception as e:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao deletar documentos para cliente {chat_id}: {str(e)}")
+        return jsonify({"error": f"Erro ao deletar documentos: {str(e)}"}), 500
 
 @app.route('/cars/<path:path>')
 def serve_car_images(path):
     try:
         return send_from_directory(CAR_DIR, path)
     except Exception as e:
-        print(f"Erro ao servir imagem do carro {path}: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao servir imagem do carro {path}: {str(e)}")
         return jsonify({"error": "Imagem não encontrada"}), 404
 
 @app.route('/documents/<path:path>')
@@ -586,7 +582,7 @@ def serve_client_documents(path):
     try:
         return send_from_directory(DOC_DIR, path)
     except Exception as e:
-        print(f"Erro ao servir documento do cliente {path}: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao servir documento do cliente {path}: {str(e)}")
         return jsonify({"error": "Documento não encontrado"}), 404
 
 @app.route('/QRCODE/<path:path>')
@@ -594,16 +590,52 @@ def serve_qrcode(path):
     try:
         return send_from_directory(QRCODE_DIR, path)
     except Exception as e:
-        print(f"Erro ao servir QR code {path}: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao servir QR code {path}: {str(e)}")
         return jsonify({"error": "QR code não encontrado"}), 404
+
+@app.route('/api/clients/<chat_id>/trade_in_photos', methods=['POST'])
+def upload_trade_in_photos(chat_id):
+    try:
+        client = next((c for c in clientes_data['clients'] if c['chat_id'] == chat_id), None)
+        if not client:
+            return jsonify({"error": "Cliente não encontrado"}), 404
+
+        if 'bot_data' not in client:
+            client['bot_data'] = {}
+        if 'trade_in_car' not in client['bot_data']:
+            client['bot_data']['trade_in_car'] = {}
+        if 'photos' not in client['bot_data']['trade_in_car'] or not isinstance(client['bot_data']['trade_in_car']['photos'], list):
+            client['bot_data']['trade_in_car']['photos'] = []
+
+        client_dir = os.path.join(DOC_DIR, chat_id)
+        os.makedirs(client_dir, exist_ok=True)
+        
+        photos = client['bot_data']['trade_in_car']['photos']
+        
+        if 'trade_in_photos' in request.files:
+            files = request.files.getlist('trade_in_photos')
+            for file in files:
+                if file and file.filename.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
+                    filename = f"trade_{uuid.uuid4().hex}.{file.filename.split('.')[-1]}"
+                    filepath = os.path.join(client_dir, filename)
+                    file.save(filepath)
+                    photos.append(f"documents/{chat_id}/{filename}")
+        
+        client['bot_data']['trade_in_car']['photos'] = photos
+        save_clientes(clientes_data)
+        
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Fotos de troca adicionadas para o cliente: {chat_id}")
+        return jsonify({"message": "Fotos da troca adicionadas com sucesso", "photos": photos}), 200
+    except Exception as e:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao adicionar fotos de troca para o cliente {chat_id}: {str(e)}")
+        return jsonify({"error": f"Erro ao adicionar fotos de troca: {str(e)}"}), 500
 
 @app.route('/status')
 def get_status():
     try:
-        # Placeholder para verificar o status da conexão com o WhatsApp
         return jsonify({"isReady": False}), 200
     except Exception as e:
-        print(f"Erro ao verificar status: {str(e)}")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] Erro ao verificar status: {str(e)}")
         return jsonify({"error": f"Erro ao verificar status: {str(e)}"}), 500
 
 if __name__ == '__main__':

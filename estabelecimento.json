@@ -1,0 +1,58 @@
+{
+  "loja": {
+    "atendente": "Zailon",
+    "id": "001",
+    "nome": "Auto Center Premium",
+    "descricao": "Concessionária especializada em veículos novos e seminovos de diversas marcas.",
+    "telefone_principal": "+55 11 99999-9999",
+    "email": "contato@autocenterpremium.com.br",
+    "site": "https://www.autocenterpremium.com.br",
+    "whatsapp": "+55 11 98888-8888",
+    "horario_funcionamento": {
+      "segunda_sexta": "08:00 - 18:00",
+      "sabado": "09:00 - 13:00",
+      "domingo_feriado": "Fechado"
+    },
+    "localizacao": {
+      "endereco": "Av. Paulista, 1000",
+      "bairro": "Bela Vista",
+      "cidade": "São Paulo",
+      "estado": "SP",
+      "cep": "01310-100",
+      "link_maps": "https://goo.gl/maps/xxxxx"
+    },
+    "redes_sociais": {
+      "facebook": "https://facebook.com/autocenterpremium",
+      "instagram": "https://instagram.com/autocenterpremium",
+      "youtube": "https://youtube.com/autocenterpremium",
+      "tiktok": "https://tiktok.com/@autocenterpremium"
+    }
+  },
+  "vendedores": [
+    {
+      "id": "v001",
+      "nome": "Carlos Silva",
+      "telefone": "+55 11 97777-7777",
+      "whatsapp": "5546991370461@c.us",
+      "email": "carlos@autocenterpremium.com.br",
+      "especialidade": "Financiamento e veículos seminovos",
+      "foto": "https://www.autocenterpremium.com.br/img/vendedores/carlos.jpg",
+      "horario_disponivel": "08:00 - 18:00"
+    }
+  ],
+  "informacoes_uteis": {
+    "formas_pagamento": [
+      "Pix",
+      "Transferência bancária",
+      "Financiamento",
+      "Cartão de crédito (até 12x)"
+    ],
+    "servicos_adicionais": [
+      "Aceitamos carro como parte do pagamento 'Troca' ",
+      "Garantia estendida",
+      "Vendemos seu veiculo",
+      "Despachante próprio",
+      "Seguro automotivo"
+    ]
+  }
+}

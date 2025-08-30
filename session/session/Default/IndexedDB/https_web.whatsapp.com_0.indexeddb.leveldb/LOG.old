@@ -1,0 +1,34 @@
+2025/08/30-18:44:37.873 2f50 Reusing MANIFEST C:\Users\PulseMarketing\Documents\ZailonChatBot\Zailo-ChatBot\session\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/08/30-18:44:37.874 2f50 Recovering log #173
+2025/08/30-18:44:38.047 2f50 Reusing old log C:\Users\PulseMarketing\Documents\ZailonChatBot\Zailo-ChatBot\session\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000173.log 
+2025/08/30-18:44:42.119 2f50 Level-0 table #183: started
+2025/08/30-18:44:42.141 2f50 Level-0 table #183: 803928 bytes OK
+2025/08/30-18:44:42.145 2f50 Delete type=0 #173
+2025/08/30-18:44:42.148 2610 Manual compaction at level-0 from '\x00!\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00"\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/08/30-18:44:42.157 2610 Level-0 table #185: started
+2025/08/30-18:44:42.170 2610 Level-0 table #185: 446 bytes OK
+2025/08/30-18:44:42.172 2610 Delete type=0 #182
+2025/08/30-18:44:42.172 2610 Manual compaction at level-0 from '\x00"\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00#\x00\x00\x00' @ 0 : 0; will stop at '\x00"\x00\x00\x05' @ 1170858 : 0
+2025/08/30-18:44:42.172 2610 Compacting 1@0 + 1@1 files
+2025/08/30-18:44:42.214 2610 Generated table #186@0: 33209 keys, 466749 bytes
+2025/08/30-18:44:42.214 2610 Compacted 1@0 + 1@1 files => 466749 bytes
+2025/08/30-18:44:42.217 2610 compacted to: files[ 0 1 6 0 0 0 0 ]
+2025/08/30-18:44:42.217 2610 Delete type=2 #185
+2025/08/30-18:44:42.218 2610 Manual compaction at level-0 from '\x00"\x00\x00\x05' @ 1170858 : 0 .. '\x00#\x00\x00\x00' @ 0 : 0; will stop at (end)
+2025/08/30-18:44:43.512 2610 Compacting 1@1 + 6@2 files
+2025/08/30-18:44:43.575 2610 Generated table #187@1: 37925 keys, 2193225 bytes
+2025/08/30-18:44:43.612 2610 Generated table #188@1: 2423 keys, 2169633 bytes
+2025/08/30-18:44:43.679 2610 Generated table #189@1: 24366 keys, 2179702 bytes
+2025/08/30-18:44:43.795 2610 Generated table #190@1: 88956 keys, 2234483 bytes
+2025/08/30-18:44:43.931 2610 Generated table #191@1: 116233 keys, 2269215 bytes
+2025/08/30-18:44:43.961 2610 Generated table #192@1: 23804 keys, 463967 bytes
+2025/08/30-18:44:43.961 2610 Compacted 1@1 + 6@2 files => 11510225 bytes
+2025/08/30-18:44:43.963 2610 compacted to: files[ 0 0 6 0 0 0 0 ]
+2025/08/30-18:44:43.963 2610 Delete type=2 #175
+2025/08/30-18:44:43.963 2610 Delete type=2 #176
+2025/08/30-18:44:43.963 2610 Delete type=2 #177
+2025/08/30-18:44:43.963 2610 Delete type=2 #178
+2025/08/30-18:44:43.963 2610 Delete type=2 #179
+2025/08/30-18:44:43.963 2610 Delete type=2 #180
+2025/08/30-18:44:43.963 2610 Delete type=2 #183
+2025/08/30-18:44:43.963 2610 Delete type=2 #186
