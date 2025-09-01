@@ -43,8 +43,8 @@
                         "preco": "1500000"
                     }
                 ],
-                "previousState": "finalizado_troca",
-                "state": "leed_recebido",
+                "previousState": "leed_recebido",
+                "state": "aguardando_interesse",
                 "temp_car": null,
                 "trade_in_car": {}
             }
